@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const unionFilters = document.querySelectorAll('.union-filter');
-  const ambulanceCards = document.querySelectorAll('.ambulance-card');
 
   const applyAmbulanceFilter = (selectedUnion) => {
+    const ambulanceCards = document.querySelectorAll('.ambulance-card');
     ambulanceCards.forEach((card) => {
       const matches = selectedUnion === 'all' || card.dataset.union === selectedUnion;
       card.style.display = matches ? 'block' : 'none';
@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const bloodFilters = document.querySelectorAll('.blood-filter');
-  const donorCards = document.querySelectorAll('.donor-card');
   const bloodSearch = document.querySelector('.blood-search');
 
   const applyBloodFilter = () => {
     const selectedGroup = document.querySelector('.blood-filter.active')?.dataset.blood ?? 'all';
     const searchValue = (bloodSearch?.value || '').trim().toLowerCase();
 
+    const donorCards = document.querySelectorAll('.donor-card');
     donorCards.forEach((card) => {
       const matchesGroup = selectedGroup === 'all' || card.dataset.blood === selectedGroup;
       const searchText = (card.dataset.search || '').toLowerCase();
@@ -184,6 +184,61 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   marketSearch?.addEventListener('input', applyMarketplaceFilter);
+
+  // --- Dynamic union loader ---
+  const ambulanceGrid = document.querySelector('.ambulance-grid');
+  const donorGrid = document.querySelector('.donor-grid');
+
+  const renderAmbulanceEntry = (unionId, entry) => `
+    <article class="ambulance-card" data-union="${unionId}" data-search="${entry.search || ''}">
+      <div class="service-meta">
+        <span class="status-dot"></span>
+        <span>${entry.availability || '২৪/৭'}</span>
+      </div>
+      <h4>${entry.name}</h4>
+      <p>${entry.union || ''}</p>
+      <small>${entry.role || ''}</small>
+      <a href="tel:${entry.phone}">${entry.phone}</a>
+    </article>
+  `;
+
+  const renderDonorEntry = (unionId, donor) => `
+    <article class="donor-card" data-blood="${donor.blood || 'Unknown'}" data-search="${donor.search || ''}">
+      <div class="donor-head">
+        <span class="blood-badge">${donor.blood || ''}</span>
+        <span class="donor-status">সক্রিয়</span>
+      </div>
+      <h4>${donor.name}</h4>
+      <p>শেষ দান: ${donor.last_donated || ''}</p>
+      <small>${donor.union || ''}</small>
+      <a href="tel:${donor.phone}">কল করুন</a>
+    </article>
+  `;
+
+  const fetchAndRenderUnion = async (path) => {
+    try {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+
+      const unionId = data.union_id || data.union || path;
+      const unionName = data.union_name || '';
+
+      if (Array.isArray(data.ambulance) && ambulanceGrid) {
+        ambulanceGrid.insertAdjacentHTML('beforeend', data.ambulance.map((a) => renderAmbulanceEntry(unionId, Object.assign({ union: unionName }, a))).join(''));
+      }
+
+      if (Array.isArray(data.donors) && donorGrid) {
+        donorGrid.insertAdjacentHTML('beforeend', data.donors.map((d) => renderDonorEntry(unionId, d)).join(''));
+      }
+    } catch (e) {
+      console.warn('Could not load union file', path, e.message);
+    }
+  };
+
+  // Load known union files (created earlier)
+  fetchAndRenderUnion('index.borohatia');
+  fetchAndRenderUnion('index.amirabad');
 
   const eventData = [
     {

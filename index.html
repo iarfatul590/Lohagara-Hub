@@ -7,36 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                50: '#f7f3ff',
-                500: '#5b4fd4',
-                600: '#4f46e5',
-                700: '#4338ca'
-              },
-              warn: {
-                50: '#fff7ed',
-                500: '#f59e0b',
-                600: '#d97706'
-              },
-              success: {
-                50: '#ecfdf5',
-                500: '#22c55e',
-                600: '#16a34a'
-              }
-            },
-            boxShadow: {
-              soft: '0 18px 40px rgba(15, 23, 42, 0.08)'
-            }
-          }
-        }
-      };
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -50,10 +21,81 @@
           </div>
         </div>
 
-        <div class="top-note">লোহাগাড়ার সকল সেবা ও তথ্য এক জায়গায়</div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="#emergency-panel">জরুরি</a>
+          <a href="#krishi-heading">কৃষি</a>
+          <a href="#healthcare-heading">স্বাস্থ্য</a>
+          <a href="#education-heading">শিক্ষা</a>
+          <a href="#marketplace-heading">মার্কেট</a>
+        </nav>
+
+        <a href="#openBloodRequestModal" class="nav-cta">জরুরি রক্ত</a>
       </header>
 
-      <section class="emergency-panel" aria-labelledby="emergency-heading">
+      <section class="hero-section" aria-label="Community overview">
+        <div class="hero-copy">
+          <span class="eyebrow">Smart local community platform</span>
+          <h1>লোহাগাড়ার সব সেবা, তথ্য ও জরুরি সহায়তা এক প্ল্যাটফর্মে</h1>
+          <p>
+            কৃষি, স্বাস্থ্য, শিক্ষা, বাজার, পরিবহন, সামাজিক সহায়তা ও স্থানীয় ইভেন্ট—সবকিছু সহজে খুঁজুন,
+            দ্রুত যোগাযোগ করুন এবং একসাথে আরও স্মার্ট লোহাগাড়া গড়ুন।
+          </p>
+
+          <div class="hero-actions">
+            <a href="#healthcare-heading" class="primary-btn">সেবা খুঁজুন</a>
+            <a href="#marketplace-heading" class="secondary-btn">মার্কেট দেখুন</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat-box">
+              <strong>২৪/৭</strong>
+              <span>জরুরি সেবা</span>
+            </div>
+            <div class="stat-box">
+              <strong>12+</strong>
+              <span>ক্যাটাগরি</span>
+            </div>
+            <div class="stat-box">
+              <strong>Live</strong>
+              <span>সাম্প্রতিক আপডেট</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="hero-card">
+            <div class="card-topline">
+              <span class="live-pill">Live</span>
+              <span class="mini-kicker">লোহাগাড়া স্ট্যাটাস</span>
+            </div>
+
+            <h2>আজকের কভারেজ</h2>
+
+            <div class="mini-metrics">
+              <div>
+                <span>আবহাওয়া</span>
+                <strong>২৯°C</strong>
+              </div>
+              <div>
+                <span>বাজার</span>
+                <strong>৭টি</strong>
+              </div>
+              <div>
+                <span>রক্ত</span>
+                <strong>৬ টি</strong>
+              </div>
+            </div>
+
+            <ul class="quick-list">
+              <li><span class="dot green"></span> কৃষি বাজার দর আপডেটেড</li>
+              <li><span class="dot red"></span> জরুরি রক্তের চাহিদা সক্রিয়</li>
+              <li><span class="dot blue"></span> স্বাস্থ্য ও বাস সময়সূচি শেয়ার করা হয়েছে</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="emergency-panel" id="emergency-panel" aria-labelledby="emergency-heading">
         <div class="emergency-header">
           <div class="emergency-badge">🚨 জরুরি হেল্পলাইন</div>
           <h2 id="emergency-heading">জরুরি হেল্পলাইন ও হটলাইন কর্নার</h2>
@@ -389,28 +431,8 @@
                   <small>অ্যাম্বুলেন্স ড্রাইভার</small>
                   <a href="tel:+8801712345678">+৮৮ ০১৭১২-৩৪৫৬৭৮</a>
                 </article>
-
-                <article class="ambulance-card" data-union="bighatia" data-search="মোঃ জসিম bighatia ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ জসিম</h4>
-                  <p>১নং বড়হাতিয়া</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801723456789">+৮৮ ০১৭২৩-৪৫৬৭৮৯</a>
-                </article>
-
-                <article class="ambulance-card" data-union="amirabad" data-search="মোঃ নাজিম amirabad ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ নাজিম</h4>
-                  <p>২নং আমিরাবাদ</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801734567890">+৮৮ ০১৭৩৪-৫৬৭৮৯০</a>
-                </article>
+                <!-- Bighatia ambulance moved to index.borohatia -->
+                <!-- Amirabad ambulance moved to index.amirabad -->
 
                 <article class="ambulance-card" data-union="padua" data-search="মোঃ রফিক padua ambulance">
                   <div class="service-meta">
@@ -511,27 +533,8 @@
                   <a href="tel:+8801711223344">কল করুন</a>
                 </article>
 
-                <article class="donor-card" data-blood="O+" data-search="মোঃ সোহেল o plus">
-                  <div class="donor-head">
-                    <span class="blood-badge">O+</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ সোহেল</h4>
-                  <p>শেষ দান: ৪ মে ২০২৬</p>
-                  <small>বড়হাতিয়া</small>
-                  <a href="tel:+8801811223344">কল করুন</a>
-                </article>
-
-                <article class="donor-card" data-blood="B-" data-search="মোঃ আতিক b minus">
-                  <div class="donor-head">
-                    <span class="blood-badge">B-</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ আতিক</h4>
-                  <p>শেষ দান: ২১ এপ্রিল ২০২৬</p>
-                  <small>আমিরাবাদ</small>
-                  <a href="tel:+8801911223344">কল করুন</a>
-                </article>
+                <!-- Bighatia donor moved to index.borohatia -->
+                <!-- Amirabad donor moved to index.amirabad -->
 
                 <article class="donor-card" data-blood="AB+" data-search="মোঃ জুবায়ের ab plus">
                   <div class="donor-head">
