@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>লোহাগাড়া হাব</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#f7f3ff',
+                500: '#5b4fd4',
+                600: '#4f46e5',
+                700: '#4338ca'
+              },
+              warn: {
+                50: '#fff7ed',
+                500: '#f59e0b',
+                600: '#d97706'
+              },
+              success: {
+                50: '#ecfdf5',
+                500: '#22c55e',
+                600: '#16a34a'
+              }
+            },
+            boxShadow: {
+              soft: '0 18px 40px rgba(15, 23, 42, 0.08)'
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">🌿</div>
+          <div>
+            <div class="brand-title">লোহাগাড়া হাব</div>
+            <span class="brand-tag">কমিউনিটি প্ল্যাটফর্ম</span>
+          </div>
+        </div>
+
+        <div class="top-note">লোহাগাড়ার সকল সেবা ও তথ্য এক জায়গায়</div>
+      </header>
+
+      <section class="emergency-panel" aria-labelledby="emergency-heading">
+        <div class="emergency-header">
+          <div class="emergency-badge">🚨 জরুরি হেল্পলাইন</div>
+          <h2 id="emergency-heading">জরুরি হেল্পলাইন ও হটলাইন কর্নার</h2>
+        </div>
+
+        <div class="emergency-grid">
+          <article class="emergency-card emergency-red">
+            <div class="emergency-icon" aria-hidden="true">🚒</div>
+            <div class="emergency-content">
+              <span class="emergency-label">ফায়ার সার্ভিস ও থানা</span>
+              <ul class="emergency-list">
+                <li>
+                  <span>লোহাগাড়া পুলিশ স্টেশন</span>
+                  <a href="tel:+8801700000000">+৮৮ ০১৭০০-০০০০০০</a>
+                </li>
+                <li>
+                  <span>ফায়ার সার্ভিস</span>
+                  <a href="tel:+8801700000001">+৮৮ ০১৭০০-০০০০০১</a>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="emergency-card emergency-amber">
+            <div class="emergency-icon" aria-hidden="true">⚡</div>
+            <div class="emergency-content">
+              <span class="emergency-label">বিদ্যুৎ অফিস</span>
+              <ul class="emergency-list">
+                <li>
+                  <span>বিদ্যুৎ জরুরি সেবা</span>
+                  <a href="tel:+8801700000002">+৮৮ ০১৭০০-০০০০০২</a>
+                </li>
+                <li>
+                  <span>কন্ট্রোল রুম / অভিযোগ</span>
+                  <a href="tel:+8801700000003">+৮৮ ০১৭০০-০০০০০৩</a>
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="emergency-card emergency-blue">
+            <div class="emergency-icon" aria-hidden="true">🏛️</div>
+            <div class="emergency-content">
+              <span class="emergency-label">নির্বাহী অফিসারের কার্যালয়</span>
+              <ul class="emergency-list">
+                <li>
+                  <span>উপজেলা প্রশাসন</span>
+                  <a href="tel:+8801700000004">+৮৮ ০১৭০০-০০০০০৪</a>
+                </li>
+                <li>
+                  <span>সাধারণ জরুরি তথ্য</span>
+                  <a href="tel:+8801700000005">+৮৮ ০১৭০০-০০০০০৫</a>
+                </li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="krishi-section" aria-labelledby="krishi-heading">
+        <div class="krishi-header">
+          <div class="krishi-tag">🌾 Krishi &amp; Weather Shield</div>
+          <h2 id="krishi-heading">ফসলের দর-দাম ও আবহাওয়া ট্র্যাকার</h2>
+          <p>লোহাগাড়ার কৃষক, পাইকার ও মৌসুমি ব্যবসায়ীদের জন্য আজকের বাজারদর, আবহাওয়া সতর্কতা ও পণ্যের দিকনির্দেশনা—সবই এক জায়গায়।</p>
+        </div>
+
+        <div class="krishi-layout">
+          <div class="market-panel">
+            <div class="market-toolbar">
+              <div class="market-header-row">
+                <h3>আজকের কৃষিপণ্যের বাজারদর</h3>
+                <button type="button" id="refreshMarketBtn" class="refresh-price-btn">Refresh</button>
+              </div>
+
+              <div class="krishi-filters" aria-label="Agriculture category filters">
+                <button type="button" class="krishi-filter active" data-filter="all">সব</button>
+                <button type="button" class="krishi-filter" data-filter="hill">পাহাড়ি পণ্য</button>
+                <button type="button" class="krishi-filter" data-filter="market">কাঁচাবাজার</button>
+                <button type="button" class="krishi-filter" data-filter="fruit">ফলমূল</button>
+                <button type="button" class="krishi-filter" data-filter="seed">বীজ ও সার</button>
+              </div>
+            </div>
+
+            <div class="price-search-wrap">
+              <span>⌕</span>
+              <input id="krishiPriceSearch" type="search" placeholder="পণ্যের নাম লিখুন... (যেমন: পান, আম, লেবু, বীজ)" aria-label="Search product prices" />
+            </div>
+
+            <div class="price-table">
+              <div class="price-row price-head">
+                <span>পণ্য</span>
+                <span>একক</span>
+                <span>দর</span>
+                <span>ট্রেন্ড</span>
+                <span>বাজার</span>
+              </div>
+              <div id="marketPriceGrid" class="market-price-grid"></div>
+            </div>
+          </div>
+
+          <aside class="weather-panel">
+            <div class="weather-header-row">
+              <h3>লোহাগাড়া আবহাওয়া</h3>
+              <span class="weather-live-tag">Live</span>
+            </div>
+
+            <div class="weather-card">
+              <div class="weather-main">
+                <div class="weather-icon">🌦️</div>
+                <div>
+                  <div class="weather-temp">২৯°C</div>
+                  <div class="weather-condition">আংশিক মেঘলা</div>
+                </div>
+              </div>
+
+              <div class="weather-metrics">
+                <div>
+                  <span>Humidity</span>
+                  <strong>৭৮%</strong>
+                </div>
+                <div>
+                  <span>Wind</span>
+                  <strong>১৩ km/h</strong>
+                </div>
+                <div>
+                  <span>Rain</span>
+                  <strong>৬৮%</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="weather-warning">
+              <div class="warning-badge">⚠️ ফার্মার সতর্কতা</div>
+              <p>আগামী ৪৮ ঘণ্টায় ভারী বৃষ্টির সম্ভাবনা, পাকা ধান ও পান বরজ সুরক্ষায় সতর্ক থাকুন। ঝুঁকিপূর্ণ এলাকায় বৃষ্টি-নিরোধক ছাউনি ব্যবহার করুন।</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="smart-blood-section" aria-labelledby="smart-blood-heading">
+        <div class="smart-blood-header">
+          <div class="smart-blood-badge">🩸 Smart Blood Network</div>
+          <div>
+            <h2 id="smart-blood-heading">স্মার্ট ব্লাড নেটওয়ার্ক</h2>
+            <p>AI-assisted donor matching, instant emergency broadcast, and live donor response for critical blood needs in Lohagara.</p>
+          </div>
+        </div>
+
+        <div class="smart-blood-hero">
+          <div class="smart-blood-brief">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="status-chip success-chip">Live</span>
+              <span class="status-chip neutral-chip">Priority Match</span>
+              <span class="status-chip neutral-chip">SMS + Browser Alerts</span>
+            </div>
+            <p class="mt-4 text-sm leading-6 text-slate-600 sm:text-base">ইমার্জেন্সি ব্লাড রিকোয়েস্ট ছাড়া অন্য কোন রক্তদাতা খুঁজে ফেলার চেয়ে দ্রুত, নিরাপদ ও অটোমেটেড কণ্ঠস্বর/বিশ্বস্ত নেটওয়ার্ক এখানে কাজ করে।</p>
+          </div>
+
+          <button id="openBloodRequestModal" type="button" class="emergency-alert-btn">
+            <span class="pulse-dot"></span>
+            জরুরি রক্তের প্রয়োজন / Emergency Alert
+          </button>
+        </div>
+
+        <div id="bloodAlertStatus" class="alert-status" aria-live="polite">
+          <span class="status-spinner"></span>
+          <span>System ready for emergency blood broadcasts in Lohagara.</span>
+        </div>
+
+        <div class="smart-blood-grid">
+          <div class="blood-match-panel">
+            <div class="panel-head">
+              <h3>Priority Match Dashboard</h3>
+              <span>Active donor queue</span>
+            </div>
+
+            <div id="bloodMatchList" class="match-list"></div>
+          </div>
+
+          <div class="blood-register-panel">
+            <div class="panel-head">
+              <h3>Donor Quick Register</h3>
+              <span>Available now</span>
+            </div>
+
+            <div class="donor-toggle-group">
+              <button type="button" class="donor-toggle active">Eligible donor</button>
+            </div>
+
+            <div class="donor-form-grid">
+              <div>
+                <label for="donorName" class="field-label">Donor Name</label>
+                <input id="donorName" type="text" placeholder="আপনার নাম" class="blood-input" />
+              </div>
+
+              <div>
+                <label for="donorPhone" class="field-label">Phone</label>
+                <input id="donorPhone" type="tel" placeholder="01XXXXXXXXX" class="blood-input" />
+              </div>
+
+              <div>
+                <label for="donorBloodGroup" class="field-label">Blood Group</label>
+                <select id="donorBloodGroup" class="blood-input">
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="donorUnion" class="field-label">Union / Area</label>
+                <select id="donorUnion" class="blood-input">
+                  <option value="৬নং লোহাগাড়া">৬নং লোহাগাড়া</option>
+                  <option value="১নং বড়হাতিয়া">১নং বড়হাতিয়া</option>
+                  <option value="২নং আমিরাবাদ">২নং আমিরাবাদ</option>
+                  <option value="৩নং পদুয়া">৩নং পদুয়া</option>
+                  <option value="৪নং চরম্বা">৪নং চরম্বা</option>
+                  <option value="৫নং কলাউজান">৫নং কলাউজান</option>
+                  <option value="৭নং পুটিবিলা">৭নং পুটিবিলা</option>
+                  <option value="৮নং চুনতি">৮নং চুনতি</option>
+                  <option value="৯নং আধুনগর">৯নং আধুনগর</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="registerDonorBtn" type="button" class="register-donor-btn">Activate as active donor</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="bloodRequestModal" class="blood-modal hidden">
+        <div class="blood-modal-dialog">
+          <div class="blood-modal-header">
+            <div>
+              <p class="modal-kicker">Emergency response</p>
+              <h3>জরুরি রক্তের আবেদন</h3>
+            </div>
+            <button id="closeBloodRequestModal" type="button" class="close-modal-btn" aria-label="Close emergency blood form">×</button>
+          </div>
+
+          <form id="bloodRequestForm" class="blood-form-grid">
+            <div>
+              <label for="patientName" class="field-label">Patient Name</label>
+              <input id="patientName" type="text" placeholder="রোগীর নাম" class="blood-input" required />
+            </div>
+
+            <div>
+              <label for="bloodGroup" class="field-label">Blood Group</label>
+              <select id="bloodGroup" class="blood-input" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="requestLocation" class="field-label">Hospital / Location</label>
+              <input id="requestLocation" type="text" placeholder="যেমন: লোহাগাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স" class="blood-input" required />
+            </div>
+
+            <div>
+              <label for="unitsNeeded" class="field-label">Units Needed</label>
+              <input id="unitsNeeded" type="number" min="1" max="20" value="2" class="blood-input" required />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label for="requestPhone" class="field-label">Contact Phone</label>
+              <input id="requestPhone" type="tel" placeholder="01XXXXXXXXX" class="blood-input" required />
+            </div>
+
+            <div class="sm:col-span-2 flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+              <button type="button" id="cancelBloodRequestModal" class="secondary-modal-btn">Cancel</button>
+              <button type="submit" class="primary-modal-btn">Send emergency alert</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section class="healthcare-directory" aria-labelledby="healthcare-heading">
+        <div class="healthcare-header">
+          <div class="section-tag">🏥 স্বাস্থ্য ও চিকিৎসা সেবা</div>
+          <h2 id="healthcare-heading">স্বাস্থ্য ও চিকিৎসা সেবা</h2>
+          <p>লোহাগাড়ার দ্রুত চিকিৎসা, অ্যাম্বুলেন্স ও রক্তদাতা পরিষেবা</p>
+        </div>
+
+        <div class="healthcare-tabs">
+          <div class="tab-list" role="tablist" aria-label="Healthcare directory tabs">
+            <label class="tab-button active" for="tab-ambulance" role="tab" aria-controls="panel-ambulance">অ্যাম্বুলেন্স</label>
+            <label class="tab-button" for="tab-blood" role="tab" aria-controls="panel-blood">রক্তদাতা</label>
+            <label class="tab-button" for="tab-doctors" role="tab" aria-controls="panel-doctors">ডাক্তার ও ক্লিনিক</label>
+          </div>
+
+          <input type="radio" name="healthcare-tab" id="tab-ambulance" checked />
+          <input type="radio" name="healthcare-tab" id="tab-blood" />
+          <input type="radio" name="healthcare-tab" id="tab-doctors" />
+
+          <div class="healthcare-panels">
+            <div class="panel ambulance-panel" id="panel-ambulance">
+              <div class="panel-toolbar">
+                <h3>অ্যাম্বুলেন্স নেটওয়ার্ক</h3>
+                <div class="mini-filters">
+                  <button type="button" class="union-filter active" data-union="all">সব</button>
+                  <button type="button" class="union-filter" data-union="bighatia">১নং বড়হাতিয়া</button>
+                  <button type="button" class="union-filter" data-union="amirabad">২নং আমিরাবাদ</button>
+                  <button type="button" class="union-filter" data-union="padua">৩নং পদুয়া</button>
+                  <button type="button" class="union-filter" data-union="chormba">৪নং চরম্বা</button>
+                  <button type="button" class="union-filter" data-union="kolaizan">৫নং কলাউজান</button>
+                  <button type="button" class="union-filter" data-union="lohagara">৬নং লোহাগাড়া</button>
+                  <button type="button" class="union-filter" data-union="putibila">৭নং পুটিবিলা</button>
+                  <button type="button" class="union-filter" data-union="chunati">৮নং চুনতি</button>
+                  <button type="button" class="union-filter" data-union="adhunagar">৯নং আধুনগর</button>
+                </div>
+              </div>
+
+              <div class="ambulance-grid">
+                <article class="ambulance-card" data-union="lohagara" data-search="মোঃ শামীম lohagara ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ শামীম</h4>
+                  <p>লোহাগাড়া ইউনিয়ন</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801712345678">+৮৮ ০১৭১২-৩৪৫৬৭৮</a>
+                </article>
+
+                <article class="ambulance-card" data-union="bighatia" data-search="মোঃ জসিম bighatia ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ জসিম</h4>
+                  <p>১নং বড়হাতিয়া</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801723456789">+৮৮ ০১৭২৩-৪৫৬৭৮৯</a>
+                </article>
+
+                <article class="ambulance-card" data-union="amirabad" data-search="মোঃ নাজিম amirabad ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ নাজিম</h4>
+                  <p>২নং আমিরাবাদ</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801734567890">+৮৮ ০১৭৩৪-৫৬৭৮৯০</a>
+                </article>
+
+                <article class="ambulance-card" data-union="padua" data-search="মোঃ রফিক padua ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ রফিক</h4>
+                  <p>৩নং পদুয়া</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801745678901">+৮৮ ০১৭৪৫-৬৭৮৯০১</a>
+                </article>
+
+                <article class="ambulance-card" data-union="chormba" data-search="মোঃ সাইফুল chormba ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ সাইফুল</h4>
+                  <p>৪নং চরম্বা</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801756789012">+৮৮ ০১৭৫৬-৭৮৯০১২</a>
+                </article>
+
+                <article class="ambulance-card" data-union="kolaizan" data-search="মোঃ ফারুক kolaizan ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ ফারুক</h4>
+                  <p>৫নং কলাউজান</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801767890123">+৮৮ ০১৭৬৭-৮৯০১২৩</a>
+                </article>
+
+                <article class="ambulance-card" data-union="putibila" data-search="মোঃ হারুন putibila ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ হারুন</h4>
+                  <p>৭নং পুটিবিলা</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801778901234">+৮৮ ০১৭৭৮-৯০১২৩৪</a>
+                </article>
+
+                <article class="ambulance-card" data-union="chunati" data-search="মোঃ ইমরান chunati ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ ইমরান</h4>
+                  <p>৮নং চুনতি</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801789012345">+৮৮ ০১৭৮৯-০১২৩৪৫</a>
+                </article>
+
+                <article class="ambulance-card" data-union="adhunagar" data-search="মোঃ সোহেল adhunagar ambulance">
+                  <div class="service-meta">
+                    <span class="status-dot"></span>
+                    <span>২৪/৭</span>
+                  </div>
+                  <h4>মোঃ সোহেল</h4>
+                  <p>৯নং আধুনগর</p>
+                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
+                  <a href="tel:+8801790123456">+৮৮ ০১৭৯০-১২৩৪৫৬</a>
+                </article>
+              </div>
+            </div>
+
+            <div class="panel blood-panel" id="panel-blood">
+              <div class="panel-toolbar">
+                <h3>রক্তদাতা কর্নার</h3>
+                <div class="panel-tools">
+                  <input type="search" class="blood-search" placeholder="নাম বা গ্রুপ খুঁজুন" aria-label="Search blood donors" />
+                  <div class="mini-filters">
+                    <button type="button" class="blood-filter active" data-blood="all">সব</button>
+                    <button type="button" class="blood-filter" data-blood="A+">A+</button>
+                    <button type="button" class="blood-filter" data-blood="A-">A-</button>
+                    <button type="button" class="blood-filter" data-blood="B+">B+</button>
+                    <button type="button" class="blood-filter" data-blood="B-">B-</button>
+                    <button type="button" class="blood-filter" data-blood="O+">O+</button>
+                    <button type="button" class="blood-filter" data-blood="O-">O-</button>
+                    <button type="button" class="blood-filter" data-blood="AB+">AB+</button>
+                    <button type="button" class="blood-filter" data-blood="AB-">AB-</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="donor-grid">
+                <article class="donor-card" data-blood="A+" data-search="মোঃ রাকিব a plus">
+                  <div class="donor-head">
+                    <span class="blood-badge">A+</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ রাকিব</h4>
+                  <p>শেষ দান: ১২ জুন ২০২৬</p>
+                  <small>লোহাগাড়া ইউনিয়ন</small>
+                  <a href="tel:+8801711223344">কল করুন</a>
+                </article>
+
+                <article class="donor-card" data-blood="O+" data-search="মোঃ সোহেল o plus">
+                  <div class="donor-head">
+                    <span class="blood-badge">O+</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ সোহেল</h4>
+                  <p>শেষ দান: ৪ মে ২০২৬</p>
+                  <small>বড়হাতিয়া</small>
+                  <a href="tel:+8801811223344">কল করুন</a>
+                </article>
+
+                <article class="donor-card" data-blood="B-" data-search="মোঃ আতিক b minus">
+                  <div class="donor-head">
+                    <span class="blood-badge">B-</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ আতিক</h4>
+                  <p>শেষ দান: ২১ এপ্রিল ২০২৬</p>
+                  <small>আমিরাবাদ</small>
+                  <a href="tel:+8801911223344">কল করুন</a>
+                </article>
+
+                <article class="donor-card" data-blood="AB+" data-search="মোঃ জুবায়ের ab plus">
+                  <div class="donor-head">
+                    <span class="blood-badge">AB+</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ জুবায়ের</h4>
+                  <p>শেষ দান: ৮ জুন ২০২৬</p>
+                  <small>পদুয়া</small>
+                  <a href="tel:+8801611223344">কল করুন</a>
+                </article>
+
+                <article class="donor-card" data-blood="O-" data-search="মোঃ ইব্রাহিম o minus">
+                  <div class="donor-head">
+                    <span class="blood-badge">O-</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ ইব্রাহিম</h4>
+                  <p>শেষ দান: ১৯ মে ২০২৬</p>
+                  <small>চরম্বা</small>
+                  <a href="tel:+8801511223344">কল করুন</a>
+                </article>
+
+                <article class="donor-card" data-blood="A-" data-search="মোঃ নাঈম a minus">
+                  <div class="donor-head">
+                    <span class="blood-badge">A-</span>
+                    <span class="donor-status">সক্রিয়</span>
+                  </div>
+                  <h4>মোঃ নাঈম</h4>
+                  <p>শেষ দান: ২৮ জুলাই ২০২৬</p>
+                  <small>কলাউজান</small>
+                  <a href="tel:+8801411223344">কল করুন</a>
+                </article>
+              </div>
+            </div>
+
+            <div class="panel doctor-panel" id="panel-doctors">
+              <div class="panel-toolbar">
+                <h3>স্থানীয় ডাক্তার ও ক্লিনিক</h3>
+                <div class="mini-filters">
+                  <button type="button" class="doctor-filter active" data-specialty="all">সব</button>
+                  <button type="button" class="doctor-filter" data-specialty="general">জেনারেল</button>
+                  <button type="button" class="doctor-filter" data-specialty="medicine">মেডিসিন</button>
+                  <button type="button" class="doctor-filter" data-specialty="gynecology">গাইনোকলজি</button>
+                  <button type="button" class="doctor-filter" data-specialty="pediatric">পেডিয়াট্রিক</button>
+                  <button type="button" class="doctor-filter" data-specialty="dentistry">ডেন্টিস্ট্রি</button>
+                </div>
+              </div>
+
+              <div class="doctor-grid">
+                <article class="doctor-card" data-specialty="medicine">
+                  <div class="doctor-badge">মেডিসিন</div>
+                  <h4>ডা. আবুল বাশার</h4>
+                  <p>সার্বিক মেডিসিন</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> লোহাগাড়া সিটি মেডিকেল সেন্টার</li>
+                    <li><strong>সময়:</strong> সকাল ৯:০০ - দুপুর ২:০০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801712349988">+৮৮ ০১৭১২-৩৪৯৯৮৮</a></li>
+                  </ul>
+                </article>
+
+                <article class="doctor-card" data-specialty="general">
+                  <div class="doctor-badge">জেনারেল</div>
+                  <h4>ডা. রিনা সুলতানা</h4>
+                  <p>ফ্যামিলি ফিজিশিয়ান</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> ড. রিনা চেম্বার, শহীদ মিনার সড়ক</li>
+                    <li><strong>সময়:</strong> বিকাল ৪:০০ - ৮:০০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801812345566">+৮৮ ০১৮১২-৩৪৫৫৬৬</a></li>
+                  </ul>
+                </article>
+
+                <article class="doctor-card" data-specialty="gynecology">
+                  <div class="doctor-badge">গাইনোকলজি</div>
+                  <h4>ডা. তাসলিমা আক্তার</h4>
+                  <p>স্ত্রী ও প্রসূতি</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> গার্ডেন মেডিকেল ক্লিনিক</li>
+                    <li><strong>সময়:</strong> সকাল ১০:০০ - দুপুর ১:০০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801719988776">+৮৮ ০১৭১৯-৯৮৮৮৭৬</a></li>
+                  </ul>
+                </article>
+
+                <article class="doctor-card" data-specialty="pediatric">
+                  <div class="doctor-badge">পেডিয়াট্রিক</div>
+                  <h4>ডা. মোহাম্মদ নাসির</h4>
+                  <p>শিশু স্বাস্থ্য</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> শিশু স্বাস্থ্য কেন্দ্র, বাজার এলাকা</li>
+                    <li><strong>সময়:</strong> সকাল ১১:০০ - ৩:০০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801819988771">+৮৮ ০১৮১৯-৯৯৮৮৭১</a></li>
+                  </ul>
+                </article>
+
+                <article class="doctor-card" data-specialty="dentistry">
+                  <div class="doctor-badge">ডেন্টিস্ট্রি</div>
+                  <h4>ডা. বেলাল হোসেন</h4>
+                  <p>দাঁত ও মৌখিক স্বাস্থ্য</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> সোনারসরি ডেন্টাল সেন্টার</li>
+                    <li><strong>সময়:</strong> বিকাল ৩:০০ - ৮:০০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801717766554">+৮৮ ০১৭১৭-৭৬৬৫৫৪</a></li>
+                  </ul>
+                </article>
+
+                <article class="doctor-card" data-specialty="general">
+                  <div class="doctor-badge">জেনারেল</div>
+                  <h4>ডা. নাহার জাহান</h4>
+                  <p>ক্লিনিক ও জেনারেল কেয়ার</p>
+                  <ul>
+                    <li><strong>চেম্বার:</strong> নাহার ক্লিনিক, লোহাগাড়া বাজার</li>
+                    <li><strong>সময়:</strong> সকাল ৯:৩০ - দুপুর ২:৩০</li>
+                    <li><strong>ফোন:</strong> <a href="tel:+8801722334455">+৮৮ ০১৭২২-৩৩৪৪৫৫</a></li>
+                  </ul>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="education-section" aria-labelledby="education-heading">
+        <div class="edu-header">
+          <div class="edu-tag">📚 শিক্ষা ও ক্যারিয়ার কর্নার</div>
+          <h2 id="education-heading">শিক্ষা ও ক্যারিয়ার কর্নার</h2>
+          <p>স্থানীয় লাইব্রেরি, টিউশন, কোচিং ও ফ্রিল্যান্সিং সুযোগ</p>
+        </div>
+
+        <div class="edu-ticker" aria-label="Education updates">
+          <span class="ticker-pill">Tuition</span>
+          <span class="ticker-pill">Freelancing</span>
+          <span class="ticker-pill">Library</span>
+          <span class="ticker-pill">Career Guidance</span>
+          <span class="ticker-pill">Youth Hub</span>
+        </div>
+
+        <div class="edu-tabs">
+          <div class="edu-tab-list" role="tablist" aria-label="Education section tabs">
+            <label class="edu-tab active" for="edu-library" role="tab" aria-controls="edu-library-panel">লাইব্রেরি & কোচিং</label>
+            <label class="edu-tab" for="edu-tuition" role="tab" aria-controls="edu-tuition-panel">টিউশন & ফ্রিল্যান্সিং</label>
+          </div>
+
+          <input type="radio" name="edu-tab" id="edu-library" checked />
+          <input type="radio" name="edu-tab" id="edu-tuition" />
+
+          <div class="edu-panels">
+            <div class="edu-panel library-panel" id="edu-library-panel">
+              <div class="panel-toolbar">
+                <h3>স্থানীয় লাইব্রেরি ও কোচিং</h3>
+              </div>
+
+              <div class="library-grid">
+                <article class="library-card">
+                  <div class="card-badge library-badge">লাইব্রেরি</div>
+                  <h4>লোহাগাড়া পাবলিক লাইব্রেরি</h4>
+                  <p>বাজার সড়ক, লোহাগাড়া</p>
+                  <ul>
+                    <li>সাধারণ বই, ভর্তি প্রস্তুতি, আলাদা পড়ার জায়গা</li>
+                    <li>সময়: সকাল ৯:০০ - বিকাল ৬:০০</li>
+                    <li><a href="tel:+8801700001001">+৮৮ ০১৭০০-০০১০০১</a></li>
+                  </ul>
+                </article>
+
+                <article class="library-card">
+                  <div class="card-badge coaching-badge">কোচিং</div>
+                  <h4>আকবর কোচিং সেন্টার</h4>
+                  <p>শহীদ মিনার রোড, লোহাগাড়া</p>
+                  <ul>
+                    <li>HSC/SSC প্রস্তুতি, গাণিতিক অনুশীলন</li>
+                    <li>সময়: সন্ধ্যা ৪:০০ - ৯:০০</li>
+                    <li><a href="tel:+8801700001002">+৮৮ ০১৭০০-০০১০০২</a></li>
+                  </ul>
+                </article>
+
+                <article class="library-card">
+                  <div class="card-badge library-badge">লাইব্রেরি</div>
+                  <h4>স্মার্ট স্টাডি নোটস</h4>
+                  <p>লোহাগাড়া বাজার</p>
+                  <ul>
+                    <li>স্টাডি রুম, গ্রুপ স্টাডি, সাজেশন বই</li>
+                    <li>সময়: সকাল ১০:০০ - রাত ৯:০০</li>
+                    <li><a href="tel:+8801700001003">+৮৮ ০১৭০০-০০১০০৩</a></li>
+                  </ul>
+                </article>
+
+                <article class="library-card">
+                  <div class="card-badge coaching-badge">কোচিং</div>
+                  <h4>এক্সেলেনস একাডেমি</h4>
+                  <p>মডেল টাউন, লোহাগাড়া</p>
+                  <ul>
+                    <li>ইংরেজি, গণিত, বিজ্ঞান, ICT</li>
+                    <li>সময়: দুপুর ১:০০ - রাত ৮:০০</li>
+                    <li><a href="tel:+8801700001004">+৮৮ ০১৭০০-০০১০০৪</a></li>
+                  </ul>
+                </article>
+              </div>
+            </div>
+
+            <div class="edu-panel tuition-panel" id="edu-tuition-panel">
+              <div class="panel-toolbar">
+                <h3>টিউশন ও ফ্রিল্যান্সিং হাব</h3>
+                <div class="notice-filters">
+                  <button type="button" class="notice-filter active" data-category="all">সব</button>
+                  <button type="button" class="notice-filter" data-category="tuition">টিউশন</button>
+                  <button type="button" class="notice-filter" data-category="freelancing">ফ্রিল্যান্সিং</button>
+                  <button type="button" class="notice-filter" data-category="library">লাইব্রেরি</button>
+                </div>
+              </div>
+
+              <div class="notice-grid">
+                <article class="notice-card" data-category="tuition">
+                  <div class="notice-top">
+                    <span class="notice-tag tuition-tag">টিউশন</span>
+                    <span class="notice-date">২৭ সেপ্টেম্বর</span>
+                  </div>
+                  <h4> SSC ও HSC গণিত টিউশন খোঁজছেন</h4>
+                  <p>দ্বিতীয় পত্রের জন্য ৬ষ্ঠ-১২তম শ্রেণির শিক্ষার্থীদের জন্য অনলাইন ও অফলাইন ক্লাস। সাপ্তাহিক পরীক্ষা ও নোট সুবিধা আছে।</p>
+                  <div class="notice-meta">
+                    <span>যৌথভাবে: ২ জন</span>
+                    <a href="tel:+8801700002001">যোগাযোগ</a>
+                  </div>
+                </article>
+
+                <article class="notice-card" data-category="freelancing">
+                  <div class="notice-top">
+                    <span class="notice-tag freelance-tag">ফ্রিল্যান্সিং</span>
+                    <span class="notice-date">২৫ সেপ্টেম্বর</span>
+                  </div>
+                  <h4>ফেসবুক মার্কেটিং ও গ্রাফিক্স ডিজাইন ফ্রিল্যান্স</h4>
+                  <p>ফ্রিল্যান্সারদের জন্য ছোট প্রজেক্ট, পোস্ট ডিজাইন, কপি রাইটিং, ভিডিও এসডিটিং ও ইকমার্স পোস্টিং।</p>
+                  <div class="notice-meta">
+                    <span>টিম: ৪ জন</span>
+                    <a href="tel:+8801700002002">যোগাযোগ</a>
+                  </div>
+                </article>
+
+                <article class="notice-card" data-category="library">
+                  <div class="notice-top">
+                    <span class="notice-tag library-tag">লাইব্রেরি</span>
+                    <span class="notice-date">২৪ সেপ্টেম্বর</span>
+                  </div>
+                  <h4>সাময়িক পড়ার ঘর ও রিভিশন সেশন</h4>
+                  <p>লোকাল লাইব্রেরি ও স্টাডি সেন্টারের রিভিশন সেশন, নোট শেয়ারিং ও গ্রুপ স্টাডি আয়োজন করছে।</p>
+                  <div class="notice-meta">
+                    <span>যোগাযোগ: ০৯:০০-১৮:০০</span>
+                    <a href="tel:+8801700002003">যোগাযোগ</a>
+                  </div>
+                </article>
+
+                <article class="notice-card" data-category="tuition">
+                  <div class="notice-top">
+                    <span class="notice-tag tuition-tag">টিউশন</span>
+                    <span class="notice-date">২২ সেপ্টেম্বর</span>
+                  </div>
+                  <h4>প্রাইমারি ও জেএসসি বাংলা-ইংরেজি টিউশন</h4>
+                  <p>৬ষ্ঠ-৮ম ও ৯ম-১০ম শ্রেণির শিক্ষার্থীদের জন্য নিয়মিত টিউশন ও ওয়ার্কশিট রিভিশন।</p>
+                  <div class="notice-meta">
+                    <span>ব্যয়: সাপ্তাহিক বাছাই</span>
+                    <a href="tel:+8801700002004">যোগাযোগ</a>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="events-section" aria-labelledby="events-heading">
+        <div class="mb-6 overflow-hidden rounded-[22px] border border-indigo-200 bg-indigo-50 shadow-sm">
+          <div class="events-ticker-wrap">
+            <div class="events-ticker-track">
+              <span class="inline-flex items-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white">New</span>
+              <span>নতুন: ৬নং লোহাগাড়া ইউনিয়নে blood donation camp registrations শুরু হয়েছে</span>
+              <span class="inline-flex items-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white">Live</span>
+              <span>উপজেলা প্রশাসন অফিসের জরুরি বিজ্ঞপ্তি: বর্ষা প্রস্তুতি সভা ৬ অক্টোবর, ১১:৩০ AM</span>
+              <span class="inline-flex items-center rounded-full bg-gradient-to-r from-red-500 to-orange-500 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white">New</span>
+              <span>শিক্ষা বৃত্তি পরীক্ষা ও চাকরির প্রস্তুতি ক্যাম্পের আবেদন চলছে</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <span class="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-100 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-indigo-700">📅_local events & notices</span>
+            <h2 id="events-heading" class="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">স্থানীয় ইভেন্ট ও নোটিশ বোর্ড</h2>
+            <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">মুসলিম ও সামাজিক অনুষ্ঠান, ক্রীড়া কার্যক্রম, রক্তদান, বৃত্তি পরীক্ষা, স্বাস্থ্য ক্যাম্প ও সরকারি নোটিশ যেন সবাই আগে জানতে পারে—এই বোর্ডে সবকিছু একসাথে।</p>
+          </div>
+
+          <button type="button" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-slate-800">
+            + সব নোটিশ দেখুন
+          </button>
+        </div>
+
+        <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
+          <article class="events-card rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.09em] text-emerald-700">Sports</span>
+              <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-amber-700">New</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900">লোহাগাড়া ইউনিয়ন স্পোর্টস ফেস্ট</h3>
+            <div class="mt-4 space-y-2 text-sm text-slate-600">
+              <div class="flex items-center gap-2"><span>📅</span><span>১২ অক্টোবর ২০২৬</span></div>
+              <div class="flex items-center gap-2"><span>🕒</span><span>সকাল ৮:০০ AM</span></div>
+              <div class="flex items-center gap-2"><span>📍</span><span>৬নং লোহাগাড়া মাঠ</span></div>
+            </div>
+
+            <p class="mt-4 text-sm leading-6 text-slate-600">ফুটবল, ক্রিকেট, ভলিবল ও শিশু-কিশোর বিভাগে আন্তঃইউনিয়ন টুর্নামেন্ট আয়োজন করা হবে।</p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="events-countdown text-left" data-target="2026-10-12T08:00:00+06:00">
+                <div class="countdown-label">Starting in</div>
+                <div class="countdown-value">--:--:--</div>
+              </div>
+              <button type="button" class="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/20 transition hover:opacity-95">রেজিস্ট্রেশন</button>
+            </div>
+          </article>
+
+          <article class="events-card rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.09em] text-violet-700">Religious</span>
+              <span class="inline-flex items-center rounded-full border border-sky-200 bg-sky-50 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-sky-700">Popular</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900">বড় ওয়াজ মাহফিল ও দোয়া সমাবেশ</h3>
+            <div class="mt-4 space-y-2 text-sm text-slate-600">
+              <div class="flex items-center gap-2"><span>📅</span><span>২২ অক্টোবর ২০২৬</span></div>
+              <div class="flex items-center gap-2"><span>🕒</span><span>সন্ধ্যা ৬:৩০ PM</span></div>
+              <div class="flex items-center gap-2"><span>📍</span><span>লোহাগাড়া জামিয়া মাঠ</span></div>
+            </div>
+
+            <p class="mt-4 text-sm leading-6 text-slate-600">ইসলামিক বক্তব্য, দোয়া, সামাজিক উন্নয়ন ও বোনাস বিতরণ অনুষ্ঠানের আয়োজন।</p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="events-countdown text-left" data-target="2026-10-22T18:30:00+06:00">
+                <div class="countdown-label">Starting in</div>
+                <div class="countdown-value">--:--:--</div>
+              </div>
+              <button type="button" class="rounded-xl bg-gradient-to-r from-violet-500 to-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-violet-500/20 transition hover:opacity-95">বিস্তারিত</button>
+            </div>
+          </article>
+
+          <article class="events-card rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full bg-rose-100 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.09em] text-rose-700">Health Camp</span>
+              <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-emerald-700">Urgent</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900">মুক্ত রক্তদান ও স্বাস্থ্য ক্যাম্প</h3>
+            <div class="mt-4 space-y-2 text-sm text-slate-600">
+              <div class="flex items-center gap-2"><span>📅</span><span>২৮ অক্টোবর ২০২৬</span></div>
+              <div class="flex items-center gap-2"><span>🕒</span><span>বিকাল ৩:০০ PM</span></div>
+              <div class="flex items-center gap-2"><span>📍</span><span>লোহাগাড়া উপজেলা কমিউনিটি সেন্টার</span></div>
+            </div>
+
+            <p class="mt-4 text-sm leading-6 text-slate-600">রক্তদান, ব্লাড প্রেসার, ডায়াবেটিস স্ক্রিনিং এবং পরামর্শ সেশন অনুষ্ঠিত হবে।</p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="events-countdown text-left" data-target="2026-10-28T15:00:00+06:00">
+                <div class="countdown-label">Starting in</div>
+                <div class="countdown-value">--:--:--</div>
+              </div>
+              <button type="button" class="rounded-xl bg-gradient-to-r from-rose-500 to-red-600 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-rose-500/20 transition hover:opacity-95">রেজিস্ট্রেশন</button>
+            </div>
+          </article>
+
+          <article class="events-card rounded-[26px] border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <span class="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.09em] text-amber-700">Education</span>
+              <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-slate-600">Notice</span>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-slate-900">বৃত্তি ও ভর্তি প্রস্তুতি পরীক্ষা</h3>
+            <div class="mt-4 space-y-2 text-sm text-slate-600">
+              <div class="flex items-center gap-2"><span>📅</span><span>১৫ নভেম্বর ২০২৬</span></div>
+              <div class="flex items-center gap-2"><span>🕒</span><span>সকাল ৯:০০ AM</span></div>
+              <div class="flex items-center gap-2"><span>📍</span><span>লোহাগাড়া কলেজ কমপ্লেক্স</span></div>
+            </div>
+
+            <p class="mt-4 text-sm leading-6 text-slate-600">বৃত্তি প্রার্থী, SSC/HSC প্রস্তুতি ও ভর্তি পরীক্ষার জন্য মতবিনিময় সভা।</p>
+
+            <div class="mt-5 flex items-center justify-between gap-3">
+              <div class="events-countdown text-left" data-target="2026-11-15T09:00:00+06:00">
+                <div class="countdown-label">Starting in</div>
+                <div class="countdown-value">--:--:--</div>
+              </div>
+              <button type="button" class="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-amber-500/20 transition hover:opacity-95">আবেদন</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="transport-section" aria-labelledby="transport-heading">
+        <div class="transport-header">
+          <div class="transport-tag">🚍 যাতায়াত ও পরিবহন ব্যবস্থা</div>
+          <h2 id="transport-heading">যাতায়াত ও পরিবহন ব্যবস্থা</h2>
+          <p>লোহাগাড়া থেকে চট্টগ্রাম ও স্থানীয় রুটের দ্রুত ভ্রমণ তথ্য</p>
+        </div>
+
+        <div class="transport-layout">
+          <div class="transport-panel">
+            <div class="panel-toolbar">
+              <h3>বাস ও গাড়ি সময়সূচি</h3>
+              <div class="route-filters">
+                <button type="button" class="route-filter active" data-route="all">সব</button>
+                <button type="button" class="route-filter" data-route="chattogram">চট্টগ্রাম</button>
+                <button type="button" class="route-filter" data-route="barisal">বরিশাল</button>
+                <button type="button" class="route-filter" data-route="khulna">খুলনা</button>
+                <button type="button" class="route-filter" data-route="local">লোকাল</button>
+              </div>
+            </div>
+
+            <div class="schedule-grid">
+              <article class="schedule-card" data-route="chattogram">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-blue">চট্টগ্রাম</span>
+                  <span class="schedule-time">৬:৩০ AM</span>
+                </div>
+                <h4>লোহাগাড়া → চট্টগ্রাম</h4>
+                <p>সদর বাসস্ট্যান্ড → আগ্রাবাদ → চট্টগ্রাম</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ১৮০</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003001">+৮৮ ০১৭০০-০০৩০০১</a></li>
+                </ul>
+              </article>
+
+              <article class="schedule-card" data-route="chattogram">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-blue">চট্টগ্রাম</span>
+                  <span class="schedule-time">১:১৫ PM</span>
+                </div>
+                <h4>লোহাগাড়া → চট্টগ্রাম</h4>
+                <p>দুপুরের ভ্রমণ, সিট-এডভান্স সেবা</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ১৮০</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003002">+৮৮ ০১৭০০-০০৩০০২</a></li>
+                </ul>
+              </article>
+
+              <article class="schedule-card" data-route="barisal">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-slate">বরিশাল</span>
+                  <span class="schedule-time">৮:০০ AM</span>
+                </div>
+                <h4>লোহাগাড়া → বরিশাল</h4>
+                <p>সেন্ট্রাল রুট, বকশি স্টপ ও হাইওয়ে</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ৪১০</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003003">+৮৮ ০১৭০০-০০৩০০৩</a></li>
+                </ul>
+              </article>
+
+              <article class="schedule-card" data-route="khulna">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-cyan">খুলনা</span>
+                  <span class="schedule-time">১১:৩০ AM</span>
+                </div>
+                <h4>লোহাগাড়া → খুলনা</h4>
+                <p>সারা দিন চলাচল, ফাস্ট ট্রাভেল</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ৫৫০</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003004">+৮৮ ০১৭০০-০০৩০০৪</a></li>
+                </ul>
+              </article>
+
+              <article class="schedule-card" data-route="local">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-emerald">লোকাল</span>
+                  <span class="schedule-time">৫:০০ PM</span>
+                </div>
+                <h4>লোহাগাড়া → উপজেলা কেন্দ্র</h4>
+                <p>মহানগর, বাজার, থানা ও ক্লিনিক রুট</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ২৫</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003005">+৮৮ ০১৭০০-০০৩০০৫</a></li>
+                </ul>
+              </article>
+
+              <article class="schedule-card" data-route="local">
+                <div class="schedule-top">
+                  <span class="schedule-badge badge-emerald">লোকাল</span>
+                  <span class="schedule-time">৮:১৫ PM</span>
+                </div>
+                <h4>লোহাগাড়া → ইউনিয়ন রুট</h4>
+                <p>সব ইউনিয়ন পর্যন্ত চলাচল</p>
+                <ul>
+                  <li><strong>ভাড়া:</strong> ৳ ১৫-৩০</li>
+                  <li><strong>কাউন্টার:</strong> <a href="tel:+8801700003006">+৮৮ ০১৭০০-০০৩০০৬</a></li>
+                </ul>
+              </article>
+            </div>
+          </div>
+
+          <div class="transport-panel">
+            <div class="panel-toolbar">
+              <h3>লোকাল ড্রাইভার ডিরেক্টরি</h3>
+              <div class="driver-filters">
+                <button type="button" class="driver-filter active" data-type="all">সব</button>
+                <button type="button" class="driver-filter" data-type="easybike">ইজিবাইক</button>
+                <button type="button" class="driver-filter" data-type="cng">সিএনজি</button>
+                <button type="button" class="driver-filter" data-type="reserve">রিজার্ভ কার</button>
+              </div>
+            </div>
+
+            <div class="driver-grid">
+              <article class="driver-card" data-type="easybike">
+                <div class="driver-badge badge-easy">ইজিবাইক</div>
+                <h4>মোঃ রফিক</h4>
+                <p>বাজার-সদর রুট</p>
+                <small>অপারেটিং এলাকা: লোহাগাড়া বাজার, স্টেশন, হাসপাতাল</small>
+                <a href="tel:+8801711223345">+৮৮ ০১৭১১-২২৩৩৪৫</a>
+              </article>
+
+              <article class="driver-card" data-type="cng">
+                <div class="driver-badge badge-cng">সিএনজি</div>
+                <h4>মোঃ আব্দুল্লা</h4>
+                <p>চট্টগ্রাম রুট</p>
+                <small>অপারেটিং এলাকা: সিটি সেন্টার, রেলস্টেশন, বাজার</small>
+                <a href="tel:+8801811223346">+৮৮ ০১৮১১-২২৩৩৪৬</a>
+              </article>
+
+              <article class="driver-card" data-type="reserve">
+                <div class="driver-badge badge-reserve">রিজার্ভ কার</div>
+                <h4>মোঃ সাইফুল</h4>
+                <p>ফ্যামিলি ভ্রমণ</p>
+                <small>অপারেটিং এলাকা: শহর, উপজেলা, দূর-দূরান্তের রুট</small>
+                <a href="tel:+8801911223347">+৮৮ ০১৯১১-২২৩৩৪৭</a>
+              </article>
+
+              <article class="driver-card" data-type="easybike">
+                <div class="driver-badge badge-easy">ইজিবাইক</div>
+                <h4>মোঃ নাছির</h4>
+                <p>হাসপাতাল-শিক্ষাপ্রতিষ্ঠান রুট</p>
+                <small>অপারেটিং এলাকা: হাসপাতাল, কলেজ, বাসস্ট্যান্ড</small>
+                <a href="tel:+8801711223348">+৮৮ ০১৭১১-২২৩৩৪৮</a>
+              </article>
+
+              <article class="driver-card" data-type="cng">
+                <div class="driver-badge badge-cng">সিএনজি</div>
+                <h4>মোঃ ইমরান</h4>
+                <p>শহরের অন্দরমহল</p>
+                <small>অপারেটিং এলাকা: ভাতিজাগর, ইউনিয়ন রুট, রাজপথ</small>
+                <a href="tel:+8801811223349">+৮৮ ০১৮১১-২২৩৩৪৯</a>
+              </article>
+
+              <article class="driver-card" data-type="reserve">
+                <div class="driver-badge badge-reserve">রিজার্ভ কার</div>
+                <h4>মোঃ হাবিব</h4>
+                <p>কর্মস্থল ও পরিবার</p>
+                <small>অপারেটিং এলাকা: শহর, গ্রামীণ ও দূরপাল্লার রুট</small>
+                <a href="tel:+8801911223350">+৮৮ ০১৯১১-২২৩৩৫০</a>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="marketplace-section" aria-labelledby="marketplace-heading">
+        <div class="marketplace-header">
+          <div class="marketplace-tag">🛍️ লোকাল মার্কেটপ্লেস</div>
+          <h2 id="marketplace-heading">লোহাগাড়া মার্কেটপ্লেস</h2>
+          <p>স্থানীয় উদ্যোক্তা, কৃষিজ পণ্য ও হিল-প্রোডাক্টসের বাজার</p>
+        </div>
+
+        <div class="marketplace-toolbar">
+          <div class="marketplace-search-wrap">
+            <span class="search-icon">⌕</span>
+            <input type="search" class="marketplace-search" placeholder="পণ্য খুঁজুন (যেমন: ভুট্টা, শাক, বাঁশ, হ্যান্ডক্রাফ্ট)..." aria-label="Search marketplace products" />
+          </div>
+
+          <div class="marketplace-filters" aria-label="Marketplace categories">
+            <button type="button" class="market-filter active" data-category="all">সব</button>
+            <button type="button" class="market-filter" data-category="hill">হিল প্রোডাক্টস</button>
+            <button type="button" class="market-filter" data-category="agri">কৃষি পণ্য</button>
+            <button type="button" class="market-filter" data-category="craft">হ্যান্ডক্রাফ্ট</button>
+            <button type="button" class="market-filter" data-category="food">লোকাল খাদ্য</button>
+            <button type="button" class="market-filter" data-category="home">গৃহস্থালী</button>
+          </div>
+        </div>
+
+        <div class="marketplace-grid">
+          <article class="product-card" data-category="hill" data-search="মিঠা কুমড়া পাহাড়ি ভেষজ hill product">
+            <div class="product-image image-hill">
+              <span>🌿</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-hill">হিল প্রোডাক্টস</span>
+                <span class="product-price">৳ ৮০-১৫০</span>
+              </div>
+              <h3>মিষ্টি কুমড়া ও পাহাড়ি ভেষজ</h3>
+              <p>কৃষি ও ভেষজ পণ্য, তাজা, রংিন ও পুষ্টিকর।</p>
+              <div class="product-owner">
+                <strong>রিজওয়ান ফার্ম</strong>
+                <span>লোহাগাড়া বাজার</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004001" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004001" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="agri" data-search="ধান চাল বোরো কৃষি পণ্য">
+            <div class="product-image image-agri">
+              <span>🌾</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-agri">কৃষি পণ্য</span>
+                <span class="product-price">৳ ৩৫০-৬০০</span>
+              </div>
+              <h3>টাটকা ধান ও বোরো চাল</h3>
+              <p>প্রাকৃতিক ও পরিষ্কার ধান, ঘরের জন্য সেরা মানের কৃষি পণ্য।</p>
+              <div class="product-owner">
+                <strong>নতুন কৃষি ফার্ম</strong>
+                <span>৬নং লোহাগাড়া</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004002" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004002" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="craft" data-search="বাঁশ মাটি শাল handicraft">
+            <div class="product-image image-craft">
+              <span>🧺</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-craft">হ্যান্ডক্রাফ্ট</span>
+                <span class="product-price">৳ ১২৫-৮৫০</span>
+              </div>
+              <h3>বাঁশ ও মাটি Craft হস্তশিল্প</h3>
+              <p>লোকাল হস্তশিল্প, সাজসজ্জা, ঝুড়ি, টিফিনবাক্স ও স্মারক আইটেম।</p>
+              <div class="product-owner">
+                <strong>বাঁশকুটি শিল্পকলা</strong>
+                <span>৪নং চরম্বা</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004003" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004003" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="food" data-search="মধু গুড় ডালিম local food">
+            <div class="product-image image-food">
+              <span>🍯</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-food">লোকাল খাদ্য</span>
+                <span class="product-price">৳ ১২০-৩২০</span>
+              </div>
+              <h3>মধু, গুড় ও স্থানীয় মিষ্টি</h3>
+              <p>স্বাদ ও মানের জন্য সেরা কেওড়া মধু ও বনজ গুড়।</p>
+              <div class="product-owner">
+                <strong>শ্রীরাম ফুডস</strong>
+                <span>বাজার এলাকা</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004004" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004004" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="home" data-search="সেগুন কাঠ চা পাতা home goods">
+            <div class="product-image image-home">
+              <span>🏡</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-home">গৃহস্থালী</span>
+                <span class="product-price">৳ ৯০০-২৮০০</span>
+              </div>
+              <h3>সেগুন কাঠের গৃহস্থালী সামগ্রী</h3>
+              <p>দুর্দান্ত মানের কাঠের আসবাব, টেবিল ও স্ন্যাক বক্স।</p>
+              <div class="product-owner">
+                <strong>সোনালু কারিগর</strong>
+                <span>১নং বড়হাতিয়া</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004005" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004005" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="agri" data-search="টমেটো মরিচ শাক সবজি agriculture">
+            <div class="product-image image-agri-two">
+              <span>🥬</span>
+            </div>
+            <div class="product-body">
+              <div class="product-meta">
+                <span class="product-badge badge-agri">কৃষি পণ্য</span>
+                <span class="product-price">৳ ৬০-১৮০</span>
+              </div>
+              <h3>টাটকা সবজি ও শাক-সবজি</h3>
+              <p>পরিচ্ছন্ন ঘাসহীন সবজি, তাজা ফল ও শাকসবজি সরবরাহ।</p>
+              <div class="product-owner">
+                <strong>হৃদয় কৃষি ইউনিট</strong>
+                <span>৭নং পুটিবিলা</span>
+              </div>
+              <div class="product-actions">
+                <a href="tel:+8801700004006" class="call-btn">কল করুন</a>
+                <a href="https://wa.me/8801700004006" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="marketplace-empty" id="marketplaceEmpty" hidden>
+          <strong>কোনো পণ্য পাওয়া যায়নি</strong>
+          <span>অন্যান্য ক্যাটাগরি বা কীওয়ার্ড ব্যবহার করে আবার খুঁজুন।</span>
+        </div>
+      </section>
+
+      <section class="artisan-showcase-section" aria-labelledby="artisan-showcase-heading">
+        <div class="artisan-showcase-header">
+          <div class="artisan-showcase-tag">🧵 গ্রামীন স্কিল ও কারিগর কর্নার</div>
+          <div class="artisan-showcase-topline">
+            <div>
+              <h2 id="artisan-showcase-heading">লোহাগাড়ার লুকানো দক্ষতা</h2>
+              <p>স্থানীয় কারিগর, হস্তশিল্পী, মেরামতকারী ও ডিজিটাল দক্ষতাবানদের সেবা খুঁজুন—কেবল এক ট্যাপেই কল ও WhatsApp করুন।</p>
+            </div>
+            <button type="button" id="openArtisanModal" class="artisan-register-btn">আপনার দক্ষতা বা কাজ যুক্ত করুন</button>
+          </div>
+        </div>
+
+        <div class="artisan-toolbar">
+          <div class="artisan-filters" aria-label="Artisan skill filters">
+            <button type="button" class="artisan-filter active" data-category="all">সব</button>
+            <button type="button" class="artisan-filter" data-category="craft">হস্তশিল্প</button>
+            <button type="button" class="artisan-filter" data-category="artisan">কারিগর</button>
+            <button type="button" class="artisan-filter" data-category="expert">বিশেষজ্ঞ</button>
+          </div>
+        </div>
+
+        <div id="artisanGrid" class="artisan-grid" aria-live="polite"></div>
+      </section>
+
+      <div id="artisanModal" class="artisan-modal hidden" aria-modal="true" role="dialog" aria-labelledby="artisanModalTitle">
+        <div class="artisan-modal-panel">
+          <div class="artisan-modal-header">
+            <div>
+              <p class="artisan-modal-kicker">নতুন প্রোফাইল</p>
+              <h3 id="artisanModalTitle">আপনার দক্ষতা যুক্ত করুন</h3>
+            </div>
+            <button type="button" id="closeArtisanModal" class="artisan-close-btn" aria-label="Close modal">×</button>
+          </div>
+
+          <form id="artisanForm" class="artisan-form">
+            <div class="artisan-form-grid">
+              <label>
+                <span>নাম</span>
+                <input type="text" id="artisanName" placeholder="আপনার নাম" required />
+              </label>
+              <label>
+                <span>ফোন নম্বর</span>
+                <input type="tel" id="artisanPhone" placeholder="০১XXXXXXXXX" required />
+              </label>
+            </div>
+
+            <div class="artisan-form-grid">
+              <label>
+                <span>দক্ষতার ধরন</span>
+                <select id="artisanCategory" required>
+                  <option value="craft">হস্তশিল্প</option>
+                  <option value="artisan">কারিগর</option>
+                  <option value="expert">বিশেষজ্ঞ</option>
+                </select>
+              </label>
+              <label>
+                <span>এলাকা / ইউনিয়ন</span>
+                <input type="text" id="artisanArea" placeholder="যেমন: পটুয়া, চুনতি, কালাইয়া" required />
+              </label>
+            </div>
+
+            <label>
+              <span>দক্ষতা ও সেবা</span>
+              <input type="text" id="artisanSkill" placeholder="যেমন: নকশী কাঁথা, বাঁশের কাজ, মোবাইল মেরামত" required />
+            </label>
+
+            <label>
+              <span>সংক্ষিপ্ত বর্ণনা</span>
+              <textarea id="artisanBio" rows="4" placeholder="আপনার কাজ, বিশেষত্ব, বা সুনির্দিষ্ট সেবা সম্পর্কে লিখুন..." required></textarea>
+            </label>
+
+            <div class="artisan-modal-actions">
+              <button type="button" id="cancelArtisanModal" class="artisan-secondary-btn">বাতিল</button>
+              <button type="submit" class="artisan-primary-btn">প্রোফাইল জমা দিন</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section class="oxygen-section" aria-labelledby="oxygen-heading">
+        <div class="oxygen-header">
+          <div class="oxygen-tag">🫁 জরুরি অক্সিজেন ও চিকিৎসা সরঞ্জাম শেয়ারিং</div>
+          <div class="oxygen-topline">
+            <div>
+              <h2 id="oxygen-heading">জরুরি চিকিৎসা সরঞ্জাম লাইভ স্ট্যাটাস</h2>
+              <p>অক্সিজেন সিলিন্ডার, হুইলচেয়ার, নেবুলাইজার ও স্ট্রেচার—অবস্থানীয়ভাবে শেয়ার বা ধার নিতে সাহায্য করার জন্য দ্রুত খুঁজুন।</p>
+            </div>
+            <button type="button" id="openOxygenModal" class="oxygen-register-btn">জরুরি সরঞ্জাম রেজিস্টার করুন</button>
+          </div>
+        </div>
+
+        <div class="oxygen-toolbar">
+          <div class="oxygen-filters" aria-label="Equipment filters">
+            <button type="button" class="oxygen-filter active" data-category="all">সব</button>
+            <button type="button" class="oxygen-filter" data-category="oxygen">অক্সিজেন সিলিন্ডার</button>
+            <button type="button" class="oxygen-filter" data-category="wheelchair">হুইলচেয়ার</button>
+            <button type="button" class="oxygen-filter" data-category="nebulizer">নেবুলাইজার</button>
+            <button type="button" class="oxygen-filter" data-category="stretcher">স্ট্রেচার</button>
+            <button type="button" class="oxygen-filter" data-status="available">শুধু লভ্য</button>
+          </div>
+        </div>
+
+        <div id="oxygenGrid" class="oxygen-grid" aria-live="polite"></div>
+      </section>
+
+      <div id="oxygenModal" class="oxygen-modal hidden" aria-modal="true" role="dialog" aria-labelledby="oxygenModalTitle">
+        <div class="oxygen-modal-panel">
+          <div class="oxygen-modal-header">
+            <div>
+              <p class="oxygen-modal-kicker">কমিউনিটি রিসোর্স</p>
+              <h3 id="oxygenModalTitle">সরঞ্জাম রেজিস্টার করুন</h3>
+            </div>
+            <button type="button" id="closeOxygenModal" class="oxygen-close-btn" aria-label="Close modal">×</button>
+          </div>
+
+          <form id="oxygenForm" class="oxygen-form">
+            <div class="oxygen-form-grid">
+              <label>
+                <span>সরঞ্জামের নাম</span>
+                <select id="equipmentType" required>
+                  <option value="oxygen">অক্সিজেন সিলিন্ডার</option>
+                  <option value="wheelchair">হুইলচেয়ার</option>
+                  <option value="nebulizer">নেবুলাইজার</option>
+                  <option value="stretcher">স্ট্রেচার</option>
+                </select>
+              </label>
+              <label>
+                <span>স্ট্যাটাস</span>
+                <select id="equipmentStatus" required>
+                  <option value="available">উপলব্ধ</option>
+                  <option value="booked">সংরক্ষিত</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="oxygen-form-grid">
+              <label>
+                <span>দাতা / রেজিস্টারকারী</span>
+                <input type="text" id="equipmentProvider" placeholder="যেমন: লোহাগাড়া যুব ফোরাম" required />
+              </label>
+              <label>
+                <span>ফোন নম্বর</span>
+                <input type="tel" id="equipmentPhone" placeholder="০১XXXXXXXXX" required />
+              </label>
+            </div>
+
+            <div class="oxygen-form-grid">
+              <label>
+                <span>এলাকা / ইউনিয়ন</span>
+                <input type="text" id="equipmentArea" placeholder="যেমন: পদুয়া, ৬নং লোহাগাড়া" required />
+              </label>
+              <label>
+                <span>ডিপোজিট / বিবরণ</span>
+                <input type="text" id="equipmentDetails" placeholder="যেমন: ৫লিটার, ১০০০ টাকা ডিপোজিট" />
+              </label>
+            </div>
+
+            <label>
+              <span>সংক্ষিপ্ত নোট</span>
+              <textarea id="equipmentNote" rows="4" placeholder="সরঞ্জামটি কীভাবে ধার দেওয়া হবে, কোনো শর্ত আছে কি না, স্ট্যাটাস কেমন—এ সম্পর্কে লিখুন..." required></textarea>
+            </label>
+
+            <div class="oxygen-modal-actions">
+              <button type="button" id="cancelOxygenModal" class="oxygen-secondary-btn">বাতিল</button>
+              <button type="submit" class="oxygen-primary-btn">সরঞ্জাম জমা দিন</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section class="mentor-section" aria-labelledby="mentor-heading">
+        <div class="mentor-header">
+          <div class="mentor-tag">🎓 লোহাগাড়ার সিনিয়র মেন্টর ও ক্যারিয়ার কর্নার</div>
+          <div class="mentor-topline">
+            <div>
+              <h2 id="mentor-heading">ফিউচার-প্রস্তুত যুবসমাজের জন্য অভিজ্ঞদের নির্দেশনা</h2>
+              <p>ইউনিভার্সিটি, উচ্চশিক্ষা, প্রযুক্তি, ফ্রিল্যান্সিং, করপোরেট ও গবেষণার পথে লোহাগাড়ার সফল স্নাতক, প্রাক্তন শিক্ষার্থী ও পেশাজীবীদের কাছ থেকে গাইডেন্স নিন।</p>
+            </div>
+            <button type="button" id="openMentorModal" class="mentor-register-btn">মেন্টর হিসেবে যুক্ত হন</button>
+          </div>
+        </div>
+
+        <div class="mentor-toolbar">
+          <div class="mentor-search-wrap">
+            <span>⌕</span>
+            <input id="mentorSearch" type="search" placeholder="মেন্টর বা ফিল্ড খুঁজুন (যেমন: AI, software, banking, freelancing)" aria-label="Search mentors" />
+          </div>
+
+          <div class="mentor-filters" aria-label="Mentor expertise filters">
+            <button type="button" class="mentor-filter active" data-field="all">সব</button>
+            <button type="button" class="mentor-filter" data-field="higher-studies">উচ্চশিক্ষা</button>
+            <button type="button" class="mentor-filter" data-field="tech">প্রযুক্তি ও ফ্রিল্যান্সিং</button>
+            <button type="button" class="mentor-filter" data-field="corporate">করপোরেট ও জব</button>
+            <button type="button" class="mentor-filter" data-field="science">অন্যান্য</button>
+          </div>
+        </div>
+
+        <div id="mentorGrid" class="mentor-grid" aria-live="polite"></div>
+      </section>
+
+      <div id="mentorModal" class="mentor-modal hidden" aria-modal="true" role="dialog" aria-labelledby="mentorModalTitle">
+        <div class="mentor-modal-panel">
+          <div class="mentor-modal-header">
+            <div>
+              <p class="mentor-modal-kicker">কমিউনিটি গাইডেন্স</p>
+              <h3 id="mentorModalTitle">মেন্টর হিসেবে যুক্ত হোন</h3>
+            </div>
+            <button type="button" id="closeMentorModal" class="mentor-close-btn" aria-label="Close modal">×</button>
+          </div>
+
+          <form id="mentorForm" class="mentor-form">
+            <div class="mentor-form-grid">
+              <label>
+                <span>নাম</span>
+                <input type="text" id="mentorName" placeholder="আপনার নাম" required />
+              </label>
+              <label>
+                <span>ফোন / WhatsApp</span>
+                <input type="tel" id="mentorPhone" placeholder="০১XXXXXXXXX" required />
+              </label>
+            </div>
+
+            <div class="mentor-form-grid">
+              <label>
+                <span>ফিল্ড / এক্সপার্টিজ</span>
+                <select id="mentorField" required>
+                  <option value="higher-studies">উচ্চশিক্ষা</option>
+                  <option value="tech">প্রযুক্তি ও ফ্রিল্যান্সিং</option>
+                  <option value="corporate">করপোরেট ও জব</option>
+                  <option value="science">অন্যান্য</option>
+                </select>
+              </label>
+              <label>
+                <span>এলাকা / ইউনিয়ন</span>
+                <input type="text" id="mentorArea" placeholder="যেমন: চুনতি, পদুয়া, কালাইয়া" required />
+              </label>
+            </div>
+
+            <label>
+              <span>বর্তমান অবস্থা / রোল</span>
+              <input type="text" id="mentorRole" placeholder="যেমন: MSc in Computer Science, University of Dhaka | Software Engineer, ABC Ltd" required />
+            </label>
+
+            <label>
+              <span>সংক্ষিপ্ত মেসেজ / পরামর্শ</span>
+              <textarea id="mentorBio" rows="4" placeholder="শিক্ষার্থীদের জন্য আপনার পরামর্শ, অভিজ্ঞতা, বা গাইডেন্স লিখুন..." required></textarea>
+            </label>
+
+            <div class="mentor-modal-actions">
+              <button type="button" id="cancelMentorModal" class="mentor-secondary-btn">বাতিল</button>
+              <button type="submit" class="mentor-primary-btn">মেন্টর প্রোফাইল জমা দিন</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section class="archive-vault-section" aria-labelledby="archive-vault-heading">
+        <div class="archive-vault-shell">
+          <div class="archive-vault-heading">
+            <div class="archive-kicker">🕰️ ঐতিহাসিক ভল্ট ও লোক স্মৃতি</div>
+            <div class="archive-topline">
+              <div>
+                <h2 id="archive-vault-heading">লোহাগাড়ার ডিজিটাল স্মৃতি ভল্ট</h2>
+                <p>মুক্তিযুদ্ধ, প্রবীণদের গল্প, ঐতিহাসিক স্থান, লোকসংস্কৃতি ও পরিবারের স্মৃতি—সবকিছু এক জায়গায় সংরক্ষিত হচ্ছে ভল্টের মতো।</p>
+              </div>
+              <button type="button" id="openArchiveModal" class="archive-primary-btn">ঐতিহাসিক গল্প বা তথ্য যোগ করুন</button>
+            </div>
+          </div>
+
+          <div class="archive-toolbar">
+            <div class="archive-search-wrap">
+              <span>⌕</span>
+              <input id="archiveSearch" type="search" placeholder="শিরোনাম, ইউনিয়ন, গল্প বা ঐতিহাসিক বিষয় খুঁজুন" aria-label="Search archive entries" />
+            </div>
+
+            <div class="archive-filters" aria-label="Archive filters">
+              <button type="button" class="archive-filter active" data-category="all">সব</button>
+              <button type="button" class="archive-filter" data-category="freedom">মুক্তিযুদ্ধ</button>
+              <button type="button" class="archive-filter" data-category="landmark">ঐতিহাসিক স্থান</button>
+              <button type="button" class="archive-filter" data-category="elders">প্রবীণদের গল্প</button>
+              <button type="button" class="archive-filter" data-category="culture">লোকসংস্কৃতি</button>
+            </div>
+          </div>
+
+          <div id="archiveGrid" class="archive-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <div id="archiveModal" class="archive-modal hidden" aria-modal="true" role="dialog" aria-labelledby="archiveModalTitle">
+        <div class="archive-modal-panel">
+          <div class="archive-modal-header">
+            <div>
+              <p class="archive-modal-kicker">কমিউনিটি আর্কাইভ</p>
+              <h3 id="archiveModalTitle">আপনার এলাকার ইতিহাস যোগ করুন</h3>
+            </div>
+            <button type="button" id="closeArchiveModal" class="archive-close-btn" aria-label="Close archive modal">×</button>
+          </div>
+
+          <form id="archiveForm" class="archive-form">
+            <div class="archive-form-grid">
+              <label>
+                <span>নাম</span>
+                <input type="text" id="archiveContributor" placeholder="আপনার নাম" required />
+              </label>
+              <label>
+                <span>ইউনিয়ন / এলাকা</span>
+                <input type="text" id="archiveArea" placeholder="যেমন: ৬নং লোহাগাড়া" required />
+              </label>
+            </div>
+
+            <div class="archive-form-grid">
+              <label>
+                <span>গল্প / ঘটনার শিরোনাম</span>
+                <input type="text" id="archiveTitle" placeholder="গল্পের শিরোনাম লিখুন" required />
+              </label>
+              <label>
+                <span>ক্যাটাগরি</span>
+                <select id="archiveCategory" required>
+                  <option value="freedom">মুক্তিযুদ্ধ</option>
+                  <option value="landmark">ঐতিহাসিক স্থান</option>
+                  <option value="elders">প্রবীণদের গল্প</option>
+                  <option value="culture">লোকসংস্কৃতি</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              <span>উৎস / বর্ণনাকারী</span>
+              <input type="text" id="archiveSource" placeholder="যেমন: ৮০ বছর বয়সী অধ্যাপক মোঃ ফজলুল হক, ৬নং ইউনিয়ন" required />
+            </label>
+
+            <label>
+              <span>সংক্ষিপ্ত বিবরণ</span>
+              <textarea id="archiveExcerpt" rows="4" placeholder="মৌখিক ইতিহাস, প্রত্নতাত্ত্বিক তথ্য, অথবা পরিবার বা গ্রামের স্মৃতি সংক্ষেপে লিখুন..." required></textarea>
+            </label>
+
+            <div class="archive-modal-actions">
+              <button type="button" id="cancelArchiveModal" class="archive-secondary-btn">বাতিল</button>
+              <button type="submit" class="archive-primary-btn">ভল্টে জমা দিন</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <section id="lost-found-section" class="relative mx-auto my-6 max-w-7xl overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-br from-amber-50 via-white to-indigo-50 shadow-soft">
+        <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-r from-amber-200/40 via-orange-100/20 to-indigo-200/40"></div>
+
+        <div class="relative p-5 sm:p-7 lg:p-8">
+          <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-100 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-amber-700">🔎 হারিয়ে যাওয়া ও পাওয়া</span>
+              <h2 class="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">লোহাগাড়া লস্ট &amp; ফাউন্ড কর্নার</h2>
+              <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">গৃহস্থালি জিনিস, নথি, মোবাইল, প্রাণী বা গুরুত্বপূর্ণ কাগজপত্র হারিয়ে গেলে অথবা খুঁজে পেলে দ্রুত মানুষকে সাহায্য করুন।</p>
+            </div>
+
+            <button id="openLostFoundModal" type="button" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-slate-800">
+              + তথ্য যোগ করুন
+            </button>
+          </div>
+
+          <div class="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-wrap gap-2" role="tablist" aria-label="Lost and found tabs">
+              <button type="button" data-lost-tab="lost" class="lost-found-tab rounded-full border border-amber-200 bg-amber-100 px-4 py-2 text-sm font-bold text-amber-900 transition hover:bg-amber-200 data-[active=true]:bg-gradient-to-r data-[active=true]:from-amber-500 data-[active=true]:to-orange-500 data-[active=true]:text-white data-[active=true]:shadow-md" data-active="true">হারিয়ে গেছে</button>
+              <button type="button" data-lost-tab="found" class="lost-found-tab rounded-full border border-emerald-200 bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-800 transition hover:bg-emerald-200 data-[active=true]:bg-gradient-to-r data-[active=true]:from-emerald-500 data-[active=true]:to-green-600 data-[active=true]:text-white data-[active=true]:shadow-md" data-active="false">পাওয়া গেছে</button>
+            </div>
+
+            <div class="flex w-full max-w-md items-center gap-2 rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 shadow-sm">
+              <span class="text-lg text-slate-400">⌕</span>
+              <input id="lostFoundSearch" type="search" placeholder="কীওয়ার্ড দিয়ে খুঁজুন..." class="w-full border-0 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="mb-5 flex flex-wrap gap-2" aria-label="Lost and found category filters">
+            <button type="button" data-lost-filter="all" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="true">সব</button>
+            <button type="button" data-lost-filter="NID Card" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="false">NID Card</button>
+            <button type="button" data-lost-filter="Certificate" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="false">Certificate</button>
+            <button type="button" data-lost-filter="Mobile" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="false">Mobile</button>
+            <button type="button" data-lost-filter="Animal" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="false">Animal</button>
+            <button type="button" data-lost-filter="Others" class="lost-found-filter rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700 data-[active=true]:border-indigo-500 data-[active=true]:bg-indigo-600 data-[active=true]:text-white" data-active="false">Others</button>
+          </div>
+
+          <div id="lostFoundGrid" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
+
+          <div id="lostFoundEmpty" class="mt-5 hidden rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center">
+            <p class="text-base font-bold text-slate-700">কোনো রিপোর্ট পাওয়া যায়নি</p>
+            <p class="mt-1 text-sm text-slate-500">দয়া করে অন্য ক্যাটাগরি বা কীওয়ার্ড দিয়ে আবার খুঁজুন।</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="grievance-section" class="relative my-6 overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 shadow-soft">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(15,118,110,0.08),transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(37,99,235,0.08),transparent_30%)]"></div>
+
+        <div class="relative p-5 sm:p-7 lg:p-8">
+          <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <span class="inline-flex items-center rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-700">📣 অভিযোগ ও পরামর্শ বক্স</span>
+              <h2 class="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl">জনস্বার্থের অভিযোগ ও পরামর্শ</h2>
+              <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">রাস্তা, জলাবদ্ধতা, বিদ্যুৎ, স্বাস্থ্য, শিক্ষা অথবা প্রশাসন-সংক্রান্ত সমস্যা লিখুন; দ্রুত শুনে ব্যবস্থা নেওয়া হবে।</p>
+            </div>
+
+            <button id="openGrievanceModal" type="button" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/15 transition hover:-translate-y-0.5 hover:bg-slate-800">
+              + অভিযোগ/পরামর্শ জমা দিন
+            </button>
+          </div>
+
+          <div class="grid gap-5 xl:grid-cols-[1.1fr_1.4fr]">
+            <div class="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <div class="mb-4">
+                <div class="flex items-center justify-between gap-3">
+                  <h3 class="text-xl font-extrabold text-slate-900">সাম্প্রতিক প্রকাশ</h3>
+                  <span class="rounded-full bg-sky-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-sky-700">Community Feed</span>
+                </div>
+              </div>
+
+              <div id="grievanceFeed" class="space-y-3"></div>
+            </div>
+
+            <div class="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <div class="mb-4 flex items-center justify-between gap-3">
+                <h3 class="text-xl font-extrabold text-slate-900">অভিযোগের তালিকা</h3>
+                <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-emerald-700">Live Board</span>
+              </div>
+
+              <div class="mb-4 flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                <span class="text-lg text-slate-400">⌕</span>
+                <input id="grievanceSearch" type="search" placeholder="কীওয়ার্ড দিয়ে খুঁজুন..." class="w-full border-0 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
+              </div>
+
+              <div id="grievanceList" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div id="grievanceModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/55 p-4 backdrop-blur-sm">
+        <div class="w-full max-w-xl rounded-[28px] border border-slate-200 bg-white p-5 shadow-2xl sm:p-6">
+          <div class="mb-5 flex items-start justify-between gap-4">
+            <div>
+              <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-slate-700">Citizen desk</p>
+              <h3 class="mt-2 text-2xl font-extrabold text-slate-900">অভিযোগ বা পরামর্শ জমা দিন</h3>
+            </div>
+            <button id="closeGrievanceModal" type="button" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">×</button>
+          </div>
+
+          <form id="grievanceForm" class="space-y-4">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label for="grievanceName" class="mb-1.5 block text-sm font-bold text-slate-700">নাম</label>
+                <input id="grievanceName" type="text" placeholder="আপনার নাম" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100" required />
+              </div>
+
+              <div>
+                <label for="grievancePhone" class="mb-1.5 block text-sm font-bold text-slate-700">ফোন নম্বর</label>
+                <input id="grievancePhone" type="tel" placeholder="01XXXXXXXXX" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100" required />
+              </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label for="grievanceArea" class="mb-1.5 block text-sm font-bold text-slate-700">এলাকা / ইউনিয়ন</label>
+                <input id="grievanceArea" type="text" placeholder="যেমন: ৬নং লোহাগাড়া" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100" required />
+              </div>
+
+              <div>
+                <label for="grievanceCategory" class="mb-1.5 block text-sm font-bold text-slate-700">ক্যাটাগরি</label>
+                <select id="grievanceCategory" class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100">
+                  <option value="রাস্তাঘাট ও যোগাযোগ">রাস্তাঘাট ও যোগাযোগ</option>
+                  <option value="জলাবদ্ধতা">জলাবদ্ধতা</option>
+                  <option value="বিদ্যুৎ সরবরাহ">বিদ্যুৎ সরবরাহ</option>
+                  <option value="শিক্ষা / স্বাস্থ্য">শিক্ষা / স্বাস্থ্য</option>
+                  <option value="অন্যান্য">অন্যান্য</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="grievanceDescription" class="mb-1.5 block text-sm font-bold text-slate-700">বিস্তারিত</label>
+              <textarea id="grievanceDescription" rows="4" placeholder="সমস্যা বা পরামর্শ লিখুন..." class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100" required></textarea>
+            </div>
+
+            <div>
+              <label for="grievanceImage" class="mb-1.5 block text-sm font-bold text-slate-700">ছবি (ঐচ্ছিক)</label>
+              <input id="grievanceImage" type="file" accept="image/*" class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-sky-600 file:px-3 file:py-2 file:text-xs file:font-bold file:text-white" />
+            </div>
+
+            <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+              <button type="button" id="cancelGrievanceModal" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100">বাতিল</button>
+              <button type="submit" class="rounded-xl bg-gradient-to-r from-slate-900 to-sky-700 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-500/20 transition hover:opacity-95">জমা দিন</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="dashboard-wrap">
+        <div class="toolbar-panel">
+          <div class="search-box">
+            <span class="search-icon">⌕</span>
+            <input id="searchInput" type="text" placeholder="সেবা খুঁজুন (যেমন: অ্যাম্বুলেন্স, রক্ত, ডাক্তার)..." />
+          </div>
+
+          <div class="filter-list" id="filterButtons">
+            <button type="button" class="filter-btn active" data-union="all">সব এলাকা</button>
+            <button type="button" class="filter-btn" data-union="bighatia">১নং বড়হাতিয়া</button>
+            <button type="button" class="filter-btn" data-union="amirabad">২নং আমিরাবাদ</button>
+            <button type="button" class="filter-btn" data-union="padua">৩নং পদুয়া</button>
+            <button type="button" class="filter-btn" data-union="chormba">৪নং চরম্বা</button>
+            <button type="button" class="filter-btn" data-union="kolaizan">৫নং কলাউজান</button>
+            <button type="button" class="filter-btn" data-union="lohagara">৬নং লোহাগাড়া</button>
+            <button type="button" class="filter-btn" data-union="putibila">৭নং পুটিবিলা</button>
+            <button type="button" class="filter-btn" data-union="chunati">৮নং চুনতি</button>
+            <button type="button" class="filter-btn" data-union="adhunagar">৯নং আধুনগর</button>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <section class="service-panel">
+            <div class="panel-header">
+              <h3>সেবার তালিকা</h3>
+            </div>
+            <div id="serviceList" class="service-grid"></div>
+          </section>
+
+          <aside class="form-panel">
+            <div class="form-header">
+              <h3>নতুন সেবা যোগ করুন</h3>
+            </div>
+
+            <form id="addServiceForm" class="service-form">
+              <div class="field-group">
+                <label for="newTitle">সেবার নাম</label>
+                <input id="newTitle" type="text" placeholder="যেমন: আল-হাফিজ অ্যাম্বুলেন্স" required />
+              </div>
+
+              <div class="field-group">
+                <label for="newCategory">ক্যাটাগরি</label>
+                <select id="newCategory">
+                  <option value="অ্যাম্বুলেন্স ও পরিবহন">অ্যাম্বুলেন্স ও পরিবহন</option>
+                  <option value="রক্তদাতা গ্রুপ">রক্তদাতা গ্রুপ</option>
+                  <option value="চিকিৎসক ও স্বাস্থ্য">চিকিৎসক ও স্বাস্থ্য</option>
+                  <option value="জরুরি সাহায্য">জরুরি সাহায্য</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="newUnion">এলাকা / ইউনিয়ন</label>
+                <select id="newUnion">
+                  <option value="bighatia">১নং বড়হাতিয়া ইউনিয়ন</option>
+                  <option value="amirabad">২নং আমিরাবাদ ইউনিয়ন</option>
+                  <option value="padua">৩নং পদুয়া ইউনিয়ন</option>
+                  <option value="chormba">৪নং চরম্বা ইউনিয়ন</option>
+                  <option value="kolaizan">৫নং কলাউজান ইউনিয়ন</option>
+                  <option value="lohagara" selected>৬নং লোহাগাড়া ইউনিয়ন (সদর)</option>
+                  <option value="putibila">৭নং পুটিবিলা ইউনিয়ন</option>
+                  <option value="chunati">৮নং চুনতি ইউনিয়ন</option>
+                  <option value="adhunagar">৯নং আধুনগর ইউনিয়ন</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label for="newPhone">যোগাযোগ নম্বর</label>
+                <input id="newPhone" type="text" placeholder="যেমন: 018XXXXXXXX" required />
+              </div>
+
+              <button class="submit-btn" type="submit">তথ্য সাবমিট করুন</button>
+            </form>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
