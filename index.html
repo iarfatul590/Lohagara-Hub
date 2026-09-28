@@ -69,12 +69,12 @@
               <span class="mini-kicker">লোহাগাড়া স্ট্যাটাস</span>
             </div>
 
-            <h2>আজকের কভারেজ</h2>
+            <h2>এক নজরে</h2>
 
             <div class="mini-metrics">
               <div>
                 <span>আবহাওয়া</span>
-                <strong>২৯°C</strong>
+                <strong id="heroWeatherTemp">২৯°C</strong>
               </div>
               <div>
                 <span>বাজার</span>
@@ -83,6 +83,17 @@
               <div>
                 <span>রক্ত</span>
                 <strong>৬ টি</strong>
+              </div>
+            </div>
+
+            <div class="mt-3 border-t border-slate-200 pt-3 text-xs text-slate-600">
+              <div class="flex items-center justify-between gap-3">
+                <span>Humidity</span>
+                <strong id="heroWeatherHumidity" class="text-slate-900">--%</strong>
+              </div>
+              <div class="mt-1 flex items-center justify-between gap-3">
+                <span>Condition</span>
+                <strong id="heroWeatherCondition" class="text-right text-slate-900">--</strong>
               </div>
             </div>
 
@@ -109,11 +120,11 @@
               <ul class="emergency-list">
                 <li>
                   <span>লোহাগাড়া পুলিশ স্টেশন</span>
-                  <a href="tel:+8801700000000">+৮৮ ০১৭০০-০০০০০০</a>
+                  <a href="tel:+8801713-373650">+৮৮ ০১৭১৩-৩৭৩৬৫০</a>
                 </li>
                 <li>
                   <span>ফায়ার সার্ভিস</span>
-                  <a href="tel:+8801700000001">+৮৮ ০১৭০০-০০০০০১</a>
+                  <a href="tel:+8801901-021605">+৮৮ ০১৯০১-০২১৬০৫</a>
                 </li>
               </ul>
             </div>
@@ -126,11 +137,11 @@
               <ul class="emergency-list">
                 <li>
                   <span>বিদ্যুৎ জরুরি সেবা</span>
-                  <a href="tel:+8801700000002">+৮৮ ০১৭০০-০০০০০২</a>
+                  <a href="tel:+8801769-400106">+৮৮ ০১৭৬৯-৪০০১০৬</a>
                 </li>
                 <li>
                   <span>কন্ট্রোল রুম / অভিযোগ</span>
-                  <a href="tel:+8801700000003">+৮৮ ০১৭০০-০০০০০৩</a>
+                  <a href="tel:+8801769-400958">+৮৮ ০১৭৬৯-৪০০৯৫৮</a>
                 </li>
               </ul>
             </div>
@@ -142,12 +153,12 @@
               <span class="emergency-label">নির্বাহী অফিসারের কার্যালয়</span>
               <ul class="emergency-list">
                 <li>
+                  <a href="tel:+880233445903">+৮৮০২৩৩৪৪৫৯০৩</a>
                   <span>উপজেলা প্রশাসন</span>
-                  <a href="tel:+8801700000004">+৮৮ ০১৭০০-০০০০০৪</a>
                 </li>
                 <li>
                   <span>সাধারণ জরুরি তথ্য</span>
-                  <a href="tel:+8801700000005">+৮৮ ০১৭০০-০০০০০৫</a>
+                  <a href="tel:+8801733334350">+৮৮ ০১৭৩৩৩৩৪৩৫০</a>
                 </li>
               </ul>
             </div>
@@ -199,38 +210,47 @@
           <aside class="weather-panel">
             <div class="weather-header-row">
               <h3>লোহাগাড়া আবহাওয়া</h3>
-              <span class="weather-live-tag">Live</span>
+              <span id="weatherLiveTag" class="weather-live-tag">Live</span>
             </div>
 
             <div class="weather-card">
-              <div class="weather-main">
-                <div class="weather-icon">🌦️</div>
-                <div>
-                  <div class="weather-temp">২৯°C</div>
-                  <div class="weather-condition">আংশিক মেঘলা</div>
-                </div>
+              <div id="weatherLoading" class="weather-loading" aria-live="polite">
+                <div class="weather-spinner" aria-hidden="true"></div>
+                <span>আবহাওয়া লোড হচ্ছে...</span>
               </div>
 
-              <div class="weather-metrics">
-                <div>
-                  <span>Humidity</span>
-                  <strong>৭৮%</strong>
+              <div id="weatherContent" class="weather-content hidden">
+                <div class="weather-main">
+                  <div id="weatherIcon" class="weather-icon" aria-label="Current weather icon">🌤️</div>
+                  <div>
+                    <div id="weatherTemp" class="weather-temp">--°C</div>
+                    <div id="weatherCondition" class="weather-condition">লোড হচ্ছে...</div>
+                  </div>
                 </div>
-                <div>
-                  <span>Wind</span>
-                  <strong>১৩ km/h</strong>
-                </div>
-                <div>
-                  <span>Rain</span>
-                  <strong>৬৮%</strong>
+
+                <div class="weather-metrics">
+                  <div>
+                    <span>Humidity</span>
+                    <strong id="weatherHumidity">--%</strong>
+                  </div>
+                  <div>
+                    <span>Wind</span>
+                    <strong id="weatherWind">-- km/h</strong>
+                  </div>
+                  <div>
+                    <span>Rain</span>
+                    <strong id="weatherRain">--%</strong>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="weather-warning">
+            <div id="weatherWarning" class="weather-warning warning" aria-live="polite">
               <div class="warning-badge">⚠️ ফার্মার সতর্কতা</div>
-              <p>আগামী ৪৮ ঘণ্টায় ভারী বৃষ্টির সম্ভাবনা, পাকা ধান ও পান বরজ সুরক্ষায় সতর্ক থাকুন। ঝুঁকিপূর্ণ এলাকায় বৃষ্টি-নিরোধক ছাউনি ব্যবহার করুন।</p>
+              <p id="weatherWarningText">আবহাও বিশ্লেষণ চলছে...</p>
             </div>
+
+            <p id="weatherFallbackNote" class="weather-fallback-note">লাইভ ডাটা লোড হচ্ছে।</p>
           </aside>
         </div>
       </section>

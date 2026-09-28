@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>লোহাগাড়া হাব | অ্যাডমিন কন্ট্রোল সেন্টার</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+      import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+      // -----------------------------------------------------------------------------
+      // Firebase Web Configuration
+      // Paste your real values from Firebase Console -> Project settings -> Web app
+      // -----------------------------------------------------------------------------
+      const firebaseConfig = {
+        apiKey: 'PASTE_YOUR_FIREBASE_API_KEY_HERE',
+        authDomain: 'PASTE_YOUR_PROJECT_ID.firebaseapp.com',
+        projectId: 'PASTE_YOUR_PROJECT_ID',
+        storageBucket: 'PASTE_YOUR_PROJECT_ID.appspot.com',
+        messagingSenderId: 'PASTE_YOUR_MESSAGING_SENDER_ID',
+        appId: 'PASTE_YOUR_APP_ID'
+      };
+
+      let app;
+      let auth;
+      let googleProvider;
+
+      const hasRealFirebaseConfig = Object.values(firebaseConfig).every((value) => {
+        return typeof value === 'string' && value && !value.startsWith('PASTE_') && !value.includes('YOUR_');
+      });
+
+      if (hasRealFirebaseConfig) {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        googleProvider = new GoogleAuthProvider();
+      } else {
+        console.warn('Firebase config is not fully set. Using mock mode for UI testing. Please paste your real Firebase web credentials in the firebaseConfig object.');
+      }
+
+      window.firebaseAuth = auth;
+      window.googleProvider = googleProvider;
+      window.firebaseApp = app;
+      window.hasRealFirebaseConfig = hasRealFirebaseConfig;
+    </script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            boxShadow: {
+              soft: '0 14px 36px rgba(15, 23, 42, 0.14)',
+              glow: '0 18px 40px rgba(16, 185, 129, 0.18)',
+            },
+            colors: {
+              emerald: {
+                950: '#022c22',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Hind Siliguri', 'Segoe UI', sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 25%),
+          linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      .panel-glow {
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08), 0 6px 18px rgba(16, 185, 129, 0.08);
+      }
+
+      .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 28px rgba(15, 23, 42, 0.12);
+      }
+
+      .tab-panel.hidden {
+        display: none;
+      }
+
+      .toast {
+        animation: slideIn 0.25s ease forwards;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-slate-800 antialiased">
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+      <div class="w-full max-w-md rounded-[32px] border border-white/10 bg-white/10 p-7 shadow-[0_35px_90px_rgba(2,6,23,0.4)] backdrop-blur-xl">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 text-3xl shadow-glow">🔐</div>
+        <div class="mt-6 text-center">
+          <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-200/90">Secure Access</div>
+          <h2 class="mt-3 text-3xl font-black text-white">Admin Login</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-200">Authorized administrators only. Sign in with your Google account to access the Lohagara Hub control center.</p>
+        </div>
+
+        <button id="googleLoginBtn" class="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-3.5 text-sm font-bold text-slate-900 transition hover:-translate-y-0.5 hover:shadow-xl">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.4-1.7 4.1-5.4 4.1-3.2 0-5.8-2.6-5.8-5.8s2.6-5.8 5.8-5.8c1.8 0 3 .8 3.7 1.5l2.5-2.4C16.6 3.3 14.5 2.4 12 2.4 6.9 2.4 2.8 6.5 2.8 11.6S6.9 20.8 12 20.8c6.9 0 11.5-4.8 11.5-11.6 0-.8-.1-1.4-.2-2H12z"/>
+            <path fill="#34A853" d="M3.8 7.4l3.5 2.6c1-1.9 3.1-3.2 5.8-3.2 1.8 0 3 .8 3.7 1.5l2.5-2.4C16.6 3.3 14.5 2.4 12 2.4c-3.7 0-6.9 2.2-8.2 5z"/>
+            <path fill="#FBBC05" d="M3.8 15.8c1.2 2.5 3.8 4.2 8.2 4.2 2.4 0 4.4-.8 5.9-2.2l-2.9-2.4c-.8.5-1.9 1-3 1-2.6 0-4.6-1.8-5.4-4.1l-3.7 2.6z"/>
+            <path fill="#4285F4" d="M12 21c2.8 0 5.1-.9 6.8-2.7l-3.4-2.9c-1 .7-2.3 1.1-3.4 1.1-2.7 0-4.9-1.8-5.4-4.1l-3.6 2.7C2.5 18.4 6.6 21 12 21z"/>
+          </svg>
+          Sign in with Google
+        </button>
+
+        <div id="authError" class="mt-5 hidden rounded-2xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-100"></div>
+      </div>
+    </div>
+
+    <div id="appShell" class="hidden min-h-screen w-full">
+      <div class="flex min-h-screen overflow-hidden">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="hidden w-72 shrink-0 flex-col border-r border-emerald-900/10 bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white md:flex">
+        <div class="flex items-center justify-between border-b border-white/10 px-5 py-5">
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-2xl shadow-soft">🛡️</div>
+            <div>
+              <div class="text-lg font-bold">লোহাগাড়া</div>
+              <div class="text-xs text-emerald-100/70">Admin Console</div>
+            </div>
+          </div>
+          <button id="sidebarToggle" class="rounded-xl border border-white/10 bg-white/5 p-2 text-lg text-emerald-100 transition hover:bg-white/10 md:hidden">☰</button>
+        </div>
+
+        <nav class="flex-1 space-y-2 p-4">
+          <button data-tab="overview" class="nav-item active w-full rounded-2xl border border-emerald-400/30 bg-white/10 px-4 py-3 text-left text-sm font-semibold text-emerald-50 transition hover:bg-white/15">
+            <span class="inline-flex items-center gap-3"><span>📊</span> ড্যাশবোর্ড ওভারভিউ</span>
+          </button>
+          <button data-tab="moderation" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>🧾</span> মডারেশন কিউ</span>
+          </button>
+          <button data-tab="market" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>📈</span> বাজার দর কন্ট্রোল</span>
+          </button>
+          <button data-tab="blood" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>🩸</span> রক্ত ও জরুরি সেবা</span>
+          </button>
+
+          <div class="mt-8 border-t border-white/10 pt-4">
+            <a href="index.html" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-100 transition hover:bg-red-500/20">
+              ↩️ মেইন সাইটে ফিরুন
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Mobile Sidebar -->
+      <div id="mobileSidebar" class="fixed inset-0 z-40 hidden bg-slate-950/60 md:hidden">
+        <div class="h-full w-72 bg-gradient-to-b from-emerald-950 to-emerald-900 p-4 text-white">
+          <div class="mb-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-xl">🛡️</div>
+              <div>
+                <div class="font-bold">লোহাগাড়া</div>
+                <div class="text-xs text-emerald-100/70">Admin Panel</div>
+              </div>
+            </div>
+            <button id="closeMobileSidebar" class="rounded-xl border border-white/10 bg-white/5 px-2 py-1 text-lg">✕</button>
+          </div>
+          <nav class="space-y-2">
+            <button data-tab="overview" class="nav-item mobile-nav active w-full rounded-2xl border border-emerald-400/30 bg-white/10 px-4 py-3 text-left text-sm font-semibold text-white">📊 ড্যাশবোর্ড ওভারভিউ</button>
+            <button data-tab="moderation" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🧾 মডারেশন কিউ</button>
+            <button data-tab="market" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📈 বাজার দর কন্ট্রোল</button>
+            <button data-tab="blood" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🩸 রক্ত ও জরুরি সেবা</button>
+          </nav>
+        </div>
+      </div>
+
+      <div class="flex min-h-screen flex-1 flex-col overflow-hidden">
+        <!-- Top bar -->
+        <header class="border-b border-slate-200/80 bg-white/80 px-4 py-4 backdrop-blur-md md:px-8">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <button id="mobileMenuToggle" class="rounded-xl border border-slate-200 bg-slate-100 p-2 text-lg text-slate-700 md:hidden">☰</button>
+              <div>
+                <div class="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-700/80">Community Control</div>
+                <h1 class="text-xl font-black text-slate-800 md:text-2xl">অ্যাডমিন কন্ট্রোল সেন্টার</h1>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-2 md:flex">
+                <span class="text-sm text-slate-500">🔍</span>
+                <input type="text" placeholder="খুঁজুন..." class="w-32 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
+              </div>
+
+              <button class="relative rounded-full border border-slate-200 bg-slate-100 p-2.5 text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700">
+                🔔
+                <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">3</span>
+              </button>
+
+              <div id="userProfileBadge" class="flex items-center gap-3 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-1.5 shadow-sm">
+                <img id="userAvatar" src="" alt="User avatar" class="hidden h-10 w-10 rounded-full object-cover" />
+                <div id="userInitials" class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-400 text-sm font-bold text-white">AM</div>
+                <div class="hidden text-left md:block">
+                  <div id="userDisplayName" class="text-sm font-semibold text-slate-800">Admin Manager</div>
+                  <div id="userEmail" class="text-[11px] text-slate-500">superadmin@lohagara.org</div>
+                </div>
+              </div>
+
+              <button id="logoutBtn" class="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:-translate-y-0.5 hover:bg-red-100">Logout</button>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto bg-slate-100/60 p-4 md:p-7">
+          <!-- Overview Tab -->
+          <section id="tab-overview" class="tab-panel space-y-6">
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">অপেক্ষমান অনুমোদন</span>
+                  <span class="rounded-2xl bg-amber-100 p-2 text-xl">⏳</span>
+                </div>
+                <div class="mt-5 flex items-end justify-between">
+                  <div class="text-3xl font-black text-slate-800" data-counter="pending">05</div>
+                  <span class="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">Review</span>
+                </div>
+              </div>
+
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">সক্রিয় সেবা</span>
+                  <span class="rounded-2xl bg-emerald-100 p-2 text-xl">🧩</span>
+                </div>
+                <div class="mt-5 flex items-end justify-between">
+                  <div class="text-3xl font-black text-slate-800" data-counter="services">48</div>
+                  <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Live</span>
+                </div>
+              </div>
+
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">বাজার দর আপডেট</span>
+                  <span class="rounded-2xl bg-blue-100 p-2 text-xl">📈</span>
+                </div>
+                <div class="mt-5 flex items-end justify-between">
+                  <div class="text-3xl font-black text-slate-800" data-counter="market">09</div>
+                  <span class="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-700">Synced</span>
+                </div>
+              </div>
+
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">কন্ট্রিবিউটর</span>
+                  <span class="rounded-2xl bg-violet-100 p-2 text-xl">👥</span>
+                </div>
+                <div class="mt-5 flex items-end justify-between">
+                  <div class="text-3xl font-black text-slate-800" data-counter="users">128</div>
+                  <span class="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-violet-700">Active</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid gap-5 xl:grid-cols-[1.5fr_0.95fr]">
+              <div class="glass panel-glow rounded-3xl p-5">
+                <div class="mb-5 flex items-center justify-between">
+                  <h2 class="text-xl font-black text-slate-800">অপারেশনাল ওভারভিউ</h2>
+                  <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Updated 2m ago</span>
+                </div>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="mb-3 flex items-center justify-between text-sm">
+                      <span class="text-slate-600">Service Verification</span>
+                      <span class="font-bold text-emerald-600">82%</span>
+                    </div>
+                    <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
+                      <div class="h-full w-[82%] rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="mb-3 flex items-center justify-between text-sm">
+                      <span class="text-slate-600">Emergency Response</span>
+                      <span class="font-bold text-amber-600">67%</span>
+                    </div>
+                    <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
+                      <div class="h-full w-[67%] rounded-full bg-gradient-to-r from-amber-400 to-yellow-400"></div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="mb-3 flex items-center justify-between text-sm">
+                      <span class="text-slate-600">Blood Match Success</span>
+                      <span class="font-bold text-blue-600">91%</span>
+                    </div>
+                    <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
+                      <div class="h-full w-[91%] rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="mb-3 flex items-center justify-between text-sm">
+                      <span class="text-slate-600">Content Quality</span>
+                      <span class="font-bold text-violet-600">94%</span>
+                    </div>
+                    <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
+                      <div class="h-full w-[94%] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass panel-glow rounded-3xl p-5">
+                <div class="mb-4 flex items-center justify-between">
+                  <h2 class="text-xl font-black text-slate-800">সাম্প্রতিক কার্যক্রম</h2>
+                  <span class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">Live</span>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="font-semibold text-slate-800">জরুরি সেবা অনুমোদিত</div>
+                      <div class="text-[10px] text-slate-500">২ মিনিট আগে</div>
+                    </div>
+                    <p class="mt-1 text-sm text-slate-500">লোহাগাড়া ত্রাণ সেবা সনাক্তকরণ সফল হয়েছে।</p>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="font-semibold text-slate-800">বাজার দর আপডেট</div>
+                      <div class="text-[10px] text-slate-500">৯ মিনিট আগে</div>
+                    </div>
+                    <p class="mt-1 text-sm text-slate-500">পদুয়া বাজারে চালের দাম ২.৪% বৃদ্ধি পেয়েছে।</p>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="font-semibold text-slate-800">নতুন গল্প জমা</div>
+                      <div class="text-[10px] text-slate-500">১৮ মিনিট আগে</div>
+                    </div>
+                    <p class="mt-1 text-sm text-slate-500">স্থানীয় ইতিহাসের গল্প মডারেশন কিউতে অপেক্ষমাণ।</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Moderation Tab -->
+          <section id="tab-moderation" class="tab-panel hidden space-y-5">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Review Queue</div>
+                <h2 class="mt-1 text-2xl font-black text-slate-800">মডারেশন কিউ</h2>
+              </div>
+              <button class="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100">Export Queue</button>
+            </div>
+
+            <div id="moderationList" class="space-y-4"></div>
+          </section>
+
+          <!-- Market Tab -->
+          <section id="tab-market" class="tab-panel hidden space-y-5">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Pricing Control</div>
+                <h2 class="mt-1 text-2xl font-black text-slate-800">বাজার দর কন্ট্রোল</h2>
+              </div>
+              <span class="rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Auto Sync</span>
+            </div>
+
+            <div class="grid gap-5 xl:grid-cols-[1.35fr_0.9fr]">
+              <div class="glass panel-glow rounded-3xl p-5">
+                <div class="mb-4 flex items-center justify-between">
+                  <h3 class="text-xl font-black text-slate-800">সরাসরি মূল্য আপডেট</h3>
+                  <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Live</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="min-w-full text-left text-sm">
+                    <thead>
+                      <tr class="border-b border-slate-200 text-slate-500">
+                        <th class="pb-3 pr-3 font-semibold">পণ্য</th>
+                        <th class="pb-3 pr-3 font-semibold">বাজার</th>
+                        <th class="pb-3 pr-3 font-semibold">খুচরা</th>
+                        <th class="pb-3 pr-3 font-semibold">হোলসেল</th>
+                        <th class="pb-3 font-semibold">ট্রেন্ড</th>
+                      </tr>
+                    </thead>
+                    <tbody id="marketTableBody"></tbody>
+                  </table>
+                </div>
+
+                <div class="mt-5 flex justify-end">
+                  <button id="updateMarketBtn" class="rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-glow transition hover:-translate-y-0.5">Update Price</button>
+                </div>
+              </div>
+
+              <div class="glass panel-glow rounded-3xl p-5">
+                <h3 class="mb-4 text-xl font-black text-slate-800">মার্কেট সারসংক্ষেপ</h3>
+                <div id="marketSummary" class="space-y-3"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Blood Tab -->
+          <section id="tab-blood" class="tab-panel hidden space-y-5">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Emergency Network</div>
+              <h2 class="mt-1 text-2xl font-black text-slate-800">রক্ত ও জরুরি সেবা</h2>
+            </div>
+
+            <div class="grid gap-4 xl:grid-cols-3">
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">অত্যাবশ্যক O+ রক্ত</span>
+                  <span class="rounded-full bg-red-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-red-700">Critical</span>
+                </div>
+                <div class="mt-5 text-3xl font-black text-slate-800">05</div>
+                <p class="mt-2 text-sm text-slate-500">লোহাগাড়া ও আশেপাশের ইউনিয়ন থেকে ডোনার নোটিফিকেশন পাঠানো হচ্ছে।</p>
+              </div>
+
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">ডোনার রেসপন্স</span>
+                  <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Fast</span>
+                </div>
+                <div class="mt-5 text-3xl font-black text-slate-800">18 min</div>
+                <p class="mt-2 text-sm text-slate-500">নিকটতম যাচাইকৃত ডোনার সনাক্তকরণের গড় সময়।</p>
+              </div>
+
+              <div class="glass hover-lift panel-glow rounded-3xl p-5">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-slate-500">সক্রিয় অ্যালার্ট</span>
+                  <span class="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">Review</span>
+                </div>
+                <div class="mt-5 text-3xl font-black text-slate-800">12</div>
+                <p class="mt-2 text-sm text-slate-500">ডিসপ্যাচ ও ভেরিফিকেশন বাকি আছে।</p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Confirmation modal -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 p-4">
+      <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+        <div class="mb-3 flex items-center gap-3">
+          <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-2xl">⚠️</div>
+          <div>
+            <h3 id="confirmTitle" class="text-xl font-black text-slate-800">নিশ্চিত করুন</h3>
+          </div>
+        </div>
+        <p id="confirmMessage" class="text-sm leading-6 text-slate-600">আপনি কি নিশ্চিত?</p>
+        <div class="mt-6 flex justify-end gap-3">
+          <button id="cancelConfirm" class="rounded-xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">বাতিল</button>
+          <button id="confirmAction" class="rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600">হ্যাঁ, নিশ্চিত</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex w-[280px] flex-col gap-3"></div>
+
+    <script>
+      const ADMIN_EMAILS = [
+        'yourgmail@gmail.com',
+        'admin@lohagarahub.com'
+      ];
+
+      const loginScreen = document.getElementById('loginScreen');
+      const appShell = document.getElementById('appShell');
+      const authError = document.getElementById('authError');
+
+      const userDisplayName = document.getElementById('userDisplayName');
+      const userEmail = document.getElementById('userEmail');
+      const userAvatar = document.getElementById('userAvatar');
+      const userInitials = document.getElementById('userInitials');
+
+      function showAuthError(message) {
+        authError.textContent = message;
+        authError.classList.remove('hidden');
+      }
+
+      function hideAuthError() {
+        authError.classList.add('hidden');
+        authError.textContent = '';
+      }
+
+      function triggerMockLogin() {
+        const mockUser = {
+          displayName: 'Mock Admin User',
+          email: 'admin@lohagara.local',
+          photoURL: '',
+          uid: 'mock-admin-user'
+        };
+
+        updateUserProfile(mockUser);
+        setAuthState(true);
+        showToast('Mock admin login active. Paste real Firebase credentials to enable Google sign-in.', 'warning');
+      }
+
+      function updateUserProfile(user) {
+        if (!user) {
+          userDisplayName.textContent = 'Admin Manager';
+          userEmail.textContent = 'superadmin@lohagara.org';
+          userInitials.textContent = 'AM';
+          userAvatar.src = '';
+          userAvatar.classList.add('hidden');
+          userInitials.classList.remove('hidden');
+          return;
+        }
+
+        const displayName = user.displayName || 'Admin User';
+        const email = user.email || '';
+
+        userDisplayName.textContent = displayName;
+        userEmail.textContent = email;
+
+        if (user.photoURL) {
+          userAvatar.src = user.photoURL;
+          userAvatar.classList.remove('hidden');
+          userInitials.classList.add('hidden');
+        } else {
+          userAvatar.src = '';
+          userAvatar.classList.add('hidden');
+          userInitials.textContent = displayName.charAt(0).toUpperCase();
+          userInitials.classList.remove('hidden');
+        }
+      }
+
+      function setAuthState(isAuthenticated) {
+        if (isAuthenticated) {
+          loginScreen.classList.add('hidden');
+          appShell.classList.remove('hidden');
+        } else {
+          loginScreen.classList.remove('hidden');
+          appShell.classList.add('hidden');
+        }
+      }
+
+      async function handleGoogleSignIn() {
+        const auth = window.firebaseAuth;
+        const provider = window.googleProvider;
+
+        if (!window.hasRealFirebaseConfig || !auth || !provider) {
+          console.warn('Firebase is not configured yet. Falling back to mock login mode for UI testing.');
+          triggerMockLogin();
+          return;
+        }
+
+        try {
+          hideAuthError();
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          const normalizedEmail = (user.email || '').toLowerCase();
+          const authorized = ADMIN_EMAILS.some((email) => email.toLowerCase() === normalizedEmail);
+
+          if (!authorized) {
+            await signOut(auth);
+            updateUserProfile(null);
+            setAuthState(false);
+            showAuthError('Unauthorized Google account. Only authorized admin emails can access this dashboard.');
+            return;
+          }
+
+          updateUserProfile(user);
+          setAuthState(true);
+          showToast('Signed in successfully as approved admin.', 'success');
+        } catch (error) {
+          console.error('Google sign-in failed. Details:', error);
+          setAuthState(false);
+
+          if (error?.code === 'auth/configuration-not-found' || error?.code === 'auth/invalid-api-key' || error?.code === 'auth/invalid-credential') {
+            showAuthError('Firebase is misconfigured or missing valid web credentials. Please paste the correct Firebase config from the Firebase Console.');
+            return;
+          }
+
+          if (error?.message) {
+            showAuthError(`Google sign-in failed. Please try again. (${error.message})`);
+          } else {
+            showAuthError('Google sign-in failed. Please try again.');
+          }
+        }
+      }
+
+      document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleSignIn);
+
+      const mockLoginBtn = document.createElement('button');
+      mockLoginBtn.type = 'button';
+      mockLoginBtn.textContent = 'Test dashboard UI (Mock login)';
+      mockLoginBtn.className = 'mt-4 w-full rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/20';
+      mockLoginBtn.addEventListener('click', triggerMockLogin);
+      document.querySelector('#loginScreen .w-full.max-w-md').appendChild(mockLoginBtn);
+
+      async function handleLogout() {
+        const auth = window.firebaseAuth;
+        try {
+          await signOut(auth);
+          updateUserProfile(null);
+          setAuthState(false);
+          showToast('Logged out successfully.', 'info');
+        } catch (error) {
+          console.error('Logout failed:', error);
+          showToast('Logout failed. Please try again.', 'error');
+        }
+      }
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        const modal = document.getElementById('confirmModal');
+        const title = document.getElementById('confirmTitle');
+        const text = document.getElementById('confirmMessage');
+        const confirm = document.getElementById('confirmAction');
+
+        title.textContent = 'Logout confirmation';
+        text.textContent = 'Are you sure you want to sign out and return to the admin login screen?';
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        confirm.onclick = async () => {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          await handleLogout();
+        };
+      });
+
+      document.getElementById('cancelConfirm').addEventListener('click', () => {
+        const modal = document.getElementById('confirmModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      });
+
+      document.getElementById('confirmModal').addEventListener('click', (event) => {
+        if (event.target.id === 'confirmModal') {
+          event.target.classList.add('hidden');
+          event.target.classList.remove('flex');
+        }
+      });
+
+      if (window.firebaseAuth && window.hasRealFirebaseConfig) {
+        onAuthStateChanged(window.firebaseAuth, (user) => {
+          if (!user) {
+            updateUserProfile(null);
+            setAuthState(false);
+            return;
+          }
+
+          const normalizedEmail = (user.email || '').toLowerCase();
+          const authorized = ADMIN_EMAILS.some((email) => email.toLowerCase() === normalizedEmail);
+
+          if (!authorized) {
+            signOut(window.firebaseAuth)
+              .then(() => {
+                updateUserProfile(null);
+                setAuthState(false);
+                showAuthError('This Google account is not on the authorized admin list.');
+              })
+              .catch(() => {
+                setAuthState(false);
+              });
+            return;
+          }
+
+          updateUserProfile(user);
+          setAuthState(true);
+        });
+      } else {
+        setAuthState(false);
+      }
+
+      const tabButtons = document.querySelectorAll('.nav-item');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+
+      const moderationData = [
+        {
+          id: 1,
+          type: 'Emergency Service',
+          title: 'পদুয়া নতুন জরুরি পরিবহন সেবা',
+          author: 'মোহাম্মদ করিম',
+          area: 'পদুয়া',
+          time: '2 min ago',
+          badge: 'High',
+          description: 'ফ্লাড ও জরুরি পরিবহনের জন্য নতুন কন্টাক্ট পোস্ট করা হয়েছে।'
+        },
+        {
+          id: 2,
+          type: 'Community Story',
+          title: 'প্রাচীন ব্রিজের গল্প',
+          author: 'নুসরাত জাহান',
+          area: 'লোহাগাড়া',
+          time: '18 min ago',
+          badge: 'Medium',
+          description: 'স্থানীয় ইতিহাস সম্পর্কিত গল্প আপলোড করা হয়েছে, যাচাইয়ের অপেক্ষায়।'
+        },
+        {
+          id: 3,
+          type: 'Market Update',
+          title: 'চালের দাম আপডেট',
+          author: 'জালাল উদ্দিন',
+          area: 'লোহাগাড়া',
+          time: '31 min ago',
+          badge: 'Low',
+          description: 'বাজার দর আপডেটের জন্য নতুন দর তালিকা জমা হয়েছে।'
+        },
+        {
+          id: 4,
+          type: 'Service Listing',
+          title: 'ডিজিটাল স্বাস্থ্য পরামর্শ',
+          author: 'আয়শা আক্তার',
+          area: 'লোহাগাড়া',
+          time: '54 min ago',
+          badge: 'Medium',
+          description: 'স্থানীয় টেলিহেলথ সেবা তালিকাভুক্তির জন্য আবেদন জমা।'
+        }
+      ];
+
+      const marketData = [
+        { product: 'আলু', market: 'লোহাগাড়া', retail: 26, wholesale: 18, trend: 'Up' },
+        { product: 'পেঁয়াজ', market: 'লোহাগাড়া', retail: 35, wholesale: 24, trend: 'Stable' },
+        { product: 'চাল', market: 'লোহাগাড়া', retail: 48, wholesale: 40, trend: 'Up' },
+        { product: 'আলু', market: 'পদুয়া', retail: 28, wholesale: 20, trend: 'Stable' },
+        { product: 'পেঁয়াজ', market: 'পদুয়া', retail: 37, wholesale: 25, trend: 'Down' },
+        { product: 'চাল', market: 'পদুয়া', retail: 50, wholesale: 41, trend: 'Up' }
+      ];
+
+      function switchTab(tabName) {
+        tabButtons.forEach((button) => {
+          const active = button.dataset.tab === tabName;
+          button.classList.toggle('active', active);
+          button.classList.toggle('bg-white/10', active);
+          button.classList.toggle('border-emerald-400/30', active);
+          button.classList.toggle('bg-transparent', !active);
+          button.classList.toggle('border-white/10', !active);
+        });
+
+        tabPanels.forEach((panel) => {
+          panel.classList.toggle('hidden', panel.id !== `tab-${tabName}`);
+        });
+      }
+
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => switchTab(button.dataset.tab));
+      });
+
+      function showToast(message, tone = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        const palette = {
+          success: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+          warning: 'border-amber-200 bg-amber-50 text-amber-700',
+          error: 'border-red-200 bg-red-50 text-red-700',
+          info: 'border-blue-200 bg-blue-50 text-blue-700',
+        };
+
+        toast.className = `toast flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-lg ${palette[tone] || palette.success}`;
+        toast.innerHTML = `<span>${tone === 'error' ? '⚠️' : tone === 'warning' ? '⚡' : '✅'}</span><span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 2600);
+      }
+
+      function renderModerationList() {
+        const container = document.getElementById('moderationList');
+        container.innerHTML = '';
+
+        moderationData.forEach((item) => {
+          const card = document.createElement('div');
+          const badgeTone = {
+            High: 'bg-red-100 text-red-700',
+            Medium: 'bg-amber-100 text-amber-700',
+            Low: 'bg-emerald-100 text-emerald-700',
+          };
+
+          card.className = 'glass hover-lift panel-glow rounded-3xl p-4 md:p-5';
+          card.innerHTML = `
+            <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+              <div class="flex-1">
+                <div class="mb-2 flex flex-wrap items-center gap-2">
+                  <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">${item.type}</span>
+                  <span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] ${badgeTone[item.badge] || 'bg-slate-100 text-slate-700'}">${item.badge}</span>
+                  <span class="text-[11px] uppercase tracking-[0.18em] text-slate-500">${item.time}</span>
+                </div>
+                <h3 class="text-lg font-black text-slate-800">${item.title}</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-600">${item.description}</p>
+                <div class="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                  <span>👤 ${item.author}</span>
+                  <span>📍 ${item.area}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 xl:flex-col">
+                <button data-action="approve" data-id="${item.id}" class="approve-btn rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-glow transition hover:-translate-y-0.5">অনুমোদন দিন</button>
+                <button data-action="reject" data-id="${item.id}" class="reject-btn rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 transition hover:bg-red-100">বাতিল করুন</button>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+
+        document.querySelectorAll('.approve-btn').forEach((button) => {
+          button.addEventListener('click', () => {
+            const id = Number(button.dataset.id);
+            const item = moderationData.find((entry) => entry.id === id);
+            if (!item) return;
+
+            moderationData.splice(
+              moderationData.findIndex((entry) => entry.id === id),
+              1
+            );
+            renderModerationList();
+            updateCounters();
+            showToast('সফলভাবে অনুমোদন করা হয়েছে!', 'success');
+          });
+        });
+
+        document.querySelectorAll('.reject-btn').forEach((button) => {
+          button.addEventListener('click', () => {
+            const id = Number(button.dataset.id);
+            const item = moderationData.find((entry) => entry.id === id);
+            if (!item) return;
+
+            openConfirmModal(
+              'সাবমিশন বাতিল করুন',
+              `আপনি কি "${item.title}" সাবমিশনটি বাতিল করতে চান? এই কাজটি ফিরিয়ে আনা যাবে না।`,
+              () => {
+                moderationData.splice(
+                  moderationData.findIndex((entry) => entry.id === id),
+                  1
+                );
+                renderModerationList();
+                updateCounters();
+                showToast('সাবমিশন বাতিল করা হয়েছে।', 'warning');
+              }
+            );
+          });
+        });
+      }
+
+      function openConfirmModal(title, message, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('confirmTitle');
+        const messageEl = document.getElementById('confirmMessage');
+        const confirmAction = document.getElementById('confirmAction');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        const handleConfirm = () => {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+          onConfirm();
+          confirmAction.onclick = null;
+        };
+
+        confirmAction.onclick = handleConfirm;
+      }
+
+      document.getElementById('cancelConfirm').addEventListener('click', () => {
+        const modal = document.getElementById('confirmModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      });
+
+      document.getElementById('confirmModal').addEventListener('click', (event) => {
+        if (event.target.id === 'confirmModal') {
+          event.target.classList.add('hidden');
+          event.target.classList.remove('flex');
+        }
+      });
+
+      function updateCounters() {
+        const pending = moderationData.length;
+        document.querySelector('[data-counter="pending"]').textContent = String(pending).padStart(2, '0');
+        document.querySelector('[data-counter="services"]').textContent = String(48 - Math.min(pending, 10));
+        document.querySelector('[data-counter="users"]').textContent = String(128 + Math.max(0, 5 - pending));
+      }
+
+      function renderMarketTable() {
+        const tbody = document.getElementById('marketTableBody');
+        tbody.innerHTML = marketData
+          .map((row, index) => `
+            <tr class="border-b border-slate-200 last:border-b-0">
+              <td class="py-3 pr-3 font-semibold text-slate-800">${row.product}</td>
+              <td class="py-3 pr-3 text-slate-600">${row.market}</td>
+              <td class="py-3 pr-3">
+                <input data-field="retail" data-index="${index}" value="${row.retail}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
+              </td>
+              <td class="py-3 pr-3">
+                <input data-field="wholesale" data-index="${index}" value="${row.wholesale}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
+              </td>
+              <td class="py-3">
+                <select data-field="trend" data-index="${index}" class="rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-slate-800 focus:border-emerald-400 focus:outline-none">
+                  <option value="Up" ${row.trend === 'Up' ? 'selected' : ''}>Up</option>
+                  <option value="Stable" ${row.trend === 'Stable' ? 'selected' : ''}>Stable</option>
+                  <option value="Down" ${row.trend === 'Down' ? 'selected' : ''}>Down</option>
+                </select>
+              </td>
+            </tr>
+          `)
+          .join('');
+      }
+
+      function renderMarketSummary() {
+        const container = document.getElementById('marketSummary');
+        const summary = marketData.reduce((acc, row) => {
+          const key = row.market;
+          if (!acc[key]) acc[key] = { market: key, total: 0, count: 0 };
+          acc[key].total += row.retail;
+          acc[key].count += 1;
+          return acc;
+        }, {});
+
+        container.innerHTML = Object.values(summary)
+          .map((item) => `
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-800">${item.market}</span>
+                <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Live</span>
+              </div>
+              <div class="mt-3 text-2xl font-black text-slate-800">${Math.round(item.total / item.count)}৳</div>
+              <p class="text-sm text-slate-500">গড় খুচরা মূল্য</p>
+            </div>
+          `)
+          .join('');
+      }
+
+      document.getElementById('updateMarketBtn').addEventListener('click', () => {
+        const rows = document.querySelectorAll('#marketTableBody tr');
+        rows.forEach((row) => {
+          const index = Number(row.querySelector('[data-index]')?.dataset.index ?? 0);
+          const retailInput = row.querySelector('[data-field="retail"]');
+          const wholesaleInput = row.querySelector('[data-field="wholesale"]');
+          const trendInput = row.querySelector('[data-field="trend"]');
+
+          if (marketData[index]) {
+            marketData[index].retail = Number(retailInput.value || marketData[index].retail);
+            marketData[index].wholesale = Number(wholesaleInput.value || marketData[index].wholesale);
+            marketData[index].trend = trendInput.value || marketData[index].trend;
+          }
+        });
+
+        renderMarketSummary();
+        showToast('বাজার দর সফলভাবে আপডেট হয়েছে!', 'success');
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        openConfirmModal(
+          'Logout from admin panel',
+          'আপনি কি নিশ্চিতভাবে অ্যাডমিন সেশনটি বন্ধ করতে চান?',
+          () => {
+            showToast('সফলভাবে লগআউট করা হয়েছে।', 'info');
+          }
+        );
+      });
+
+      document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+        document.getElementById('mobileSidebar').classList.remove('hidden');
+      });
+
+      document.getElementById('closeMobileSidebar').addEventListener('click', () => {
+        document.getElementById('mobileSidebar').classList.add('hidden');
+      });
+
+      document.querySelectorAll('.mobile-nav').forEach((button) => {
+        button.addEventListener('click', () => {
+          document.getElementById('mobileSidebar').classList.add('hidden');
+        });
+      });
+
+      renderModerationList();
+      renderMarketTable();
+      renderMarketSummary();
+      updateCounters();
+      switchTab('overview');
+    </script>
+  </body>
+</html>

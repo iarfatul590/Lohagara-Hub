@@ -1,4 +1,210 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const weatherLoading = document.getElementById('weatherLoading');
+  const weatherContent = document.getElementById('weatherContent');
+  const weatherIcon = document.getElementById('weatherIcon');
+  const weatherTemp = document.getElementById('weatherTemp');
+  const weatherCondition = document.getElementById('weatherCondition');
+  const weatherHumidity = document.getElementById('weatherHumidity');
+  const weatherWind = document.getElementById('weatherWind');
+  const weatherRain = document.getElementById('weatherRain');
+  const weatherWarning = document.getElementById('weatherWarning');
+  const weatherWarningText = document.getElementById('weatherWarningText');
+  const weatherFallbackNote = document.getElementById('weatherFallbackNote');
+  const weatherLiveTag = document.getElementById('weatherLiveTag');
+
+  const heroWeatherTemp = document.getElementById('heroWeatherTemp');
+  const heroWeatherHumidity = document.getElementById('heroWeatherHumidity');
+  const heroWeatherCondition = document.getElementById('heroWeatherCondition');
+
+  const fallbackWeather = {
+    current: {
+      temp_c: 30,
+      humidity: 78,
+      wind_kph: 13,
+      condition: { text: 'আংশিক মেঘলা', code: 116 }
+    },
+    forecast: {
+      forecastday: [
+        {
+          day: {
+            daily_chance_of_rain: 68,
+            condition: { text: 'আংশিক মেঘলা' }
+          }
+        }
+      ]
+    }
+  };
+
+  const getWeatherIcon = (code, isDay = true) => {
+    const dayIconMap = {
+      1000: '☀️',
+      1003: '⛅',
+      1006: '☁️',
+      1009: '☁️',
+      1030: '🌫️',
+      1063: '🌦️',
+      1183: '🌦️',
+      1189: '🌧️',
+      1195: '🌧️',
+      1201: '🌧️',
+      1204: '🌧️',
+      1210: '🌧️',
+      1213: '🌧️',
+      1219: '🌧️',
+      1222: '🌧️',
+      1225: '🌧️',
+      1237: '🌧️',
+      1240: '🌧️',
+      1243: '🌧️',
+      1246: '⛈️',
+      1255: '🌧️',
+      1258: '🌧️',
+      1261: '🌧️',
+      1273: '⛈️',
+      1276: '⛈️',
+      1279: '⛈️',
+      1282: '⛈️'
+    };
+
+    const nightIconMap = {
+      1000: '🌙',
+      1003: '🌤️',
+      1006: '☁️',
+      1009: '☁️',
+      1030: '🌫️',
+      1063: '🌦️',
+      1183: '🌦️',
+      1189: '🌧️',
+      1195: '🌧️',
+      1201: '🌧️',
+      1237: '🌧️',
+      1240: '🌧️',
+      1243: '🌧️',
+      1246: '⛈️'
+    };
+
+    const iconMap = isDay ? dayIconMap : nightIconMap;
+    return iconMap[code] || '🌤️';
+  };
+
+  const setWeatherLoadingState = () => {
+    weatherLoading?.classList.remove('hidden');
+    weatherContent?.classList.add('hidden');
+    if (weatherLiveTag) weatherLiveTag.textContent = 'Loading';
+  };
+
+  const applyWeatherData = (weatherData, isFallback = false) => {
+    const temp = Math.round(Number(weatherData?.main?.temp ?? 0));
+    const humidity = Math.round(Number(weatherData?.main?.humidity ?? 0));
+    const wind = Math.round(Number((weatherData?.wind?.speed ?? 0) * 3.6));
+    const conditionText = weatherData?.weather?.[0]?.description || 'আবহাওয়া';
+    const conditionMain = weatherData?.weather?.[0]?.main || 'Clear';
+    const rainChance = (() => {
+      const cloudCoverage = Number(weatherData?.clouds?.all ?? 0);
+      const weatherGroup = ['Rain', 'Drizzle', 'Thunderstorm'];
+
+      if (weatherGroup.includes(conditionMain)) {
+        return 75;
+      }
+
+      return Math.min(Math.round(cloudCoverage * 0.8), 100);
+    })();
+
+    const conditionCode = (() => {
+      const mapped = {
+        Clear: 1000,
+        Clouds: 1003,
+        Rain: 1189,
+        Drizzle: 1183,
+        Thunderstorm: 1273,
+        Snow: 1219,
+        Mist: 1030,
+        Fog: 1030,
+        Haze: 1030,
+        Smoke: 1030,
+        Dust: 1030,
+        Sand: 1030,
+        Ash: 1030,
+        Squall: 1273,
+        Tornado: 1273
+      };
+      return mapped[conditionMain] || 1003;
+    })();
+
+    const displayCondition = conditionText
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    if (weatherIcon) weatherIcon.textContent = getWeatherIcon(conditionCode, true);
+    if (weatherTemp) weatherTemp.textContent = `${temp}°C`;
+    if (weatherCondition) weatherCondition.textContent = displayCondition;
+    if (weatherHumidity) weatherHumidity.textContent = `${humidity}%`;
+    if (weatherWind) weatherWind.textContent = `${wind} km/h`;
+    if (weatherRain) weatherRain.textContent = `${rainChance}%`;
+
+    if (heroWeatherTemp) heroWeatherTemp.textContent = `${temp}°C`;
+    if (heroWeatherHumidity) heroWeatherHumidity.textContent = `${humidity}%`;
+    if (heroWeatherCondition) heroWeatherCondition.textContent = displayCondition;
+
+    if (weatherWarning && weatherWarningText) {
+      const shouldWarn = rainChance > 60 || temp > 35;
+
+      weatherWarning.classList.toggle('warning', shouldWarn);
+      weatherWarning.classList.toggle('safe', !shouldWarn);
+
+      if (shouldWarn) {
+        weatherWarningText.textContent = '⚠️ সতর্কতা: আগামী ২৪ ঘণ্টায় বৃষ্টির সম্ভাবনা রয়েছে, কৃষিপণ্য ও পান বরজ সুরক্ষায় সতর্ক থাকুন।';
+      } else {
+        weatherWarningText.textContent = '✅ আবহাওয়া generally suitable for farming activities; keep irrigation and crop protection plans aligned with local conditions.';
+      }
+    }
+
+    if (weatherContent) weatherContent.classList.remove('hidden');
+    if (weatherLoading) weatherLoading.classList.add('hidden');
+    if (weatherLiveTag) weatherLiveTag.textContent = isFallback ? 'Fallback' : 'Live';
+
+    if (weatherFallbackNote) {
+      weatherFallbackNote.textContent = isFallback
+        ? 'API লোড ব্যর্থ হলে ডিফল্ট ডাটা দেখানো হচ্ছে। আপনার ফ্রি API key বসালে লাইভ আবহাওয়া চালু হবে.'
+        : 'লাইভ আবহাওয়া আপডেট হচ্ছে।';
+    }
+  };
+
+  const fetchWeather = async () => {
+    setWeatherLoadingState();
+
+    const weatherApiKey = '6f6ba5e16b95a748b755606681572179';
+    const cityQuery = 'Lohagara,BD';
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityQuery)}&units=metric&appid=${weatherApiKey}`;
+
+    try {
+      const response = await fetch(weatherUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Weather API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data || !data.main) {
+        throw new Error('Invalid weather response');
+      }
+
+      applyWeatherData(data, false);
+    } catch (error) {
+      console.warn('Weather fetch failed. Using fallback mock data.', error);
+      applyWeatherData(fallbackWeather, true);
+    }
+  };
+
+  fetchWeather();
+
   const tabButtons = document.querySelectorAll('.tab-button');
   const tabInputs = document.querySelectorAll('input[name="healthcare-tab"]');
 
@@ -838,21 +1044,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderOxygenInventory();
 
-  const marketPriceData = [
-    { name: 'পান পাতা', unit: '১০০টি', price: '৳ ৫৮০', trend: 'up', category: 'hill', market: 'লোহাগাড়া বাজার' },
-    { name: 'আম', unit: 'কেজি', price: '৳ ৪৮', trend: 'up', category: 'fruit', market: 'পদুয়া বাজার' },
-    { name: 'লেবু', unit: 'কেজি', price: '৳ ৬২', trend: 'down', category: 'fruit', market: 'লোহাগাড়া বাজার' },
-    { name: 'শাকসবজি', unit: 'কেজি', price: '৳ ৩০', trend: 'flat', category: 'market', market: 'বড়হাতিয়া বাজার' },
-    { name: 'বীজ', unit: 'কেজি', price: '৳ ১৮৫', trend: 'up', category: 'seed', market: 'উপজেলা কৃষি অফিস' },
-    { name: 'সার', unit: 'ব্যাগ', price: '৳ ৮৫০', trend: 'flat', category: 'seed', market: 'লোহাগাড়া বাজার' },
-    { name: 'আলু', unit: 'কেজি', price: '৳ ২৮', trend: 'down', category: 'market', market: 'চুনতি বাজার' },
-    { name: 'কুমড়া', unit: 'কেজি', price: '৳ ৩৬', trend: 'up', category: 'hill', market: 'লোহাগাড়া বাজার' }
+  const baseWholesaleData = [
+    { name: 'পেঁয়াজ', unit: 'কেজি', category: 'market', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 26, transportAdjustment: 3, variableRate: 0.04 },
+    { name: 'আলু', unit: 'কেজি', category: 'market', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 22, transportAdjustment: 2.5, variableRate: 0.035 },
+    { name: 'চাল', unit: 'কেজি', category: 'rice', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 34, transportAdjustment: 4, variableRate: 0.05 },
+    { name: 'মসুর ডাল', unit: 'কেজি', category: 'rice', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 72, transportAdjustment: 5, variableRate: 0.06 },
+    { name: 'পান পাতা', unit: '১০০টি', category: 'hill', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 520, transportAdjustment: 18, variableRate: 0.05 },
+    { name: 'লেবু', unit: 'কেজি', category: 'fruit', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 60, transportAdjustment: 4, variableRate: 0.05 },
+    { name: 'আম', unit: 'কেজি', category: 'fruit', baseMarket: 'চট্টগ্রাম/ঢাকা wholesales', basePrice: 48, transportAdjustment: 4, variableRate: 0.04 },
+    { name: 'শাকসবজি', unit: 'কেজি', category: 'market', baseMarket: 'লোহাগাড়া বাজার', basePrice: 32, transportAdjustment: 2.5, variableRate: 0.03 }
   ];
+
+  const localMarketSettings = {
+    'Lohagara Bazar': { demandBoost: 0.02, handling: 2.5 },
+    'Padua Bazar': { demandBoost: 0.015, handling: 2.2 },
+    default: { demandBoost: 0.015, handling: 2 }
+  };
+
+  const estimateLocalPrice = (item, marketName = 'Lohagara Bazar') => {
+    const settings = localMarketSettings[marketName] || localMarketSettings.default;
+    const estimated = item.basePrice + item.transportAdjustment + settings.handling + (item.basePrice * item.variableRate) + (item.basePrice * settings.demandBoost);
+    return Number(estimated.toFixed(2));
+  };
+
+  const getTrendBadge = (type) => {
+    if (type === 'up') return { label: '↑ Up', className: 'trend-up' };
+    if (type === 'down') return { label: '↓ Down', className: 'trend-down' };
+    return { label: '→ Flat', className: 'trend-flat' };
+  };
+
+  const buildDynamicMarketData = () => {
+    const now = Date.now();
+
+    return baseWholesaleData.map((item, index) => {
+      const marketName = index % 2 === 0 ? 'Lohagara Bazar' : 'Padua Bazar';
+      const pulse = 1 + (Math.sin(now / 90000 + index) * 0.025);
+      const dynamicLocalPrice = estimateLocalPrice(item, marketName) * pulse;
+      const trendType = dynamicLocalPrice > estimateLocalPrice(item, marketName) ? 'up' : dynamicLocalPrice < estimateLocalPrice(item, marketName) ? 'down' : 'flat';
+      const localValue = Number(dynamicLocalPrice.toFixed(2));
+
+      return {
+        ...item,
+        market: marketName,
+        refPrice: `৳ ${item.basePrice}`,
+        localPrice: `৳ ${localValue}`,
+        trend: trendType,
+        price: `৳ ${localValue}`
+      };
+    });
+  };
+
+  let marketPriceData = buildDynamicMarketData();
 
   const krishiFilterButtons = document.querySelectorAll('.krishi-filter');
   const krishiPriceSearch = document.getElementById('krishiPriceSearch');
   const marketPriceGrid = document.getElementById('marketPriceGrid');
   const refreshMarketBtn = document.getElementById('refreshMarketBtn');
+
+  const refreshMarketData = () => {
+    marketPriceData = buildDynamicMarketData();
+    renderMarketPrices();
+  };
 
   const renderMarketPrices = () => {
     if (!marketPriceGrid) return;
@@ -876,20 +1128,23 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    marketPriceGrid.innerHTML = filteredItems.map((item) => `
-      <div class="market-price-row">
-        <div class="market-price-row-inner">
-          <div class="price-product">
-            <strong>${item.name}</strong>
-            <small>${item.market}</small>
+    marketPriceGrid.innerHTML = filteredItems.map((item) => {
+      const trend = getTrendBadge(item.trend);
+      return `
+        <div class="market-price-row">
+          <div class="market-price-row-inner">
+            <div class="price-product">
+              <strong>${item.name}</strong>
+              <small>${item.market}</small>
+            </div>
+            <span class="price-unit">${item.unit}</span>
+            <span class="price-price">${item.refPrice}</span>
+            <span class="price-price price-local">${item.localPrice}</span>
+            <span class="price-trend ${trend.className}">${trend.label}</span>
           </div>
-          <span class="price-unit">${item.unit}</span>
-          <span class="price-price">${item.price}</span>
-          <span class="price-trend ${item.trend === 'up' ? 'trend-up' : item.trend === 'down' ? 'trend-down' : 'trend-flat'}">${item.trend === 'up' ? '↑ Up' : item.trend === 'down' ? '↓ Down' : '→ Flat'}</span>
-          <span class="price-market">${item.market}</span>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   };
 
   krishiFilterButtons.forEach((button) => {
@@ -902,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', () => {
   krishiPriceSearch?.addEventListener('input', renderMarketPrices);
 
   refreshMarketBtn?.addEventListener('click', () => {
-    renderMarketPrices();
+    refreshMarketData();
     refreshMarketBtn.textContent = 'Updated';
     setTimeout(() => {
       refreshMarketBtn.textContent = 'Refresh';
@@ -910,6 +1165,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderMarketPrices();
+  setInterval(refreshMarketData, 15000);
 
   const bloodDonorPool = [
     { name: 'মোঃ রাকিব', bloodGroup: 'A+', union: '৬নং লোহাগাড়া', lastDonated: '২০২৬-০১-১৫', phone: '+8801711223344', active: true },
