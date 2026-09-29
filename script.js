@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const marketFilters = document.querySelectorAll('.market-filter');
-  const marketCards = document.querySelectorAll('.product-card');
+  const marketplaceGrid = document.querySelector('.marketplace-grid');
   const marketSearch = document.querySelector('.marketplace-search');
   const marketplaceEmpty = document.getElementById('marketplaceEmpty');
 
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchValue = (marketSearch?.value || '').trim().toLowerCase();
     let visibleCount = 0;
 
-    marketCards.forEach((card) => {
+    marketplaceGrid?.querySelectorAll('.product-card').forEach((card) => {
       const matchesCategory = selectedCategory === 'all' || card.dataset.category === selectedCategory;
       const searchText = (card.dataset.search || '').toLowerCase();
       const matchesSearch = !searchValue || searchText.includes(searchValue);
@@ -390,6 +390,283 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   marketSearch?.addEventListener('input', applyMarketplaceFilter);
+
+  const marketplaceModals = document.querySelectorAll('.marketplace-dialog');
+  const paymentModal = document.getElementById('marketplacePaymentModal');
+  const codModal = document.getElementById('marketplaceCodModal');
+  const addProductModal = document.getElementById('marketplaceAddModal');
+  const paymentTrxForm = document.getElementById('paymentTrxForm');
+  const codOrderForm = document.getElementById('codOrderForm');
+  const productForm = document.getElementById('marketplaceProductForm');
+  const productImageInput = document.getElementById('newProductImage');
+  const productImagePreview = document.getElementById('newProductImagePreview');
+  const productImagePreviewImg = document.getElementById('newProductImagePreviewImg');
+  let activeMarketplaceCard = null;
+  let focusedMarketplaceTrigger = null;
+  let productImageUrl = '';
+  let marketplaceToastTimer;
+
+  const categoryLabels = {
+    hill: 'হিল প্রোডাক্টস',
+    agri: 'কৃষি পণ্য',
+    craft: 'হ্যান্ডক্রাফ্ট',
+    food: 'লোকাল খাদ্য',
+    home: 'গৃহস্থালী'
+  };
+
+  const showMarketplaceToast = (message, tone = 'success') => {
+    const toast = document.getElementById('marketplaceToast');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.classList.toggle('error', tone === 'error');
+    toast.classList.add('show');
+    window.clearTimeout(marketplaceToastTimer);
+    marketplaceToastTimer = window.setTimeout(() => toast.classList.remove('show'), 3200);
+  };
+
+  const closeMarketplaceDialogs = () => {
+    marketplaceModals.forEach((modal) => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      modal.setAttribute('aria-hidden', 'true');
+    });
+    document.body.style.overflow = '';
+    focusedMarketplaceTrigger?.focus();
+  };
+
+  const openMarketplaceDialog = (modal, trigger) => {
+    if (!modal) return;
+    focusedMarketplaceTrigger = trigger || document.activeElement;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('input, textarea, select, button')?.focus();
+  };
+
+  const normalizeMerchantPhone = (value) => {
+    const digits = String(value || '').replace(/\D/g, '');
+    if (digits.startsWith('0')) return `88${digits}`;
+    return digits;
+  };
+
+  const readProductPhone = (card) => {
+    const callLink = card.querySelector('.call-btn');
+    return card.dataset.phone || callLink?.getAttribute('href')?.replace(/^tel:/, '') || '';
+  };
+
+  const addMarketplaceActionButtons = (card) => {
+    const actions = card.querySelector('.product-actions');
+    if (!actions || actions.querySelector('[data-marketplace-action="payment"]')) return;
+
+    const paymentButton = document.createElement('button');
+    paymentButton.type = 'button';
+    paymentButton.className = 'payment-info-btn';
+    paymentButton.dataset.marketplaceAction = 'payment';
+    paymentButton.textContent = 'bKash / Nagad তথ্য';
+
+    const codButton = document.createElement('button');
+    codButton.type = 'button';
+    codButton.className = 'cod-order-btn';
+    codButton.dataset.marketplaceAction = 'cod';
+    codButton.textContent = 'Cash on Delivery';
+
+    actions.append(paymentButton, codButton);
+  };
+
+  marketplaceGrid?.querySelectorAll('.product-card').forEach(addMarketplaceActionButtons);
+
+  document.getElementById('openProductModal')?.addEventListener('click', (event) => {
+    openMarketplaceDialog(addProductModal, event.currentTarget);
+  });
+
+  document.querySelectorAll('[data-close-marketplace-dialog]').forEach((button) => {
+    button.addEventListener('click', closeMarketplaceDialogs);
+  });
+
+  marketplaceModals.forEach((modal) => {
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeMarketplaceDialogs();
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.querySelector('.marketplace-dialog.flex')) {
+      closeMarketplaceDialogs();
+    }
+  });
+
+  marketplaceGrid?.addEventListener('click', (event) => {
+    const actionButton = event.target.closest('[data-marketplace-action]');
+    if (!actionButton) return;
+
+    const card = actionButton.closest('.product-card');
+    if (!card) return;
+    activeMarketplaceCard = card;
+
+    const title = card.querySelector('h3')?.textContent.trim() || 'পণ্য';
+    const seller = card.querySelector('.product-owner strong')?.textContent.trim() || 'স্থানীয় বিক্রেতা';
+
+    if (actionButton.dataset.marketplaceAction === 'payment') {
+      document.getElementById('paymentProductTitle').textContent = title;
+      document.getElementById('paymentProductSeller').textContent = seller;
+      document.getElementById('paymentBkashNumber').textContent = card.dataset.bkashNumber || 'বিক্রেতার কাছ থেকে নম্বর নিশ্চিত করুন';
+      document.getElementById('paymentNagadNumber').textContent = card.dataset.nagadNumber || 'বিক্রেতার কাছ থেকে নম্বর নিশ্চিত করুন';
+      document.getElementById('paymentTrxForm').reset();
+      openMarketplaceDialog(paymentModal, actionButton);
+      return;
+    }
+
+    document.getElementById('codProductTitle').textContent = title;
+    document.getElementById('codProductSeller').textContent = seller;
+    codOrderForm.reset();
+    openMarketplaceDialog(codModal, actionButton);
+  });
+
+  paymentTrxForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const trxId = document.getElementById('paymentTrxId').value.trim();
+    if (!trxId) return;
+
+    closeMarketplaceDialogs();
+    showMarketplaceToast('TrxID গ্রহণ করা হয়েছে। পেমেন্ট যাচাইয়ের জন্য সরাসরি বিক্রেতার সঙ্গে যোগাযোগ করুন।', 'success');
+  });
+
+  codOrderForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!activeMarketplaceCard) return;
+
+    const merchantPhone = normalizeMerchantPhone(readProductPhone(activeMarketplaceCard));
+    const productTitle = activeMarketplaceCard.querySelector('h3')?.textContent.trim() || 'পণ্য';
+    const formData = new FormData(codOrderForm);
+    const orderMessage = [
+      'Cash on Delivery অর্ডার অনুরোধ',
+      `পণ্য: ${productTitle}`,
+      `নাম: ${formData.get('customerName')}`,
+      `ফোন: ${formData.get('customerPhone')}`,
+      `ঠিকানা: ${formData.get('customerAddress')}`
+    ].join('\n');
+
+    closeMarketplaceDialogs();
+    if (merchantPhone) {
+      window.open(`https://wa.me/${merchantPhone}?text=${encodeURIComponent(orderMessage)}`, '_blank', 'noopener,noreferrer');
+      showMarketplaceToast('COD অনুরোধ WhatsApp-এ পাঠানোর জন্য প্রস্তুত হয়েছে। বিক্রেতার নিশ্চিতকরণ নিন।');
+    } else {
+      showMarketplaceToast('বিক্রেতার যোগাযোগ নম্বর পাওয়া যায়নি। পণ্য তালিকায় নম্বর যোগ করুন।', 'error');
+    }
+  });
+
+  productImageInput?.addEventListener('change', () => {
+    const imageFile = productImageInput.files?.[0];
+    if (productImageUrl) URL.revokeObjectURL(productImageUrl);
+    productImageUrl = '';
+
+    if (!imageFile) {
+      productImagePreview.classList.add('hidden');
+      productImagePreviewImg.removeAttribute('src');
+      return;
+    }
+
+    productImageUrl = URL.createObjectURL(imageFile);
+    productImagePreviewImg.src = productImageUrl;
+    productImagePreview.classList.remove('hidden');
+  });
+
+  const createMarketplaceProductCard = (product, imageUrl) => {
+    const card = document.createElement('article');
+    card.className = 'product-card';
+    card.dataset.category = product.category;
+    card.dataset.phone = product.phone;
+    card.dataset.bkashNumber = product.bkash;
+    card.dataset.nagadNumber = product.nagad;
+    card.dataset.search = `${product.title} ${product.description} ${product.seller} ${categoryLabels[product.category]}`.toLowerCase();
+
+    const imageWrap = document.createElement('div');
+    imageWrap.className = `product-image image-${product.category}`;
+    if (imageUrl) {
+      const image = document.createElement('img');
+      image.src = imageUrl;
+      image.alt = product.title;
+      image.loading = 'lazy';
+      imageWrap.appendChild(image);
+    } else {
+      const placeholder = document.createElement('span');
+      placeholder.textContent = '🛍️';
+      imageWrap.appendChild(placeholder);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'product-body';
+    const meta = document.createElement('div');
+    meta.className = 'product-meta';
+    const badge = document.createElement('span');
+    badge.className = `product-badge badge-${product.category}`;
+    badge.textContent = categoryLabels[product.category];
+    const price = document.createElement('span');
+    price.className = 'product-price';
+    price.textContent = `৳ ${Number(product.price).toLocaleString('bn-BD')}`;
+    meta.append(badge, price);
+
+    const title = document.createElement('h3');
+    title.textContent = product.title;
+    const description = document.createElement('p');
+    description.textContent = product.description;
+    const owner = document.createElement('div');
+    owner.className = 'product-owner';
+    const ownerName = document.createElement('strong');
+    ownerName.textContent = product.seller;
+    const area = document.createElement('span');
+    area.textContent = product.area || 'লোহাগাড়া';
+    owner.append(ownerName, area);
+
+    const actions = document.createElement('div');
+    actions.className = 'product-actions';
+    const phoneNumber = normalizeMerchantPhone(product.phone);
+    const callLink = document.createElement('a');
+    callLink.className = 'call-btn';
+    callLink.href = `tel:+${phoneNumber}`;
+    callLink.textContent = 'বিক্রেতাকে কল';
+    const whatsappLink = document.createElement('a');
+    whatsappLink.className = 'whatsapp-btn';
+    whatsappLink.href = `https://wa.me/${phoneNumber}`;
+    whatsappLink.target = '_blank';
+    whatsappLink.rel = 'noreferrer';
+    whatsappLink.textContent = 'WhatsApp-এ অর্ডার';
+    actions.append(callLink, whatsappLink);
+
+    body.append(meta, title, description, owner, actions);
+    card.append(imageWrap, body);
+    addMarketplaceActionButtons(card);
+    return card;
+  };
+
+  productForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(productForm);
+    const product = {
+      title: String(formData.get('title') || '').trim(),
+      price: Number(formData.get('price')),
+      category: String(formData.get('category') || 'agri'),
+      description: String(formData.get('description') || '').trim(),
+      seller: String(formData.get('seller') || '').trim(),
+      phone: String(formData.get('phone') || '').trim(),
+      area: String(formData.get('area') || '').trim(),
+      bkash: String(formData.get('bkash') || '').trim(),
+      nagad: String(formData.get('nagad') || '').trim()
+    };
+
+    const card = createMarketplaceProductCard(product, productImageUrl);
+    marketplaceGrid.prepend(card);
+    productForm.reset();
+    productImagePreview.classList.add('hidden');
+    productImagePreviewImg.removeAttribute('src');
+    productImageUrl = '';
+    closeMarketplaceDialogs();
+    applyMarketplaceFilter();
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showMarketplaceToast('নতুন পণ্যটি এই সেশনে তালিকাভুক্ত হয়েছে।');
+  });
 
   // --- Dynamic union loader ---
   const ambulanceGrid = document.querySelector('.ambulance-grid');

@@ -26,10 +26,11 @@
           <a href="#krishi-heading">কৃষি</a>
           <a href="#healthcare-heading">স্বাস্থ্য</a>
           <a href="#education-heading">শিক্ষা</a>
+          <a href="#events-heading">নোটিশ</a>
           <a href="#marketplace-heading">মার্কেট</a>
         </nav>
 
-        <a href="#openBloodRequestModal" class="nav-cta">জরুরি রক্ত</a>
+        <a href="#smart-blood-heading" class="nav-cta">জরুরি রক্ত</a>
       </header>
 
       <section class="hero-section" aria-label="Community overview">
@@ -105,6 +106,29 @@
           </div>
         </div>
       </section>
+
+      <nav class="community-shortcuts" aria-label="দ্রুত কমিউনিটি লিংক">
+        <a class="community-shortcut shortcut-emergency" href="#emergency-panel">
+          <span class="shortcut-icon" aria-hidden="true">🚨</span>
+          <span><strong>জরুরি সেবা</strong><small>হটলাইন ও সহায়তা</small></span>
+          <span class="shortcut-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="community-shortcut shortcut-blood" href="#smart-blood-heading">
+          <span class="shortcut-icon" aria-hidden="true">🩸</span>
+          <span><strong>রক্তদাতা</strong><small>জরুরি রক্ত নেটওয়ার্ক</small></span>
+          <span class="shortcut-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="community-shortcut shortcut-news" href="#events-heading">
+          <span class="shortcut-icon" aria-hidden="true">📢</span>
+          <span><strong>কমিউনিটি সংবাদ</strong><small>ইভেন্ট ও স্থানীয় নোটিশ</small></span>
+          <span class="shortcut-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="community-shortcut shortcut-market" href="#krishi-heading">
+          <span class="shortcut-icon" aria-hidden="true">📈</span>
+          <span><strong>বাজার আপডেট</strong><small>আজকের কৃষিপণ্যের দর</small></span>
+          <span class="shortcut-arrow" aria-hidden="true">↗</span>
+        </a>
+      </nav>
 
       <section class="emergency-panel" id="emergency-panel" aria-labelledby="emergency-heading">
         <div class="emergency-header">
@@ -1114,9 +1138,14 @@
 
       <section class="marketplace-section" aria-labelledby="marketplace-heading">
         <div class="marketplace-header">
-          <div class="marketplace-tag">🛍️ লোকাল মার্কেটপ্লেস</div>
-          <h2 id="marketplace-heading">লোহাগাড়া মার্কেটপ্লেস</h2>
-          <p>স্থানীয় উদ্যোক্তা, কৃষিজ পণ্য ও হিল-প্রোডাক্টসের বাজার</p>
+          <div class="marketplace-heading-topline">
+            <div>
+              <div class="marketplace-tag">🛍️ লোকাল মার্কেটপ্লেস</div>
+              <h2 id="marketplace-heading">লোহাগাড়া মার্কেটপ্লেস</h2>
+              <p>স্থানীয় উদ্যোক্তা, কৃষিজ পণ্য ও হিল-প্রোডাক্টসের বাজার</p>
+            </div>
+            <button type="button" id="openProductModal" class="marketplace-add-btn">+ পণ্য যোগ করুন</button>
+          </div>
         </div>
 
         <div class="marketplace-toolbar">
@@ -1138,7 +1167,7 @@
         <div class="marketplace-grid">
           <article class="product-card" data-category="hill" data-search="মিঠা কুমড়া পাহাড়ি ভেষজ hill product">
             <div class="product-image image-hill">
-              <span>🌿</span>
+              <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="সবুজ পাহাড়ি কৃষিজমি" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1152,15 +1181,15 @@
                 <span>লোহাগাড়া বাজার</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004001" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004001" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004001" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004001" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
 
           <article class="product-card" data-category="agri" data-search="ধান চাল বোরো কৃষি পণ্য">
             <div class="product-image image-agri">
-              <span>🌾</span>
+              <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="তাজা ধান ও চাল" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1174,15 +1203,15 @@
                 <span>৬নং লোহাগাড়া</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004002" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004002" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004002" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004002" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
 
           <article class="product-card" data-category="craft" data-search="বাঁশ মাটি শাল handicraft">
             <div class="product-image image-craft">
-              <span>🧺</span>
+              <img src="https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="হাতে তৈরি বাঁশের হস্তশিল্প" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1196,15 +1225,15 @@
                 <span>৪নং চরম্বা</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004003" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004003" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004003" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004003" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
 
           <article class="product-card" data-category="food" data-search="মধু গুড় ডালিম local food">
             <div class="product-image image-food">
-              <span>🍯</span>
+              <img src="https://images.unsplash.com/photo-1587049352851-8d4e89133924?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="স্থানীয় মধুর বোতল" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1218,15 +1247,15 @@
                 <span>বাজার এলাকা</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004004" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004004" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004004" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004004" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
 
           <article class="product-card" data-category="home" data-search="সেগুন কাঠ চা পাতা home goods">
             <div class="product-image image-home">
-              <span>🏡</span>
+              <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="কাঠের ঘর ও গৃহস্থালী সামগ্রী" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1240,15 +1269,15 @@
                 <span>১নং বড়হাতিয়া</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004005" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004005" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004005" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004005" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
 
           <article class="product-card" data-category="agri" data-search="টমেটো মরিচ শাক সবজি agriculture">
             <div class="product-image image-agri-two">
-              <span>🥬</span>
+              <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&amp;fit=crop&amp;w=720&amp;q=82" alt="তাজা সবুজ শাকসবজি" loading="lazy" />
             </div>
             <div class="product-body">
               <div class="product-meta">
@@ -1262,8 +1291,8 @@
                 <span>৭নং পুটিবিলা</span>
               </div>
               <div class="product-actions">
-                <a href="tel:+8801700004006" class="call-btn">কল করুন</a>
-                <a href="https://wa.me/8801700004006" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp</a>
+                <a href="tel:+8801700004006" class="call-btn">বিক্রেতাকে কল</a>
+                <a href="https://wa.me/8801700004006" target="_blank" rel="noreferrer" class="whatsapp-btn">WhatsApp-এ অর্ডার</a>
               </div>
             </div>
           </article>
@@ -1274,6 +1303,101 @@
           <span>অন্যান্য ক্যাটাগরি বা কীওয়ার্ড ব্যবহার করে আবার খুঁজুন।</span>
         </div>
       </section>
+
+      <div id="marketplacePaymentModal" class="marketplace-dialog hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="paymentModalHeading">
+        <section class="marketplace-dialog-panel" role="document">
+          <div class="marketplace-dialog-header">
+            <div>
+              <p class="marketplace-dialog-kicker">bKash · Nagad</p>
+              <h2 id="paymentModalHeading">পেমেন্ট তথ্য</h2>
+            </div>
+            <button type="button" class="marketplace-close-btn" data-close-marketplace-dialog aria-label="বন্ধ করুন">×</button>
+          </div>
+          <div class="marketplace-order-summary">
+            <strong id="paymentProductTitle">পণ্য</strong>
+            <span id="paymentProductSeller">বিক্রেতা</span>
+          </div>
+          <div class="payment-number-grid">
+            <div class="payment-number-card"><span>bKash Send Money</span><strong id="paymentBkashNumber">বিক্রেতার কাছ থেকে নম্বর নিশ্চিত করুন</strong></div>
+            <div class="payment-number-card"><span>Nagad Send Money</span><strong id="paymentNagadNumber">বিক্রেতার কাছ থেকে নম্বর নিশ্চিত করুন</strong></div>
+          </div>
+          <p class="marketplace-payment-warning">অর্ডার দেওয়ার আগে বিক্রেতার কাছ থেকে নম্বর ও মোট মূল্য নিশ্চিত করুন। এই পেজ কোনো পেমেন্ট গ্রহণ বা যাচাই করে না।</p>
+          <form id="paymentTrxForm" class="marketplace-dialog-form">
+            <label for="paymentTrxId">Transaction ID (TrxID)<input id="paymentTrxId" name="trxId" type="text" autocomplete="off" placeholder="পেমেন্টের TrxID লিখুন" required /></label>
+            <div class="marketplace-dialog-actions">
+              <button type="button" class="marketplace-secondary-btn" data-close-marketplace-dialog>বাতিল</button>
+              <button type="submit" class="marketplace-primary-btn">TrxID জমা দিন</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div id="marketplaceCodModal" class="marketplace-dialog hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="codModalHeading">
+        <section class="marketplace-dialog-panel" role="document">
+          <div class="marketplace-dialog-header">
+            <div>
+              <p class="marketplace-dialog-kicker">Cash on Delivery</p>
+              <h2 id="codModalHeading">ক্যাশ অন ডেলিভারি অর্ডার</h2>
+            </div>
+            <button type="button" class="marketplace-close-btn" data-close-marketplace-dialog aria-label="বন্ধ করুন">×</button>
+          </div>
+          <div class="marketplace-order-summary">
+            <strong id="codProductTitle">পণ্য</strong>
+            <span id="codProductSeller">বিক্রেতা</span>
+          </div>
+          <form id="codOrderForm" class="marketplace-dialog-form">
+            <label for="codCustomerName">আপনার নাম<input id="codCustomerName" name="customerName" type="text" autocomplete="name" required /></label>
+            <label for="codCustomerPhone">যোগাযোগ নম্বর<input id="codCustomerPhone" name="customerPhone" type="tel" autocomplete="tel" required /></label>
+            <label for="codCustomerAddress">ডেলিভারি ঠিকানা<textarea id="codCustomerAddress" name="customerAddress" rows="3" required></textarea></label>
+            <p class="marketplace-payment-warning">অর্ডারটি নিশ্চিত করতে বিক্রেতার সঙ্গে যোগাযোগ হবে। এই পেজে অর্ডার সার্ভারে জমা হয় না।</p>
+            <div class="marketplace-dialog-actions">
+              <button type="button" class="marketplace-secondary-btn" data-close-marketplace-dialog>বাতিল</button>
+              <button type="submit" class="marketplace-primary-btn">WhatsApp-এ COD অনুরোধ</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div id="marketplaceAddModal" class="marketplace-dialog hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="addProductHeading">
+        <section class="marketplace-dialog-panel marketplace-add-panel" role="document">
+          <div class="marketplace-dialog-header">
+            <div>
+              <p class="marketplace-dialog-kicker">Merchant listing</p>
+              <h2 id="addProductHeading">নতুন পণ্য তালিকাভুক্ত করুন</h2>
+            </div>
+            <button type="button" class="marketplace-close-btn" data-close-marketplace-dialog aria-label="বন্ধ করুন">×</button>
+          </div>
+          <form id="marketplaceProductForm" class="marketplace-dialog-form">
+            <div class="marketplace-form-grid">
+              <label for="newProductTitle">পণ্যের নাম<input id="newProductTitle" name="title" type="text" maxlength="90" required /></label>
+              <label for="newProductPrice">দাম (৳)<input id="newProductPrice" name="price" type="number" min="1" step="0.01" required /></label>
+              <label for="newProductCategory">ক্যাটাগরি
+                <select id="newProductCategory" name="category" required>
+                  <option value="hill">হিল প্রোডাক্টস</option>
+                  <option value="agri">কৃষি পণ্য</option>
+                  <option value="craft">হ্যান্ডক্রাফ্ট</option>
+                  <option value="food">লোকাল খাদ্য</option>
+                  <option value="home">গৃহস্থালী</option>
+                </select>
+              </label>
+              <label for="newProductSeller">বিক্রেতা / ব্যবসার নাম<input id="newProductSeller" name="seller" type="text" maxlength="70" required /></label>
+              <label for="newProductPhone">ফোন / WhatsApp নম্বর<input id="newProductPhone" name="phone" type="tel" placeholder="যেমন: 01XXXXXXXXX" required /></label>
+              <label for="newProductArea">এলাকা<input id="newProductArea" name="area" type="text" maxlength="70" placeholder="যেমন: পদুয়া" /></label>
+              <label for="newProductBkash">বিকাশ Send Money নম্বর <span class="field-optional">ঐচ্ছিক</span><input id="newProductBkash" name="bkash" type="tel" placeholder="বিকাশ নম্বর" /></label>
+              <label for="newProductNagad">নগদ Send Money নম্বর <span class="field-optional">ঐচ্ছিক</span><input id="newProductNagad" name="nagad" type="tel" placeholder="নগদ নম্বর" /></label>
+              <label class="marketplace-description-field" for="newProductDescription">সংক্ষিপ্ত বিবরণ<textarea id="newProductDescription" name="description" rows="3" maxlength="240" required></textarea></label>
+              <label class="marketplace-description-field" for="newProductImage">পণ্যের ছবি<input id="newProductImage" name="image" type="file" accept="image/*" class="marketplace-file-input" /><span class="field-help">ছবি যোগ করা ঐচ্ছিক; বাছাই করা ফাইল এই ব্রাউজার সেশনে শুধু প্রিভিউ হবে।</span></label>
+            </div>
+            <div id="newProductImagePreview" class="marketplace-image-preview hidden"><img id="newProductImagePreviewImg" alt="পণ্যের ছবি প্রিভিউ" /></div>
+            <div class="marketplace-dialog-actions">
+              <button type="button" class="marketplace-secondary-btn" data-close-marketplace-dialog>বাতিল</button>
+              <button type="submit" class="marketplace-primary-btn">পণ্য যোগ করুন</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <div id="marketplaceToast" class="marketplace-toast" role="status" aria-live="polite"></div>
 
       <section class="artisan-showcase-section" aria-labelledby="artisan-showcase-heading">
         <div class="artisan-showcase-header">

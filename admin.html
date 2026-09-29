@@ -164,6 +164,9 @@
           <button data-tab="blood" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
             <span class="inline-flex items-center gap-3"><span>🩸</span> রক্ত ও জরুরি সেবা</span>
           </button>
+          <button data-tab="settings" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>⚙️</span> সেটিংস</span>
+          </button>
 
           <div class="mt-8 border-t border-white/10 pt-4">
             <a href="index.html" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-100 transition hover:bg-red-500/20">
@@ -191,6 +194,7 @@
             <button data-tab="moderation" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🧾 মডারেশন কিউ</button>
             <button data-tab="market" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📈 বাজার দর কন্ট্রোল</button>
             <button data-tab="blood" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🩸 রক্ত ও জরুরি সেবা</button>
+            <button data-tab="settings" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">⚙️ সেটিংস</button>
           </nav>
         </div>
       </div>
@@ -458,6 +462,228 @@
                 <p class="mt-2 text-sm text-slate-500">ডিসপ্যাচ ও ভেরিফিকেশন বাকি আছে।</p>
               </div>
             </div>
+          </section>
+
+          <!-- Settings Tab -->
+          <section id="tab-settings" class="tab-panel hidden space-y-5" aria-labelledby="settingsHeading">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Platform Administration</div>
+                <h2 id="settingsHeading" class="mt-1 text-2xl font-black text-slate-800">সেটিংস</h2>
+                <p class="mt-1 text-sm text-slate-500">অ্যাডমিন অ্যাকাউন্ট, নোটিফিকেশন ও প্ল্যাটফর্ম কনফিগারেশন পরিচালনা করুন।</p>
+              </div>
+              <span class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Admin console
+              </span>
+            </div>
+
+            <div class="grid gap-5 xl:grid-cols-2">
+              <form id="settingsProfileForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
+                <div class="mb-5 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-lg font-black text-slate-800">প্রোফাইল তথ্য</h3>
+                    <p class="mt-1 text-sm text-slate-500">এই ব্রাউজারে প্রদর্শিত অ্যাডমিন পরিচিতি।</p>
+                  </div>
+                  <span class="rounded-2xl bg-emerald-100 p-2 text-xl" aria-hidden="true">👤</span>
+                </div>
+
+                <div class="space-y-4">
+                  <label class="block text-sm font-semibold text-slate-700" for="settingsAdminName">
+                    অ্যাডমিনের নাম
+                    <input id="settingsAdminName" name="adminName" type="text" autocomplete="name" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
+                  <label class="block text-sm font-semibold text-slate-700" for="settingsAdminEmail">
+                    ইমেইল ঠিকানা
+                    <input id="settingsAdminEmail" name="adminEmail" type="email" autocomplete="email" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
+                </div>
+
+                <div class="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <span class="text-xs text-slate-500">পরিবর্তনগুলো এই ব্রাউজারে সংরক্ষিত হবে।</span>
+                  <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20">প্রোফাইল সংরক্ষণ</button>
+                </div>
+              </form>
+
+              <form id="settingsPasswordForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
+                <div class="mb-5 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-lg font-black text-slate-800">পাসওয়ার্ড পরিবর্তন</h3>
+                    <p class="mt-1 text-sm text-slate-500">পাসওয়ার্ড আপডেটের জন্য Firebase Auth বা নিরাপদ ব্যাকএন্ড প্রয়োজন।</p>
+                  </div>
+                  <span class="rounded-2xl bg-amber-100 p-2 text-xl" aria-hidden="true">🔒</span>
+                </div>
+
+                <div class="space-y-3">
+                  <label class="block text-sm font-semibold text-slate-700" for="currentPassword">বর্তমান পাসওয়ার্ড
+                    <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block text-sm font-semibold text-slate-700" for="newPassword">নতুন পাসওয়ার্ড
+                      <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-sm font-semibold text-slate-700" for="confirmPassword">নিশ্চিত করুন
+                      <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                  </div>
+                </div>
+
+                <div class="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <span class="text-xs text-slate-500">এই ডেমো কোনো পাসওয়ার্ড সংরক্ষণ বা পরিবর্তন করে না।</span>
+                  <button type="submit" class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-emerald-700/10">পরিবর্তন যাচাই</button>
+                </div>
+              </form>
+            </div>
+
+            <form id="settingsPreferencesForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
+              <div class="mb-5">
+                <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Alerts &amp; Availability</div>
+                <h3 class="mt-1 text-lg font-black text-slate-800">নোটিফিকেশন ও প্ল্যাটফর্ম পছন্দ</h3>
+              </div>
+
+              <div class="mb-5 grid gap-3 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div class="flex items-start gap-3">
+                    <span class="rounded-xl bg-amber-100 p-2 text-lg" aria-hidden="true">🚨</span>
+                    <div><h4 class="font-bold text-slate-800">জরুরি সেবা অনুরোধ</h4><p class="mt-1 text-xs leading-5 text-slate-500">নতুন জরুরি সেবা জমা পড়লে</p></div>
+                  </div>
+                  <div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyEmergencyEmail">ইমেইল
+                      <input id="notifyEmergencyEmail" class="peer sr-only notification-toggle" type="checkbox" data-setting="emergencyEmail" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyEmergencyBrowser">ব্রাউজার
+                      <input id="notifyEmergencyBrowser" class="peer sr-only notification-toggle" type="checkbox" data-setting="emergencyBrowser" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div class="flex items-start gap-3">
+                    <span class="rounded-xl bg-rose-100 p-2 text-lg" aria-hidden="true">🩸</span>
+                    <div><h4 class="font-bold text-slate-800">রক্তদানের অ্যালার্ট</h4><p class="mt-1 text-xs leading-5 text-slate-500">নতুন রক্তের অনুরোধ বা ডোনার আপডেট</p></div>
+                  </div>
+                  <div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyBloodEmail">ইমেইল
+                      <input id="notifyBloodEmail" class="peer sr-only notification-toggle" type="checkbox" data-setting="bloodEmail" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyBloodBrowser">ব্রাউজার
+                      <input id="notifyBloodBrowser" class="peer sr-only notification-toggle" type="checkbox" data-setting="bloodBrowser" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div class="flex items-start gap-3">
+                    <span class="rounded-xl bg-sky-100 p-2 text-lg" aria-hidden="true">🛍️</span>
+                    <div><h4 class="font-bold text-slate-800">মার্কেটপ্লেস জমা</h4><p class="mt-1 text-xs leading-5 text-slate-500">নতুন পণ্য বা ব্যবসার তালিকা এলে</p></div>
+                  </div>
+                  <div class="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyMarketEmail">ইমেইল
+                      <input id="notifyMarketEmail" class="peer sr-only notification-toggle" type="checkbox" data-setting="marketEmail" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                    <label class="flex cursor-pointer items-center justify-between gap-2 text-xs font-semibold text-slate-600" for="notifyMarketBrowser">ব্রাউজার
+                      <input id="notifyMarketBrowser" class="peer sr-only notification-toggle" type="checkbox" data-setting="marketBrowser" />
+                      <span aria-hidden="true" class="relative h-6 w-11 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-700 after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="flex flex-col justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center">
+                  <div class="flex items-start gap-3">
+                    <span class="rounded-xl bg-amber-100 p-2 text-lg" aria-hidden="true">🛠️</span>
+                    <div><h4 class="font-bold text-slate-800">মেইনটেন্যান্স মোড</h4><p id="maintenanceStatus" class="mt-1 text-xs leading-5 text-slate-600">বন্ধ · শুধু এই ব্রাউজারে পছন্দটি সংরক্ষিত হবে।</p></div>
+                  </div>
+                  <label class="inline-flex cursor-pointer items-center gap-3 self-end text-sm font-bold text-slate-700 sm:self-auto" for="maintenanceMode">
+                    <span id="maintenanceToggleLabel">বন্ধ</span>
+                    <input id="maintenanceMode" class="peer sr-only" type="checkbox" />
+                    <span aria-hidden="true" class="relative h-7 w-12 rounded-full bg-slate-300 transition peer-checked:bg-amber-500 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-amber-700 after:absolute after:left-1 after:top-1 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <span class="text-xs text-slate-500">ইমেইল ও ব্রাউজার নোটিফিকেশন চালু করতে সার্ভার/ব্রাউজার ইন্টিগ্রেশন প্রয়োজন।</span>
+                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20">পছন্দ সংরক্ষণ</button>
+              </div>
+            </form>
+
+            <form id="settingsSystemForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
+              <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Integrations · Mock</div>
+                  <h3 class="mt-1 text-lg font-black text-slate-800">API ও সিস্টেম কনফিগারেশন</h3>
+                  <p class="mt-1 text-sm text-slate-500">ভবিষ্যৎ ব্যাকএন্ড সংযোগের জন্য প্লেসহোল্ডার। এই ফর্মে কোনো তথ্য পাঠানো বা সংরক্ষণ করা হয় না।</p>
+                </div>
+                <span class="w-fit rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-800">Mock mode</span>
+              </div>
+
+              <div class="grid gap-5 xl:grid-cols-2">
+                <fieldset class="min-w-0 space-y-3 rounded-2xl border border-slate-200 bg-white/70 p-4">
+                  <legend class="px-2 text-sm font-bold text-slate-800">Firebase Web App</legend>
+                  <label class="block text-xs font-semibold text-slate-600" for="settingsFirebaseApiKey">API Key
+                    <input id="settingsFirebaseApiKey" type="password" autocomplete="off" placeholder="Firebase API key" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsFirebaseProject">Project ID
+                      <input id="settingsFirebaseProject" type="text" autocomplete="off" placeholder="your-project-id" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsFirebaseAppId">App ID
+                      <input id="settingsFirebaseAppId" type="text" autocomplete="off" placeholder="1:...:web:..." class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsFirebaseAuthDomain">Auth domain
+                      <input id="settingsFirebaseAuthDomain" type="text" autocomplete="off" placeholder="your-project.firebaseapp.com" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsFirebaseStorageBucket">Storage bucket
+                      <input id="settingsFirebaseStorageBucket" type="text" autocomplete="off" placeholder="your-project.appspot.com" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-xs font-semibold text-slate-600 sm:col-span-2" for="settingsFirebaseSenderId">Messaging sender ID
+                      <input id="settingsFirebaseSenderId" type="text" autocomplete="off" placeholder="Messaging sender ID" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                  </div>
+                </fieldset>
+
+                <fieldset class="min-w-0 space-y-3 rounded-2xl border border-slate-200 bg-white/70 p-4">
+                  <legend class="px-2 text-sm font-bold text-slate-800">SMS Gateway</legend>
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsSmsProvider">Provider
+                      <input id="settingsSmsProvider" type="text" autocomplete="off" placeholder="Gateway provider" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-xs font-semibold text-slate-600" for="settingsSmsSender">Sender ID
+                      <input id="settingsSmsSender" type="text" autocomplete="off" placeholder="LOHAGARA" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                  </div>
+                  <label class="block text-xs font-semibold text-slate-600" for="settingsSmsToken">Gateway credential
+                    <input id="settingsSmsToken" type="password" autocomplete="off" placeholder="Credential / access token" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
+                </fieldset>
+
+                <label class="block text-xs font-semibold text-slate-600 xl:col-span-2" for="settingsCustomDomain">Custom domain
+                  <input id="settingsCustomDomain" type="text" autocomplete="url" placeholder="hub.example.com" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                </label>
+              </div>
+
+              <div class="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <span class="text-xs text-amber-800">Production secrets কখনো ব্রাউজার স্টোরেজে রাখবেন না।</span>
+                <button type="submit" class="inline-flex items-center justify-center rounded-xl border border-emerald-800 bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 transition hover:bg-emerald-50 focus:outline-none focus:ring-4 focus:ring-emerald-700/10">কনফিগারেশন যাচাই</button>
+              </div>
+            </form>
+
+            <section class="glass panel-glow rounded-3xl p-5 md:p-6" aria-labelledby="dataToolsHeading">
+              <div class="mb-5">
+                <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Data &amp; Backup</div>
+                <h3 id="dataToolsHeading" class="mt-1 text-lg font-black text-slate-800">ডেটা ব্যবস্থাপনা ও ব্যাকআপ</h3>
+                <p class="mt-1 text-sm text-slate-500">ড্যাশবোর্ডের বর্তমান ডেমো ডেটা ফাইলে রপ্তানি করুন বা এই ডিভাইসে সংরক্ষিত অ্যাডমিন পছন্দ মুছুন।</p>
+              </div>
+              <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <button id="exportJsonBtn" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20"><span aria-hidden="true">↓</span> JSON রপ্তানি</button>
+                <button id="exportCsvBtn" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-800 bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 transition hover:bg-emerald-50 focus:outline-none focus:ring-4 focus:ring-emerald-700/10"><span aria-hidden="true">↓</span> CSV রপ্তানি</button>
+                <button id="clearCacheBtn" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-4 focus:ring-red-700/10"><span aria-hidden="true">⌫</span> লোকাল ক্যাশ পরিষ্কার</button>
+              </div>
+            </section>
           </section>
         </main>
       </div>
@@ -743,6 +969,185 @@
         { product: 'পেঁয়াজ', market: 'পদুয়া', retail: 37, wholesale: 25, trend: 'Down' },
         { product: 'চাল', market: 'পদুয়া', retail: 50, wholesale: 41, trend: 'Up' }
       ];
+
+      const settingsStorageKey = 'lohagara-admin-settings';
+      const defaultAdminSettings = {
+        profile: { name: 'Admin Manager', email: 'superadmin@lohagara.org' },
+        notifications: {
+          emergencyEmail: true,
+          emergencyBrowser: true,
+          bloodEmail: true,
+          bloodBrowser: true,
+          marketEmail: true,
+          marketBrowser: false
+        },
+        maintenanceMode: false
+      };
+
+      function loadAdminSettings() {
+        try {
+          const storedSettings = JSON.parse(localStorage.getItem(settingsStorageKey) || '{}');
+          return {
+            ...defaultAdminSettings,
+            ...storedSettings,
+            profile: { ...defaultAdminSettings.profile, ...storedSettings.profile },
+            notifications: { ...defaultAdminSettings.notifications, ...storedSettings.notifications }
+          };
+        } catch {
+          return {
+            ...defaultAdminSettings,
+            profile: { ...defaultAdminSettings.profile },
+            notifications: { ...defaultAdminSettings.notifications }
+          };
+        }
+      }
+
+      const adminSettings = loadAdminSettings();
+
+      function persistAdminSettings() {
+        try {
+          localStorage.setItem(settingsStorageKey, JSON.stringify(adminSettings));
+          return true;
+        } catch {
+          showToast('ব্রাউজার স্টোরেজে সংরক্ষণ করা যায়নি।', 'error');
+          return false;
+        }
+      }
+
+      function refreshSettingsForm() {
+        document.getElementById('settingsAdminName').value = adminSettings.profile.name;
+        document.getElementById('settingsAdminEmail').value = adminSettings.profile.email;
+        document.querySelectorAll('.notification-toggle').forEach((input) => {
+          input.checked = Boolean(adminSettings.notifications[input.dataset.setting]);
+        });
+        const maintenanceInput = document.getElementById('maintenanceMode');
+        maintenanceInput.checked = adminSettings.maintenanceMode;
+        document.getElementById('maintenanceToggleLabel').textContent = adminSettings.maintenanceMode ? 'চালু' : 'বন্ধ';
+        document.getElementById('maintenanceStatus').textContent = adminSettings.maintenanceMode
+          ? 'চালু · শুধু এই ব্রাউজারে পছন্দটি সংরক্ষিত হবে।'
+          : 'বন্ধ · শুধু এই ব্রাউজারে পছন্দটি সংরক্ষিত হবে।';
+      }
+
+      refreshSettingsForm();
+
+      document.getElementById('settingsProfileForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        adminSettings.profile.name = document.getElementById('settingsAdminName').value.trim();
+        adminSettings.profile.email = document.getElementById('settingsAdminEmail').value.trim();
+
+        if (!persistAdminSettings()) return;
+
+        userDisplayName.textContent = adminSettings.profile.name;
+        userEmail.textContent = adminSettings.profile.email;
+        userInitials.textContent = adminSettings.profile.name
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0].toUpperCase())
+          .join('');
+        showToast('প্রোফাইল পছন্দ এই ব্রাউজারে সংরক্ষিত হয়েছে।', 'success');
+      });
+
+      document.getElementById('settingsPasswordForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newPassword = document.getElementById('newPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+
+        if (newPassword.value !== confirmPassword.value) {
+          showToast('নতুন পাসওয়ার্ড দুটি মিলছে না।', 'error');
+          confirmPassword.focus();
+          return;
+        }
+
+        event.currentTarget.reset();
+        showToast('পাসওয়ার্ড পরিবর্তনে নিরাপদ ব্যাকএন্ড প্রয়োজন; কোনো পাসওয়ার্ড সংরক্ষণ করা হয়নি।', 'warning');
+      });
+
+      document.getElementById('maintenanceMode').addEventListener('change', (event) => {
+        document.getElementById('maintenanceToggleLabel').textContent = event.target.checked ? 'চালু' : 'বন্ধ';
+        document.getElementById('maintenanceStatus').textContent = event.target.checked
+          ? 'চালু · সংরক্ষণ করলে এই ব্রাউজারে পছন্দটি থাকবে; সাইট বন্ধ হবে না।'
+          : 'বন্ধ · শুধু এই ব্রাউজারে পছন্দটি সংরক্ষিত হবে।';
+      });
+
+      document.getElementById('settingsPreferencesForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        document.querySelectorAll('.notification-toggle').forEach((input) => {
+          adminSettings.notifications[input.dataset.setting] = input.checked;
+        });
+        adminSettings.maintenanceMode = document.getElementById('maintenanceMode').checked;
+
+        if (persistAdminSettings()) {
+          document.getElementById('maintenanceStatus').textContent = adminSettings.maintenanceMode
+            ? 'চালু · পছন্দটি এই ব্রাউজারে সংরক্ষিত। সাইট বন্ধ করতে ব্যাকএন্ড ইন্টিগ্রেশন প্রয়োজন।'
+            : 'বন্ধ · পছন্দটি এই ব্রাউজারে সংরক্ষিত।';
+          showToast('নোটিফিকেশন পছন্দ সংরক্ষিত হয়েছে।', 'success');
+        }
+      });
+
+      document.getElementById('settingsSystemForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        document.getElementById('settingsFirebaseApiKey').value = '';
+        document.getElementById('settingsSmsToken').value = '';
+        showToast('ডেমো ফর্ম যাচাই হয়েছে; কনফিগারেশন পাঠানো বা সংরক্ষণ করা হয়নি।', 'warning');
+      });
+
+      function downloadFile(filename, content, mimeType) {
+        const downloadUrl = URL.createObjectURL(new Blob([content], { type: mimeType }));
+        const downloadLink = document.createElement('a');
+        downloadLink.href = downloadUrl;
+        downloadLink.download = filename;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+      }
+
+      document.getElementById('exportJsonBtn').addEventListener('click', () => {
+        const exportData = {
+          exportedAt: new Date().toISOString(),
+          moderationQueue: moderationData,
+          marketPrices: marketData,
+          adminPreferences: adminSettings
+        };
+        downloadFile('lohagara-hub-backup.json', JSON.stringify(exportData, null, 2), 'application/json');
+        showToast('JSON ব্যাকআপ ডাউনলোড শুরু হয়েছে।', 'success');
+      });
+
+      document.getElementById('exportCsvBtn').addEventListener('click', () => {
+        const csvRows = [
+          ['section', 'title_or_product', 'author_or_market', 'area', 'details'],
+          ...moderationData.map((item) => ['moderation', item.title, item.author, item.area, `${item.type}: ${item.description}`]),
+          ...marketData.map((item) => ['market', item.product, item.market, '', `retail=${item.retail}; wholesale=${item.wholesale}; trend=${item.trend}`])
+        ];
+        const csvContent = `\ufeff${csvRows.map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\r\n')}`;
+        downloadFile('lohagara-hub-backup.csv', csvContent, 'text/csv;charset=utf-8');
+        showToast('CSV ব্যাকআপ ডাউনলোড শুরু হয়েছে।', 'success');
+      });
+
+      document.getElementById('clearCacheBtn').addEventListener('click', () => {
+        openConfirmModal(
+          'লোকাল পছন্দ মুছবেন?',
+          'শুধু এই ড্যাশবোর্ডের সংরক্ষিত প্রোফাইল ও নোটিফিকেশন পছন্দ মুছে ডিফল্টে ফেরানো হবে।',
+          () => {
+            try {
+              localStorage.removeItem(settingsStorageKey);
+              Object.assign(adminSettings, {
+                ...defaultAdminSettings,
+                profile: { ...defaultAdminSettings.profile },
+                notifications: { ...defaultAdminSettings.notifications }
+              });
+              refreshSettingsForm();
+              userDisplayName.textContent = defaultAdminSettings.profile.name;
+              userEmail.textContent = defaultAdminSettings.profile.email;
+              userInitials.textContent = 'AM';
+              showToast('এই ড্যাশবোর্ডের লোকাল পছন্দ পরিষ্কার হয়েছে।', 'success');
+            } catch {
+              showToast('লোকাল পছন্দ পরিষ্কার করা যায়নি।', 'error');
+            }
+          }
+        );
+      });
 
       function switchTab(tabName) {
         tabButtons.forEach((button) => {

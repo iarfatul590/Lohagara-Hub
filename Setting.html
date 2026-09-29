@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="bn">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#064e3b" />
+		<title>সেটিংস | লোহাগাড়া হাব অ্যাডমিন</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+			body { font-family: 'Hind Siliguri', 'Segoe UI', sans-serif; }
+			.settings-switch:checked + span { background-color: #059669; }
+			.settings-switch:checked + span::after { transform: translateX(1.25rem); }
+			.settings-switch:focus-visible + span { outline: 3px solid rgba(5, 150, 105, 0.35); outline-offset: 2px; }
+			.toast-in { animation: toast-in 180ms ease-out both; }
+			@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+		</style>
+	</head>
+	<body class="min-h-screen bg-slate-100 text-slate-800 antialiased">
+		<div class="flex min-h-screen">
+			<aside class="hidden w-72 shrink-0 flex-col bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white md:flex">
+				<div class="flex items-center gap-3 border-b border-white/10 px-5 py-5">
+					<div class="grid h-11 w-11 place-items-center rounded-2xl bg-white/10 text-2xl" aria-hidden="true">🛡️</div>
+					<div>
+						<div class="text-lg font-bold">লোহাগাড়া</div>
+						<div class="text-xs text-emerald-100/70">Admin Console</div>
+					</div>
+				</div>
+
+				<nav class="flex-1 space-y-2 p-4" aria-label="প্রধান নেভিগেশন">
+					<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-emerald-50/90 transition hover:bg-white/10"><span aria-hidden="true">📊</span> ড্যাশবোর্ড ওভারভিউ</a>
+					<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-emerald-50/90 transition hover:bg-white/10"><span aria-hidden="true">🧾</span> মডারেশন কিউ</a>
+					<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-emerald-50/90 transition hover:bg-white/10"><span aria-hidden="true">📈</span> বাজার দর কন্ট্রোল</a>
+					<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-emerald-50/90 transition hover:bg-white/10"><span aria-hidden="true">🩸</span> রক্ত ও জরুরি সেবা</a>
+					<a href="Setting.html" aria-current="page" class="flex items-center gap-3 rounded-2xl border border-emerald-300/40 bg-white/10 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-950/20"><span aria-hidden="true">⚙️</span> সেটিংস<span class="ml-auto h-2 w-2 rounded-full bg-emerald-300"></span></a>
+
+					<div class="mt-8 border-t border-white/10 pt-4">
+						<a href="index.html" class="flex items-center justify-center gap-2 rounded-2xl border border-red-300/30 bg-red-400/10 px-4 py-3 text-sm font-medium text-red-100 transition hover:bg-red-400/20">↩️ মেইন সাইটে ফিরুন</a>
+					</div>
+				</nav>
+
+				<div class="border-t border-white/10 px-5 py-4 text-xs text-emerald-100/60">LOHAGARA HUB · ADMIN</div>
+			</aside>
+
+			<div id="mobileOverlay" class="fixed inset-0 z-40 hidden bg-slate-950/60 md:hidden" aria-hidden="true">
+				<aside id="mobileSidebar" class="h-full w-[min(18rem,85vw)] bg-gradient-to-b from-emerald-950 to-emerald-900 p-4 text-white" aria-label="মোবাইল নেভিগেশন">
+					<div class="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+						<div class="flex items-center gap-3">
+							<div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/10 text-xl" aria-hidden="true">🛡️</div>
+							<div><div class="font-bold">লোহাগাড়া</div><div class="text-xs text-emerald-100/70">Admin Console</div></div>
+						</div>
+						<button id="closeMobileMenu" type="button" class="grid h-9 w-9 place-items-center rounded-xl border border-white/10 text-white transition hover:bg-white/10" aria-label="মেনু বন্ধ করুন">✕</button>
+					</div>
+					<nav class="space-y-2" aria-label="মোবাইল প্রধান নেভিগেশন">
+						<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm text-emerald-50/90 hover:bg-white/10">📊 ড্যাশবোর্ড ওভারভিউ</a>
+						<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm text-emerald-50/90 hover:bg-white/10">🧾 মডারেশন কিউ</a>
+						<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm text-emerald-50/90 hover:bg-white/10">📈 বাজার দর কন্ট্রোল</a>
+						<a href="admin.html" class="flex items-center gap-3 rounded-2xl border border-white/10 px-4 py-3 text-sm text-emerald-50/90 hover:bg-white/10">🩸 রক্ত ও জরুরি সেবা</a>
+						<a href="Setting.html" aria-current="page" class="flex items-center gap-3 rounded-2xl border border-emerald-300/40 bg-white/10 px-4 py-3 text-sm font-semibold text-white">⚙️ সেটিংস</a>
+					</nav>
+				</aside>
+			</div>
+
+			<div class="flex min-w-0 flex-1 flex-col">
+				<header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
+					<div class="flex min-h-12 items-center justify-between gap-3">
+						<div class="flex min-w-0 items-center gap-3">
+							<button id="openMobileMenu" type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-lg text-slate-700 shadow-sm md:hidden" aria-label="মেনু খুলুন">☰</button>
+							<div class="min-w-0">
+								<div class="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700 sm:block">Community Control</div>
+								<h1 class="truncate text-lg font-extrabold text-slate-900 sm:text-xl">অ্যাডমিন কন্ট্রোল সেন্টার</h1>
+							</div>
+						</div>
+
+						<div class="flex shrink-0 items-center gap-2 sm:gap-3">
+							<label class="hidden h-10 items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 sm:flex" for="settingsSearch">
+								<span class="text-slate-400" aria-hidden="true">⌕</span>
+								<input id="settingsSearch" type="search" placeholder="সেটিংস খুঁজুন..." class="w-36 bg-transparent text-sm outline-none placeholder:text-slate-400 lg:w-48" />
+							</label>
+							<button type="button" class="relative grid h-10 w-10 place-items-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 transition hover:border-emerald-300 hover:text-emerald-800" aria-label="৩টি অপঠিত নোটিফিকেশন">
+								<span aria-hidden="true">🔔</span><span class="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">3</span>
+							</button>
+							<div class="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 py-1 pl-1 pr-2.5 sm:gap-3 sm:pr-3">
+								<span id="adminInitials" class="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 text-xs font-bold text-white">AM</span>
+								<span class="hidden min-w-0 sm:block"><span id="headerAdminName" class="block max-w-32 truncate text-xs font-bold text-slate-800">Admin Manager</span><span id="headerAdminEmail" class="block max-w-36 truncate text-[10px] text-slate-500">superadmin@lohagara.org</span></span>
+							</div>
+						</div>
+					</div>
+				</header>
+
+				<main class="flex-1 p-4 sm:p-6 lg:p-8">
+					<div class="mx-auto max-w-6xl space-y-5">
+						<div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+							<div>
+								<div class="text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-700">Platform Administration</div>
+								<h2 class="mt-1 text-2xl font-black text-slate-900">সেটিংস</h2>
+								<p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">অ্যাডমিন প্রোফাইল, নিরাপত্তা, নোটিফিকেশন ও সাইট পছন্দ এক জায়গা থেকে পরিচালনা করুন।</p>
+							</div>
+							<span class="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> Admin settings</span>
+						</div>
+
+						<div id="noSearchResults" class="hidden rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-500">কোনো সেটিংস মেলেনি।</div>
+
+						<div class="grid gap-5 xl:grid-cols-2">
+							<section class="settings-card rounded-3xl border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)] sm:p-6" data-searchable>
+								<div class="mb-5 flex items-start justify-between gap-3">
+									<div><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Account</p><h3 class="mt-1 text-lg font-extrabold text-slate-900">প্রোফাইল সেটিংস</h3><p class="mt-1 text-sm text-slate-500">অ্যাডমিনের প্রদর্শিত নাম ও যোগাযোগের ইমেইল।</p></div>
+									<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-50 text-lg" aria-hidden="true">👤</span>
+								</div>
+								<form id="profileForm" class="space-y-4">
+									<label for="adminName" class="block text-sm font-semibold text-slate-700">অ্যাডমিনের নাম<input id="adminName" name="adminName" type="text" autocomplete="name" required value="Admin Manager" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+									<label for="adminEmail" class="block text-sm font-semibold text-slate-700">ইমেইল ঠিকানা<input id="adminEmail" name="adminEmail" type="email" autocomplete="email" required value="superadmin@lohagara.org" class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+									<div class="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between"><span class="text-xs text-slate-500">প্রোফাইল এই ব্রাউজারে সংরক্ষিত হবে।</span><button type="submit" class="inline-flex items-center justify-center rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20">প্রোফাইল সংরক্ষণ</button></div>
+								</form>
+							</section>
+
+							<section class="settings-card rounded-3xl border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)] sm:p-6" data-searchable>
+								<div class="mb-5 flex items-start justify-between gap-3">
+									<div><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Security</p><h3 class="mt-1 text-lg font-extrabold text-slate-900">নিরাপত্তা</h3><p class="mt-1 text-sm text-slate-500">পাসওয়ার্ড পরিবর্তনের অনুরোধ যাচাই করুন।</p></div>
+									<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-lg" aria-hidden="true">🔒</span>
+								</div>
+								<form id="securityForm" class="space-y-3">
+									<label for="currentPassword" class="block text-sm font-semibold text-slate-700">বর্তমান পাসওয়ার্ড<input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+									<div class="grid gap-3 sm:grid-cols-2">
+										<label for="newPassword" class="block text-sm font-semibold text-slate-700">নতুন পাসওয়ার্ড<input id="newPassword" name="newPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+										<label for="confirmPassword" class="block text-sm font-semibold text-slate-700">নিশ্চিত করুন<input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10" /></label>
+									</div>
+									<div class="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between"><span class="text-xs leading-5 text-slate-500">পাসওয়ার্ড বদলাতে Firebase Auth বা নিরাপদ ব্যাকএন্ড লাগবে।</span><button type="submit" class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-emerald-700/10">আপডেট যাচাই</button></div>
+								</form>
+							</section>
+						</div>
+
+						<section class="settings-card rounded-3xl border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)] sm:p-6" data-searchable>
+							<div class="mb-5"><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Preferences</p><h3 class="mt-1 text-lg font-extrabold text-slate-900">প্ল্যাটফর্ম পছন্দ</h3><p class="mt-1 text-sm text-slate-500">অ্যালার্ট ও সাইটের উপলভ্যতার পছন্দ নির্ধারণ করুন।</p></div>
+							<form id="preferencesForm">
+								<div class="divide-y divide-slate-100">
+									<label for="emergencyAlerts" class="flex cursor-pointer items-center justify-between gap-4 py-4 first:pt-0"><span class="flex items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-rose-50 text-lg" aria-hidden="true">🚨</span><span><span class="block text-sm font-bold text-slate-800">Emergency Alerts</span><span class="mt-0.5 block text-xs leading-5 text-slate-500">জরুরি সেবার নতুন অনুরোধ এলে অ্যালার্ট পান।</span></span></span><input id="emergencyAlerts" class="settings-switch sr-only" type="checkbox" /><span aria-hidden="true" class="relative h-6 w-11 shrink-0 rounded-full bg-slate-300 transition after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition"></span></label>
+									<label for="serviceNotifications" class="flex cursor-pointer items-center justify-between gap-4 py-4"><span class="flex items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sky-50 text-lg" aria-hidden="true">📬</span><span><span class="block text-sm font-bold text-slate-800">New Service Notifications</span><span class="mt-0.5 block text-xs leading-5 text-slate-500">নতুন সার্ভিস সাবমিশন এলে অ্যাডমিনকে জানানো হবে।</span></span></span><input id="serviceNotifications" class="settings-switch sr-only" type="checkbox" /><span aria-hidden="true" class="relative h-6 w-11 shrink-0 rounded-full bg-slate-300 transition after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition"></span></label>
+									<label for="maintenanceMode" class="flex cursor-pointer items-center justify-between gap-4 py-4 last:pb-0"><span class="flex items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-lg" aria-hidden="true">🛠️</span><span><span class="block text-sm font-bold text-slate-800">Site Maintenance Mode</span><span id="maintenanceDescription" class="mt-0.5 block text-xs leading-5 text-slate-500">বন্ধ · এই পছন্দটি লোকাল; এটি লাইভ সাইট বন্ধ করে না।</span></span></span><input id="maintenanceMode" class="settings-switch sr-only" type="checkbox" /><span aria-hidden="true" class="relative h-6 w-11 shrink-0 rounded-full bg-slate-300 transition after:absolute after:left-1 after:top-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition"></span></label>
+								</div>
+								<div class="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between"><span id="preferenceSaveStatus" class="text-xs text-slate-500">নোটিফিকেশন পাঠাতে সার্ভার ও ব্রাউজার ইন্টিগ্রেশন প্রয়োজন।</span><button type="submit" class="inline-flex items-center justify-center rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20">পছন্দ সংরক্ষণ</button></div>
+							</form>
+						</section>
+
+						<section class="settings-card rounded-3xl border border-slate-200/80 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)] sm:p-6" data-searchable>
+							<div class="mb-5"><p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Data &amp; System</p><h3 class="mt-1 text-lg font-extrabold text-slate-900">ডেটা ও সিস্টেম অপশন</h3><p class="mt-1 text-sm text-slate-500">এই ডেমো পেজের সংরক্ষিত সেটিংস ব্যাকআপ বা পরিষ্কার করুন।</p></div>
+							<div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+								<button id="exportBackup" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20"><span aria-hidden="true">↓</span> Export Backup (JSON)</button>
+								<button id="clearCache" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-4 focus:ring-red-700/10"><span aria-hidden="true">⌫</span> Clear Local Cache</button>
+							</div>
+						</section>
+
+						<p class="px-1 text-xs leading-5 text-slate-500">এই standalone ডেমোতে profile ও preferences এই ব্রাউজারে থাকে। পাসওয়ার্ড, নোটিফিকেশন ডেলিভারি এবং maintenance প্রয়োগ করতে নিরাপদ সার্ভার integration প্রয়োজন।</p>
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<div id="toastRegion" class="fixed bottom-4 right-4 z-50 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2" aria-live="polite" aria-atomic="true"></div>
+
+		<script>
+			const settingsStorageKey = 'lohagara-admin-settings-page';
+			const defaultSettings = {
+				profile: { name: 'Admin Manager', email: 'superadmin@lohagara.org' },
+				preferences: { emergencyAlerts: true, serviceNotifications: true, maintenanceMode: false }
+			};
+
+			const loadSettings = () => {
+				try {
+					const saved = JSON.parse(localStorage.getItem(settingsStorageKey) || '{}');
+					return {
+						profile: { ...defaultSettings.profile, ...saved.profile },
+						preferences: { ...defaultSettings.preferences, ...saved.preferences }
+					};
+				} catch {
+					return { profile: { ...defaultSettings.profile }, preferences: { ...defaultSettings.preferences } };
+				}
+			};
+
+			let settings = loadSettings();
+			let toastTimer;
+
+			function showAlert(message, tone = 'success') {
+				const toast = document.createElement('div');
+				const toneClasses = tone === 'error'
+					? 'border-red-200 bg-red-50 text-red-800'
+					: tone === 'warning'
+						? 'border-amber-200 bg-amber-50 text-amber-900'
+						: 'border-emerald-200 bg-emerald-50 text-emerald-900';
+				toast.className = `toast-in rounded-2xl border px-4 py-3 text-sm font-semibold shadow-lg ${toneClasses}`;
+				toast.setAttribute('role', 'status');
+				toast.textContent = message;
+				const region = document.getElementById('toastRegion');
+				region.replaceChildren(toast);
+				window.clearTimeout(toastTimer);
+				toastTimer = window.setTimeout(() => toast.remove(), 3200);
+			}
+
+			function saveSettings() {
+				try {
+					localStorage.setItem(settingsStorageKey, JSON.stringify(settings));
+					return true;
+				} catch {
+					showAlert('লোকাল সেটিংস সংরক্ষণ করা যায়নি।', 'error');
+					return false;
+				}
+			}
+
+			function renderSettings() {
+				document.getElementById('adminName').value = settings.profile.name;
+				document.getElementById('adminEmail').value = settings.profile.email;
+				document.getElementById('headerAdminName').textContent = settings.profile.name;
+				document.getElementById('headerAdminEmail').textContent = settings.profile.email;
+				document.getElementById('adminInitials').textContent = settings.profile.name
+					.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join('') || 'A';
+				Object.entries(settings.preferences).forEach(([key, checked]) => {
+					document.getElementById(key).checked = Boolean(checked);
+				});
+				document.getElementById('maintenanceDescription').textContent = settings.preferences.maintenanceMode
+					? 'চালু · এই পছন্দটি লোকাল; এটি লাইভ সাইট বন্ধ করে না।'
+					: 'বন্ধ · এই পছন্দটি লোকাল; এটি লাইভ সাইট বন্ধ করে না।';
+			}
+
+			renderSettings();
+
+			document.getElementById('profileForm').addEventListener('submit', (event) => {
+				event.preventDefault();
+				settings.profile = {
+					name: document.getElementById('adminName').value.trim(),
+					email: document.getElementById('adminEmail').value.trim()
+				};
+				if (saveSettings()) {
+					renderSettings();
+					showAlert('অ্যাডমিন প্রোফাইল সংরক্ষণ করা হয়েছে।');
+				}
+			});
+
+			document.getElementById('securityForm').addEventListener('submit', (event) => {
+				event.preventDefault();
+				const currentPassword = document.getElementById('currentPassword');
+				const newPassword = document.getElementById('newPassword');
+				const confirmPassword = document.getElementById('confirmPassword');
+				if (newPassword.value !== confirmPassword.value) {
+					showAlert('নতুন পাসওয়ার্ড দুটি মিলছে না।', 'error');
+					confirmPassword.focus();
+					return;
+				}
+				event.currentTarget.reset();
+				showAlert('ফর্ম যাচাই হয়েছে। পাসওয়ার্ড পরিবর্তনে নিরাপদ ব্যাকএন্ড প্রয়োজন।', 'warning');
+				currentPassword.value = '';
+			});
+
+			document.getElementById('preferencesForm').addEventListener('submit', (event) => {
+				event.preventDefault();
+				settings.preferences = {
+					emergencyAlerts: document.getElementById('emergencyAlerts').checked,
+					serviceNotifications: document.getElementById('serviceNotifications').checked,
+					maintenanceMode: document.getElementById('maintenanceMode').checked
+				};
+				if (saveSettings()) {
+					renderSettings();
+					document.getElementById('preferenceSaveStatus').textContent = 'পছন্দগুলো এই ব্রাউজারে সংরক্ষিত হয়েছে।';
+					showAlert('প্ল্যাটফর্ম পছন্দ সংরক্ষণ করা হয়েছে।');
+				}
+			});
+
+			document.getElementById('exportBackup').addEventListener('click', () => {
+				const backup = {
+					exportedAt: new Date().toISOString(),
+					note: 'Standalone settings page backup. Passwords and secrets are not included.',
+					settings
+				};
+				const url = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }));
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `lohagara-settings-backup-${new Date().toISOString().slice(0, 10)}.json`;
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+				window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+				showAlert('JSON সেটিংস ব্যাকআপ ডাউনলোড শুরু হয়েছে।');
+			});
+
+			document.getElementById('clearCache').addEventListener('click', () => {
+				if (!window.confirm('এই পেজের সংরক্ষিত প্রোফাইল ও পছন্দ মুছে ডিফল্টে ফেরাবেন?')) return;
+				try {
+					localStorage.removeItem(settingsStorageKey);
+					settings = { profile: { ...defaultSettings.profile }, preferences: { ...defaultSettings.preferences } };
+					renderSettings();
+					document.getElementById('preferenceSaveStatus').textContent = 'নোটিফিকেশন পাঠাতে সার্ভার ও ব্রাউজার ইন্টিগ্রেশন প্রয়োজন।';
+					showAlert('এই পেজের লোকাল সেটিংস পরিষ্কার হয়েছে।');
+				} catch {
+					showAlert('লোকাল সেটিংস পরিষ্কার করা যায়নি।', 'error');
+				}
+			});
+
+			const overlay = document.getElementById('mobileOverlay');
+			const closeMobileMenu = () => {
+				overlay.classList.add('hidden');
+				overlay.setAttribute('aria-hidden', 'true');
+			};
+			document.getElementById('openMobileMenu').addEventListener('click', () => {
+				overlay.classList.remove('hidden');
+				overlay.setAttribute('aria-hidden', 'false');
+			});
+			document.getElementById('closeMobileMenu').addEventListener('click', closeMobileMenu);
+			overlay.addEventListener('click', (event) => {
+				if (event.target === overlay) closeMobileMenu();
+			});
+
+			document.getElementById('settingsSearch').addEventListener('input', (event) => {
+				const query = event.target.value.trim().toLocaleLowerCase();
+				let visibleCount = 0;
+				document.querySelectorAll('[data-searchable]').forEach((card) => {
+					const matches = card.textContent.toLocaleLowerCase().includes(query);
+					card.classList.toggle('hidden', !matches);
+					if (matches) visibleCount += 1;
+				});
+				document.getElementById('noSearchResults').classList.toggle('hidden', visibleCount > 0);
+			});
+		</script>
+	</body>
+</html>
