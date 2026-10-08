@@ -8,42 +8,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script type="module">
-      import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+      import { firebaseApp } from './firebase.js';
       import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-      // -----------------------------------------------------------------------------
-      // Firebase Web Configuration
-      // Paste your real values from Firebase Console -> Project settings -> Web app
-      // -----------------------------------------------------------------------------
-      const firebaseConfig = {
-        apiKey: 'PASTE_YOUR_FIREBASE_API_KEY_HERE',
-        authDomain: 'PASTE_YOUR_PROJECT_ID.firebaseapp.com',
-        projectId: 'PASTE_YOUR_PROJECT_ID',
-        storageBucket: 'PASTE_YOUR_PROJECT_ID.appspot.com',
-        messagingSenderId: 'PASTE_YOUR_MESSAGING_SENDER_ID',
-        appId: 'PASTE_YOUR_APP_ID'
-      };
-
-      let app;
-      let auth;
-        let googleProvider;
-
-      const hasRealFirebaseConfig = Object.values(firebaseConfig).every((value) => {
-        return typeof value === 'string' && value && !value.startsWith('PASTE_') && !value.includes('YOUR_');
-      });
-
-      if (hasRealFirebaseConfig) {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        googleProvider = new GoogleAuthProvider();
-      } else {
-        console.warn('Firebase config is not set. Admin sign-in is unavailable until real web credentials are configured.');
-      }
+      const auth = getAuth(firebaseApp);
+      const googleProvider = new GoogleAuthProvider();
 
       window.firebaseAuth = auth;
       window.googleProvider = googleProvider;
-      window.firebaseApp = app;
-      window.hasRealFirebaseConfig = hasRealFirebaseConfig;
+      window.firebaseApp = firebaseApp;
+      window.hasRealFirebaseConfig = true;
       window.firebaseSignInWithPopup = signInWithPopup;
       window.firebaseSignOut = signOut;
       window.firebaseOnAuthStateChanged = onAuthStateChanged;
