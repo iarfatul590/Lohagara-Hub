@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="admin-api-base" content="http://localhost:4000/api/v1" />
     <title>লোহাগাড়া হাব</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -205,6 +206,8 @@
                 <button type="button" id="refreshMarketBtn" class="refresh-price-btn">Refresh</button>
               </div>
 
+              <div class="market-header-row"><label for="publicMarketUnion">ইউনিয়ন</label><select id="publicMarketUnion" aria-label="Select union for prices"></select><select id="publicMarketSelect" aria-label="Select local bazar"><option value="">সব বাজার</option></select></div>
+
               <div class="krishi-filters" aria-label="Agriculture category filters">
                 <button type="button" class="krishi-filter active" data-filter="all">সব</button>
                 <button type="button" class="krishi-filter" data-filter="hill">পাহাড়ি পণ্য</button>
@@ -300,13 +303,13 @@
 
           <button id="openBloodRequestModal" type="button" class="emergency-alert-btn">
             <span class="pulse-dot"></span>
-            জরুরি রক্তের প্রয়োজন / Emergency Alert
+            জরুরি রক্তদাতা খুঁজুন / Find donors
           </button>
         </div>
 
         <div id="bloodAlertStatus" class="alert-status" aria-live="polite">
           <span class="status-spinner"></span>
-          <span>System ready for emergency blood broadcasts in Lohagara.</span>
+          <span>উপলভ্য donor directory এবং যাচাইকৃত union তথ্য লোড হচ্ছে।</span>
         </div>
 
         <div class="smart-blood-grid">
@@ -322,7 +325,7 @@
           <div class="blood-register-panel">
             <div class="panel-head">
               <h3>Donor Quick Register</h3>
-              <span>Available now</span>
+                <span>Verification required</span>
             </div>
 
             <div class="donor-toggle-group">
@@ -334,6 +337,7 @@
                 <label for="donorName" class="field-label">Donor Name</label>
                 <input id="donorName" type="text" placeholder="আপনার নাম" class="blood-input" />
               </div>
+              <label class="donor-consent"><input id="donorPublicConsent" type="checkbox" /> নাম, blood group ও union public directory-তে দেখানোর সম্মতি দিন। ফোন নম্বর প্রকাশ করা হবে না।</label>
 
               <div>
                 <label for="donorPhone" class="field-label">Phone</label>
@@ -356,21 +360,11 @@
 
               <div>
                 <label for="donorUnion" class="field-label">Union / Area</label>
-                <select id="donorUnion" class="blood-input">
-                  <option value="৬নং লোহাগাড়া">৬নং লোহাগাড়া</option>
-                  <option value="১নং বড়হাতিয়া">১নং বড়হাতিয়া</option>
-                  <option value="২নং আমিরাবাদ">২নং আমিরাবাদ</option>
-                  <option value="৩নং পদুয়া">৩নং পদুয়া</option>
-                  <option value="৪নং চরম্বা">৪নং চরম্বা</option>
-                  <option value="৫নং কলাউজান">৫নং কলাউজান</option>
-                  <option value="৭নং পুটিবিলা">৭নং পুটিবিলা</option>
-                  <option value="৮নং চুনতি">৮নং চুনতি</option>
-                  <option value="৯নং আধুনগর">৯নং আধুনগর</option>
-                </select>
+                <select id="donorUnion" class="blood-input"><option value="">ইউনিয়ন লোড হচ্ছে...</option></select>
               </div>
             </div>
 
-            <button id="registerDonorBtn" type="button" class="register-donor-btn">Activate as active donor</button>
+            <button id="registerDonorBtn" type="button" class="register-donor-btn">যাচাইয়ের জন্য আবেদন করুন</button>
           </div>
         </div>
       </section>
@@ -422,7 +416,7 @@
 
             <div class="sm:col-span-2 flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
               <button type="button" id="cancelBloodRequestModal" class="secondary-modal-btn">Cancel</button>
-              <button type="submit" class="primary-modal-btn">Send emergency alert</button>
+              <button type="submit" class="primary-modal-btn">উপলভ্য মিল দেখুন</button>
             </div>
           </form>
         </div>
@@ -464,86 +458,7 @@
                 </div>
               </div>
 
-              <div class="ambulance-grid">
-                <article class="ambulance-card" data-union="lohagara" data-search="মোঃ শামীম lohagara ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ শামীম</h4>
-                  <p>লোহাগাড়া ইউনিয়ন</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801712345678">+৮৮ ০১৭১২-৩৪৫৬৭৮</a>
-                </article>
-                <!-- Bighatia ambulance moved to index.borohatia -->
-                <!-- Amirabad ambulance moved to index.amirabad -->
-
-                <article class="ambulance-card" data-union="padua" data-search="মোঃ রফিক padua ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ রফিক</h4>
-                  <p>৩নং পদুয়া</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801745678901">+৮৮ ০১৭৪৫-৬৭৮৯০১</a>
-                </article>
-
-                <article class="ambulance-card" data-union="chormba" data-search="মোঃ সাইফুল chormba ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ সাইফুল</h4>
-                  <p>৪নং চরম্বা</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801756789012">+৮৮ ০১৭৫৬-৭৮৯০১২</a>
-                </article>
-
-                <article class="ambulance-card" data-union="kolaizan" data-search="মোঃ ফারুক kolaizan ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ ফারুক</h4>
-                  <p>৫নং কলাউজান</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801767890123">+৮৮ ০১৭৬৭-৮৯০১২৩</a>
-                </article>
-
-                <article class="ambulance-card" data-union="putibila" data-search="মোঃ হারুন putibila ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ হারুন</h4>
-                  <p>৭নং পুটিবিলা</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801778901234">+৮৮ ০১৭৭৮-৯০১২৩৪</a>
-                </article>
-
-                <article class="ambulance-card" data-union="chunati" data-search="মোঃ ইমরান chunati ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ ইমরান</h4>
-                  <p>৮নং চুনতি</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801789012345">+৮৮ ০১৭৮৯-০১২৩৪৫</a>
-                </article>
-
-                <article class="ambulance-card" data-union="adhunagar" data-search="মোঃ সোহেল adhunagar ambulance">
-                  <div class="service-meta">
-                    <span class="status-dot"></span>
-                    <span>২৪/৭</span>
-                  </div>
-                  <h4>মোঃ সোহেল</h4>
-                  <p>৯নং আধুনগর</p>
-                  <small>অ্যাম্বুলেন্স ড্রাইভার</small>
-                  <a href="tel:+8801790123456">+৮৮ ০১৭৯০-১২৩৪৫৬</a>
-                </article>
-              </div>
+              <div id="ambulanceServiceGrid" class="ambulance-grid"></div>
             </div>
 
             <div class="panel blood-panel" id="panel-blood">
@@ -551,6 +466,7 @@
                 <h3>রক্তদাতা কর্নার</h3>
                 <div class="panel-tools">
                   <input type="search" class="blood-search" placeholder="নাম বা গ্রুপ খুঁজুন" aria-label="Search blood donors" />
+                  <select id="publicDonorUnion" aria-label="Filter donors by union"></select>
                   <div class="mini-filters">
                     <button type="button" class="blood-filter active" data-blood="all">সব</button>
                     <button type="button" class="blood-filter" data-blood="A+">A+</button>
@@ -565,136 +481,7 @@
                 </div>
               </div>
 
-              <div class="donor-grid">
-                <article class="donor-card" data-blood="A+" data-search="মোঃ রাকিব a plus">
-                  <div class="donor-head">
-                    <span class="blood-badge">A+</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ রাকিব</h4>
-                  <p>শেষ দান: ১২ জুন ২০২৬</p>
-                  <small>লোহাগাড়া ইউনিয়ন</small>
-                  <a href="tel:+8801711223344">কল করুন</a>
-                </article>
-
-                <!-- Bighatia donor moved to index.borohatia -->
-                <!-- Amirabad donor moved to index.amirabad -->
-
-                <article class="donor-card" data-blood="AB+" data-search="মোঃ জুবায়ের ab plus">
-                  <div class="donor-head">
-                    <span class="blood-badge">AB+</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ জুবায়ের</h4>
-                  <p>শেষ দান: ৮ জুন ২০২৬</p>
-                  <small>পদুয়া</small>
-                  <a href="tel:+8801611223344">কল করুন</a>
-                </article>
-
-                <article class="donor-card" data-blood="O-" data-search="মোঃ ইব্রাহিম o minus">
-                  <div class="donor-head">
-                    <span class="blood-badge">O-</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ ইব্রাহিম</h4>
-                  <p>শেষ দান: ১৯ মে ২০২৬</p>
-                  <small>চরম্বা</small>
-                  <a href="tel:+8801511223344">কল করুন</a>
-                </article>
-
-                <article class="donor-card" data-blood="A-" data-search="মোঃ নাঈম a minus">
-                  <div class="donor-head">
-                    <span class="blood-badge">A-</span>
-                    <span class="donor-status">সক্রিয়</span>
-                  </div>
-                  <h4>মোঃ নাঈম</h4>
-                  <p>শেষ দান: ২৮ জুলাই ২০২৬</p>
-                  <small>কলাউজান</small>
-                  <a href="tel:+8801411223344">কল করুন</a>
-                </article>
-              </div>
-            </div>
-
-            <div class="panel doctor-panel" id="panel-doctors">
-              <div class="panel-toolbar">
-                <h3>স্থানীয় ডাক্তার ও ক্লিনিক</h3>
-                <div class="mini-filters">
-                  <button type="button" class="doctor-filter active" data-specialty="all">সব</button>
-                  <button type="button" class="doctor-filter" data-specialty="general">জেনারেল</button>
-                  <button type="button" class="doctor-filter" data-specialty="medicine">মেডিসিন</button>
-                  <button type="button" class="doctor-filter" data-specialty="gynecology">গাইনোকলজি</button>
-                  <button type="button" class="doctor-filter" data-specialty="pediatric">পেডিয়াট্রিক</button>
-                  <button type="button" class="doctor-filter" data-specialty="dentistry">ডেন্টিস্ট্রি</button>
-                </div>
-              </div>
-
-              <div class="doctor-grid">
-                <article class="doctor-card" data-specialty="medicine">
-                  <div class="doctor-badge">মেডিসিন</div>
-                  <h4>ডা. আবুল বাশার</h4>
-                  <p>সার্বিক মেডিসিন</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> লোহাগাড়া সিটি মেডিকেল সেন্টার</li>
-                    <li><strong>সময়:</strong> সকাল ৯:০০ - দুপুর ২:০০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801712349988">+৮৮ ০১৭১২-৩৪৯৯৮৮</a></li>
-                  </ul>
-                </article>
-
-                <article class="doctor-card" data-specialty="general">
-                  <div class="doctor-badge">জেনারেল</div>
-                  <h4>ডা. রিনা সুলতানা</h4>
-                  <p>ফ্যামিলি ফিজিশিয়ান</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> ড. রিনা চেম্বার, শহীদ মিনার সড়ক</li>
-                    <li><strong>সময়:</strong> বিকাল ৪:০০ - ৮:০০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801812345566">+৮৮ ০১৮১২-৩৪৫৫৬৬</a></li>
-                  </ul>
-                </article>
-
-                <article class="doctor-card" data-specialty="gynecology">
-                  <div class="doctor-badge">গাইনোকলজি</div>
-                  <h4>ডা. তাসলিমা আক্তার</h4>
-                  <p>স্ত্রী ও প্রসূতি</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> গার্ডেন মেডিকেল ক্লিনিক</li>
-                    <li><strong>সময়:</strong> সকাল ১০:০০ - দুপুর ১:০০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801719988776">+৮৮ ০১৭১৯-৯৮৮৮৭৬</a></li>
-                  </ul>
-                </article>
-
-                <article class="doctor-card" data-specialty="pediatric">
-                  <div class="doctor-badge">পেডিয়াট্রিক</div>
-                  <h4>ডা. মোহাম্মদ নাসির</h4>
-                  <p>শিশু স্বাস্থ্য</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> শিশু স্বাস্থ্য কেন্দ্র, বাজার এলাকা</li>
-                    <li><strong>সময়:</strong> সকাল ১১:০০ - ৩:০০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801819988771">+৮৮ ০১৮১৯-৯৯৮৮৭১</a></li>
-                  </ul>
-                </article>
-
-                <article class="doctor-card" data-specialty="dentistry">
-                  <div class="doctor-badge">ডেন্টিস্ট্রি</div>
-                  <h4>ডা. বেলাল হোসেন</h4>
-                  <p>দাঁত ও মৌখিক স্বাস্থ্য</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> সোনারসরি ডেন্টাল সেন্টার</li>
-                    <li><strong>সময়:</strong> বিকাল ৩:০০ - ৮:০০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801717766554">+৮৮ ০১৭১৭-৭৬৬৫৫৪</a></li>
-                  </ul>
-                </article>
-
-                <article class="doctor-card" data-specialty="general">
-                  <div class="doctor-badge">জেনারেল</div>
-                  <h4>ডা. নাহার জাহান</h4>
-                  <p>ক্লিনিক ও জেনারেল কেয়ার</p>
-                  <ul>
-                    <li><strong>চেম্বার:</strong> নাহার ক্লিনিক, লোহাগাড়া বাজার</li>
-                    <li><strong>সময়:</strong> সকাল ৯:৩০ - দুপুর ২:৩০</li>
-                    <li><strong>ফোন:</strong> <a href="tel:+8801722334455">+৮৮ ০১৭২২-৩৩৪৪৫৫</a></li>
-                  </ul>
-                </article>
-              </div>
+              <div id="publicDonorGrid" class="donor-grid"></div>
             </div>
           </div>
         </div>

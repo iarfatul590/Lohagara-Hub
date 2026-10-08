@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const publicApiBase = document.querySelector('meta[name="admin-api-base"]')?.content.replace(/\/$/, '') || 'http://localhost:4000/api/v1';
+  const getPublicData = async (path) => {
+    const response = await fetch(`${publicApiBase}/public${path}`);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status}).`);
+    return payload.data;
+  };
   const weatherLoading = document.getElementById('weatherLoading');
   const weatherContent = document.getElementById('weatherContent');
   const weatherIcon = document.getElementById('weatherIcon');
@@ -1321,28 +1328,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderOxygenInventory();
 
-  const baseWholesaleData = [
-    { name: 'পেঁয়াজ', unit: 'কেজি', category: 'market', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 26, transportAdjustment: 3, variableRate: 0.04 },
-    { name: 'আলু', unit: 'কেজি', category: 'market', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 22, transportAdjustment: 2.5, variableRate: 0.035 },
-    { name: 'চাল', unit: 'কেজি', category: 'rice', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 34, transportAdjustment: 4, variableRate: 0.05 },
-    { name: 'মসুর ডাল', unit: 'কেজি', category: 'rice', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 72, transportAdjustment: 5, variableRate: 0.06 },
-    { name: 'পান পাতা', unit: '১০০টি', category: 'hill', baseMarket: 'খাতুনগঞ্জ, চট্টগ্রাম', basePrice: 520, transportAdjustment: 18, variableRate: 0.05 },
-    { name: 'লেবু', unit: 'কেজি', category: 'fruit', baseMarket: 'ঢাকা করওয়ান বাজার', basePrice: 60, transportAdjustment: 4, variableRate: 0.05 },
-    { name: 'আম', unit: 'কেজি', category: 'fruit', baseMarket: 'চট্টগ্রাম/ঢাকা wholesales', basePrice: 48, transportAdjustment: 4, variableRate: 0.04 },
-    { name: 'শাকসবজি', unit: 'কেজি', category: 'market', baseMarket: 'লোহাগাড়া বাজার', basePrice: 32, transportAdjustment: 2.5, variableRate: 0.03 }
-  ];
-
-  const localMarketSettings = {
-    'Lohagara Bazar': { demandBoost: 0.02, handling: 2.5 },
-    'Padua Bazar': { demandBoost: 0.015, handling: 2.2 },
-    default: { demandBoost: 0.015, handling: 2 }
-  };
-
-  const estimateLocalPrice = (item, marketName = 'Lohagara Bazar') => {
-    const settings = localMarketSettings[marketName] || localMarketSettings.default;
-    const estimated = item.basePrice + item.transportAdjustment + settings.handling + (item.basePrice * item.variableRate) + (item.basePrice * settings.demandBoost);
-    return Number(estimated.toFixed(2));
-  };
+  const publicMarketUnion = document.getElementById('publicMarketUnion');
+  const publicMarketSelect = document.getElementById('publicMarketSelect');
+  const publicDonorUnion = document.getElementById('publicDonorUnion');
+  const ambulanceServiceGrid = document.getElementById('ambulanceServiceGrid');
+  const publicDonorGrid = document.getElementById('publicDonorGrid');
+  let publicUnions = [];
+  let selectedPublicUnion = 'lohagara-sadar';
+  let publicMarketId = '';
+  let publicEmergencyTeams = [];
+  let bloodDonorPool = [];
+  const escapePublicHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
   const getTrendBadge = (type) => {
     if (type === 'up') return { label: '↑ Up', className: 'trend-up' };
@@ -1350,37 +1346,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return { label: '→ Flat', className: 'trend-flat' };
   };
 
-  const buildDynamicMarketData = () => {
-    const now = Date.now();
-
-    return baseWholesaleData.map((item, index) => {
-      const marketName = index % 2 === 0 ? 'Lohagara Bazar' : 'Padua Bazar';
-      const pulse = 1 + (Math.sin(now / 90000 + index) * 0.025);
-      const dynamicLocalPrice = estimateLocalPrice(item, marketName) * pulse;
-      const trendType = dynamicLocalPrice > estimateLocalPrice(item, marketName) ? 'up' : dynamicLocalPrice < estimateLocalPrice(item, marketName) ? 'down' : 'flat';
-      const localValue = Number(dynamicLocalPrice.toFixed(2));
-
-      return {
-        ...item,
-        market: marketName,
-        refPrice: `৳ ${item.basePrice}`,
-        localPrice: `৳ ${localValue}`,
-        trend: trendType,
-        price: `৳ ${localValue}`
-      };
-    });
-  };
-
-  let marketPriceData = buildDynamicMarketData();
+  let marketPriceData = [];
 
   const krishiFilterButtons = document.querySelectorAll('.krishi-filter');
   const krishiPriceSearch = document.getElementById('krishiPriceSearch');
   const marketPriceGrid = document.getElementById('marketPriceGrid');
   const refreshMarketBtn = document.getElementById('refreshMarketBtn');
 
-  const refreshMarketData = () => {
-    marketPriceData = buildDynamicMarketData();
-    renderMarketPrices();
+  const refreshMarketData = async () => {
+    if (!selectedPublicUnion) return;
+    try {
+      const params = new URLSearchParams({ unionSlug: selectedPublicUnion });
+      const rows = await getPublicData(`/market/prices?${params}`);
+      const markets = [...new Map(rows.map((row) => [row.market_id, row.market_name])).entries()]
+        .map(([value, label]) => ({ value, label }));
+      const currentMarket = markets.some((market) => market.value === publicMarketId) ? publicMarketId : '';
+      publicMarketId = currentMarket;
+      setSelectOptions(publicMarketSelect, markets, 'সব বাজার', currentMarket);
+      marketPriceData = rows.map((row) => ({
+        name: row.display_name,
+        marketId: row.market_id,
+        unit: row.unit,
+        category: row.category,
+        market: row.market_name,
+        refPrice: `৳ ${Number(row.wholesale_amount)}`,
+        localPrice: `৳ ${Number(row.retail_amount)}`,
+        trend: 'flat',
+        price: `৳ ${Number(row.retail_amount)}`
+      }));
+      renderMarketPrices();
+    } catch (error) {
+      marketPriceGrid.innerHTML = `<div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">${escapePublicHtml(error.message)}. Published market rates are unavailable.</div>`;
+    }
   };
 
   const renderMarketPrices = () => {
@@ -1390,9 +1387,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const query = (krishiPriceSearch?.value || '').trim().toLowerCase();
 
     const filteredItems = marketPriceData.filter((item) => {
+      const matchesMarket = !publicMarketId || item.marketId === publicMarketId;
       const matchesCategory = activeFilter === 'all' || item.category === activeFilter;
       const matchesSearch = !query || `${item.name} ${item.market}`.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
+      return matchesMarket && matchesCategory && matchesSearch;
     });
 
     if (!filteredItems.length) {
@@ -1411,10 +1409,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="market-price-row">
           <div class="market-price-row-inner">
             <div class="price-product">
-              <strong>${item.name}</strong>
-              <small>${item.market}</small>
+              <strong>${escapePublicHtml(item.name)}</strong>
+              <small>${escapePublicHtml(item.market)}</small>
             </div>
-            <span class="price-unit">${item.unit}</span>
+            <span class="price-unit">${escapePublicHtml(item.unit)}</span>
             <span class="price-price">${item.refPrice}</span>
             <span class="price-price price-local">${item.localPrice}</span>
             <span class="price-trend ${trend.className}">${trend.label}</span>
@@ -1434,28 +1432,116 @@ document.addEventListener('DOMContentLoaded', () => {
   krishiPriceSearch?.addEventListener('input', renderMarketPrices);
 
   refreshMarketBtn?.addEventListener('click', () => {
-    refreshMarketData();
-    refreshMarketBtn.textContent = 'Updated';
-    setTimeout(() => {
-      refreshMarketBtn.textContent = 'Refresh';
-    }, 1200);
+    refreshMarketData().then(() => {
+      refreshMarketBtn.textContent = 'Updated';
+      setTimeout(() => { refreshMarketBtn.textContent = 'Refresh'; }, 1200);
+    });
   });
 
-  renderMarketPrices();
-  setInterval(refreshMarketData, 15000);
+  const setSelectOptions = (select, options, placeholder, selectedValue = '') => {
+    if (!select) return;
+    select.replaceChildren();
+    if (placeholder) {
+      const placeholderOption = document.createElement('option');
+      placeholderOption.value = '';
+      placeholderOption.textContent = placeholder;
+      select.appendChild(placeholderOption);
+    }
+    options.forEach((entry) => {
+      const option = document.createElement('option');
+      option.value = entry.value;
+      option.textContent = entry.label;
+      option.selected = entry.value === selectedValue;
+      select.appendChild(option);
+    });
+  };
 
-  const bloodDonorPool = [
-    { name: 'মোঃ রাকিব', bloodGroup: 'A+', union: '৬নং লোহাগাড়া', lastDonated: '২০২৬-০১-১৫', phone: '+8801711223344', active: true },
-    { name: 'মোঃ সোহেল', bloodGroup: 'O+', union: '২নং আমিরাবাদ', lastDonated: '২০২৬-০২-১২', phone: '+8801811223344', active: true },
-    { name: 'মোঃ আতিক', bloodGroup: 'B-', union: '৩নং পদুয়া', lastDonated: '২০২৬-০২-১৮', phone: '+8801911223344', active: true },
-    { name: 'মোঃ জুবায়ের', bloodGroup: 'AB+', union: '৪নং চরম্বা', lastDonated: '২০২৬-০৩-০৮', phone: '+8801611223344', active: true },
-    { name: 'মোঃ ইব্রাহিম', bloodGroup: 'O-', union: '৫নং কলাউজান', lastDonated: '২০২৬-০৪-০১', phone: '+8801511223344', active: true },
-    { name: 'মোঃ নাঈম', bloodGroup: 'A-', union: '১নং বড়হাতিয়া', lastDonated: '২০২৬-০৪-২০', phone: '+8801411223344', active: true },
-    { name: 'নাসরিন আক্তার', bloodGroup: 'B+', union: '৬নং লোহাগাড়া', lastDonated: '২০২৬-০৫-১০', phone: '+8801723344556', active: true },
-    { name: 'মোঃ রেহমান', bloodGroup: 'AB-', union: '৮নং চুনতি', lastDonated: '২০২৬-০৬-০৩', phone: '+8801788990011', active: true },
-    { name: 'মোঃ হেলাল', bloodGroup: 'A+', union: '৭নং পুটিবিলা', lastDonated: '২০২৬-০৬-১২', phone: '+8801700998811', active: true },
-    { name: 'মোঃ নুরুল', bloodGroup: 'O+', union: '৯নং আধুনগর', lastDonated: '২০২৬-০৭-০৮', phone: '+8801898877665', active: true }
-  ];
+  const refreshPublicDonors = async () => {
+    const unionSlug = publicDonorUnion?.value || '';
+    const params = new URLSearchParams();
+    if (unionSlug) params.set('unionSlug', unionSlug);
+    try {
+      const rows = await getPublicData(`/blood/donors?${params}`);
+      bloodDonorPool = rows.map((row) => ({
+        name: row.public_label || 'Consented donor',
+        bloodGroup: row.blood_group,
+        union: row.union_name,
+        unionSlug: row.union_slug,
+        lastDonated: row.last_donated_at || 'Not provided',
+        active: true
+      }));
+      if (publicDonorGrid) {
+        publicDonorGrid.innerHTML = bloodDonorPool.map((donor) => `
+          <article class="donor-card" data-blood="${escapePublicHtml(donor.bloodGroup)}" data-search="${escapePublicHtml(`${donor.name} ${donor.union} ${donor.bloodGroup}`.toLowerCase())}">
+            <div class="donor-head"><span class="blood-badge">${escapePublicHtml(donor.bloodGroup)}</span><span class="donor-status">Verified</span></div>
+            <h4>${escapePublicHtml(donor.name)}</h4><p>শেষ দান: ${escapePublicHtml(donor.lastDonated)}</p><small>${escapePublicHtml(donor.union)}</small>
+          </article>`).join('') || '<p class="directory-empty">এই union-এ public listing-এর সম্মতি দেওয়া উপলভ্য donor নেই।</p>';
+        applyBloodFilter();
+      }
+      renderBloodMatches(document.getElementById('bloodGroup')?.value || 'O+');
+    } catch (error) {
+      bloodDonorPool = [];
+      if (publicDonorGrid) publicDonorGrid.innerHTML = `<p class="directory-empty">${escapePublicHtml(error.message)}.</p>`;
+    }
+  };
+
+  const refreshPublicEmergencyTeams = async () => {
+    try {
+      publicEmergencyTeams = await getPublicData('/emergency/teams');
+      if (ambulanceServiceGrid) {
+        ambulanceServiceGrid.innerHTML = publicEmergencyTeams.map((team) => `
+          <article class="ambulance-card" data-union="${escapePublicHtml(team.union_slug)}" data-search="${escapePublicHtml(`${team.name} ${team.union_name} ${team.team_type} ${team.area_name || ''}`.toLowerCase())}">
+            <div class="service-meta"><span class="status-dot"></span><span>Verified</span></div>
+            <h4>${escapePublicHtml(team.name)}</h4><p>${escapePublicHtml(team.union_name)}${team.ward_number ? ` · Ward ${team.ward_number}` : ''}</p>
+            <small>${escapePublicHtml({ ambulance: 'অ্যাম্বুলেন্স', fire_service: 'ফায়ার সার্ভিস', volunteer: 'স্বেচ্ছাসেবক', blood_bank: 'ব্লাড ব্যাংক', rescue: 'রেসকিউ' }[team.team_type] || team.team_type)}</small>
+            <a href="tel:${encodeURIComponent(team.phone)}">${escapePublicHtml(team.phone)}</a>
+          </article>`).join('') || '<p class="directory-empty">নির্বাচিত এলাকায় verified emergency contact পাওয়া যায়নি। জরুরিতে 999-এ কল করুন।</p>';
+        applyAmbulanceFilter(document.querySelector('.union-filter.active')?.dataset.union || 'all');
+      }
+    } catch (error) {
+      if (ambulanceServiceGrid) ambulanceServiceGrid.innerHTML = `<p class="directory-empty">${escapePublicHtml(error.message)}.</p>`;
+    }
+  };
+
+  const loadPublicDirectory = async () => {
+    try {
+      publicUnions = await getPublicData('/unions');
+      const unionOptions = publicUnions.map((union) => ({ value: union.slug, label: union.name_en }));
+      setSelectOptions(publicMarketUnion, unionOptions, null, selectedPublicUnion);
+      setSelectOptions(publicDonorUnion, unionOptions, 'সব ইউনিয়ন');
+      setSelectOptions(document.getElementById('donorUnion'), unionOptions, 'ইউনিয়ন নির্বাচন');
+      const filterButtons = document.querySelectorAll('.ambulance-panel .union-filter');
+      filterButtons.forEach((button, index) => {
+        if (index === 0) {
+          button.dataset.union = 'all';
+          button.textContent = 'সব';
+        } else {
+          const union = publicUnions[index - 1];
+          if (!union) return button.remove();
+          button.dataset.union = union.slug;
+          button.textContent = union.name_en;
+        }
+      });
+      await Promise.all([refreshMarketData(), refreshPublicEmergencyTeams(), refreshPublicDonors()]);
+    } catch (error) {
+      if (marketPriceGrid) marketPriceGrid.innerHTML = `<p class="directory-empty">Published public data is unavailable: ${escapePublicHtml(error.message)}</p>`;
+    }
+  };
+
+  publicMarketUnion?.addEventListener('change', () => {
+    selectedPublicUnion = publicMarketUnion.value;
+    publicMarketId = '';
+    refreshMarketData();
+    refreshPublicEmergencyTeams();
+  });
+  publicMarketSelect?.addEventListener('change', () => {
+    publicMarketId = publicMarketSelect.value;
+    refreshMarketData();
+  });
+  publicDonorUnion?.addEventListener('change', refreshPublicDonors);
+
+  loadPublicDirectory();
+  setInterval(() => Promise.all([refreshMarketData(), refreshPublicEmergencyTeams(), refreshPublicDonors()]), 60_000);
 
   const bloodCompatibility = {
     'A+': ['A+', 'O+'],
@@ -1483,26 +1569,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (spinner) spinner.style.display = busy ? 'inline-block' : 'none';
     const label = alertStatus.querySelector('span:last-child');
     if (label) label.textContent = text;
-  };
-
-  const triggerEmergencyTone = () => {
-    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContextClass) return;
-
-    const audioContext = new AudioContextClass();
-    const tones = [880, 660, 990];
-    const gainNode = audioContext.createGain();
-    gainNode.gain.value = 0.04;
-    gainNode.connect(audioContext.destination);
-
-    tones.forEach((frequency, index) => {
-      const oscillator = audioContext.createOscillator();
-      oscillator.type = 'sawtooth';
-      oscillator.frequency.value = frequency;
-      oscillator.connect(gainNode);
-      oscillator.start(audioContext.currentTime + index * 0.12);
-      oscillator.stop(audioContext.currentTime + index * 0.12 + 0.1);
-    });
   };
 
   const openBloodModal = () => {
@@ -1551,12 +1617,9 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="match-card">
         <div class="match-rank">${index + 1}</div>
         <div class="match-info">
-          <h4>${donor.name}</h4>
-          <p>${donor.union} • ${donor.bloodGroup} • Last donated: ${donor.lastDonated}</p>
-          <div class="match-actions">
-            <a class="match-call" href="tel:${donor.phone.replace(/\s+/g, '')}">Call</a>
-            <a class="match-sms" href="sms:${donor.phone.replace(/\s+/g, '')}?body=Hello%20${encodeURIComponent(donor.name)},%20can%20you%20help%20with%20a%20blood%20donation%20request?">SMS</a>
-          </div>
+          <h4>${escapePublicHtml(donor.name)}</h4>
+          <p>${escapePublicHtml(donor.union)} • ${escapePublicHtml(donor.bloodGroup)} • Last donated: ${escapePublicHtml(donor.lastDonated || 'Not provided')}</p>
+          <p class="match-actions">Contact details remain private. Ask the union emergency moderator to coordinate.</p>
         </div>
         <span class="priority-badge">${donor.bloodGroup === requestedGroup ? 'Exact' : 'Compatible'}</span>
       </div>
@@ -1577,54 +1640,39 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const candidates = [...bloodDonorPool].filter((donor) => donor.active).length;
-    setAlertStatus(`Sending SMS / Browser alerts to ${candidates} active donors in Lohagara...`, true);
-    triggerEmergencyTone();
+    setAlertStatus('Loading consented, verified directory matches. This form does not broadcast alerts.', true);
     closeBloodModal();
-
-    setTimeout(() => {
-      renderBloodMatches(requestedGroup);
-      setAlertStatus(`Emergency alert sent for ${patientName} • ${requestedGroup} • ${units} units • ${location}`, false);
-    }, 1600);
+    renderBloodMatches(requestedGroup);
+    setAlertStatus(`Showing verified directory matches for ${patientName} • ${requestedGroup} • ${units} units • ${location}. For dispatch, contact local emergency services.`, false);
   });
 
-  registerDonorBtn?.addEventListener('click', () => {
+  registerDonorBtn?.addEventListener('click', async () => {
     const donorName = document.getElementById('donorName')?.value?.trim() || 'Community Donor';
     const donorPhone = document.getElementById('donorPhone')?.value?.trim();
     const donorBloodGroup = document.getElementById('donorBloodGroup')?.value || 'O+';
-    const donorUnion = document.getElementById('donorUnion')?.value || '৬নং লোহাগাড়া';
+    const donorUnion = document.getElementById('donorUnion')?.value;
+    const publicDirectoryConsent = document.getElementById('donorPublicConsent')?.checked;
 
-    if (!donorPhone) {
-      alert('Please provide your phone number to activate donor status.');
+    if (!donorPhone || !donorUnion || !publicDirectoryConsent) {
+      alert('ফোন, ইউনিয়ন এবং public directory consent পূরণ করুন।');
       return;
     }
-
-    const alreadyExists = bloodDonorPool.some((donor) => donor.phone === donorPhone);
-    if (alreadyExists) {
-      const donor = bloodDonorPool.find((entry) => entry.phone === donorPhone);
-      donor.active = true;
-      donor.bloodGroup = donorBloodGroup;
-      donor.union = donorUnion;
-      donor.lastDonated = '২০২৬-০৮-২০';
-      donor.name = donorName;
-    } else {
-      bloodDonorPool.unshift({
-        name: donorName,
-        bloodGroup: donorBloodGroup,
-        union: donorUnion,
-        lastDonated: '২০২৬-০৮-২০',
-        phone: donorPhone,
-        active: true
+    try {
+      const result = await fetch(`${publicApiBase}/public/blood/donor-enrollments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayName: donorName, phone: donorPhone, bloodGroup: donorBloodGroup, unionSlug: donorUnion, publicDirectoryConsent: true })
       });
+      const payload = await result.json().catch(() => ({}));
+      if (!result.ok) throw new Error(payload.error?.message || 'Donor registration failed.');
+      setAlertStatus('Registration received. A local moderator must verify your phone before you appear in the directory or receive alerts.', false);
+      document.getElementById('donorName').value = '';
+      document.getElementById('donorPhone').value = '';
+      document.getElementById('donorPublicConsent').checked = false;
+    } catch (error) {
+      setAlertStatus(error.message, false);
     }
-
-    renderBloodMatches(donorBloodGroup);
-    setAlertStatus(`Donor activated successfully for ${donorBloodGroup} in ${donorUnion}.`, false);
-    document.getElementById('donorName').value = '';
-    document.getElementById('donorPhone').value = '';
   });
-
-  renderBloodMatches('O+');
   syncTabs('tab-ambulance');
   applyAmbulanceFilter('all');
   applyBloodFilter();

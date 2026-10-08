@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="admin-api-base" content="http://localhost:4000/api/v1" />
     <title>লোহাগাড়া হাব | অ্যাডমিন কন্ট্রোল সেন্টার</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
       import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
@@ -24,7 +26,7 @@
 
       let app;
       let auth;
-      let googleProvider;
+        let googleProvider;
 
       const hasRealFirebaseConfig = Object.values(firebaseConfig).every((value) => {
         return typeof value === 'string' && value && !value.startsWith('PASTE_') && !value.includes('YOUR_');
@@ -35,13 +37,17 @@
         auth = getAuth(app);
         googleProvider = new GoogleAuthProvider();
       } else {
-        console.warn('Firebase config is not fully set. Using mock mode for UI testing. Please paste your real Firebase web credentials in the firebaseConfig object.');
+        console.warn('Firebase config is not set. Admin sign-in is unavailable until real web credentials are configured.');
       }
 
       window.firebaseAuth = auth;
       window.googleProvider = googleProvider;
       window.firebaseApp = app;
       window.hasRealFirebaseConfig = hasRealFirebaseConfig;
+      window.firebaseSignInWithPopup = signInWithPopup;
+      window.firebaseSignOut = signOut;
+      window.firebaseOnAuthStateChanged = onAuthStateChanged;
+      window.dispatchEvent(new Event('lohagara-firebase-ready'));
     </script>
     <script>
       tailwind.config = {
@@ -158,11 +164,23 @@
           <button data-tab="moderation" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
             <span class="inline-flex items-center gap-3"><span>🧾</span> মডারেশন কিউ</span>
           </button>
+          <button data-tab="properties" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>🏘️</span> প্রপার্টি ও লিড</span>
+          </button>
+          <button data-tab="leads" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>📇</span> ইনকোয়ারি CRM</span>
+          </button>
           <button data-tab="market" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
             <span class="inline-flex items-center gap-3"><span>📈</span> বাজার দর কন্ট্রোল</span>
           </button>
           <button data-tab="blood" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
             <span class="inline-flex items-center gap-3"><span>🩸</span> রক্ত ও জরুরি সেবা</span>
+          </button>
+          <button data-tab="access" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>🛡️</span> রোল ও অডিট</span>
+          </button>
+          <button data-tab="reports" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
+            <span class="inline-flex items-center gap-3"><span>📊</span> রিপোর্ট ও এক্সপোর্ট</span>
           </button>
           <button data-tab="settings" class="nav-item w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90 transition hover:bg-white/8 hover:text-white">
             <span class="inline-flex items-center gap-3"><span>⚙️</span> সেটিংস</span>
@@ -192,8 +210,12 @@
           <nav class="space-y-2">
             <button data-tab="overview" class="nav-item mobile-nav active w-full rounded-2xl border border-emerald-400/30 bg-white/10 px-4 py-3 text-left text-sm font-semibold text-white">📊 ড্যাশবোর্ড ওভারভিউ</button>
             <button data-tab="moderation" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🧾 মডারেশন কিউ</button>
+            <button data-tab="properties" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🏘️ প্রপার্টি ও লিড</button>
+            <button data-tab="leads" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📇 ইনকোয়ারি CRM</button>
             <button data-tab="market" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📈 বাজার দর কন্ট্রোল</button>
             <button data-tab="blood" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🩸 রক্ত ও জরুরি সেবা</button>
+            <button data-tab="access" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🛡️ রোল ও অডিট</button>
+            <button data-tab="reports" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📊 রিপোর্ট ও এক্সপোর্ট</button>
             <button data-tab="settings" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">⚙️ সেটিংস</button>
           </nav>
         </div>
@@ -216,6 +238,10 @@
                 <span class="text-sm text-slate-500">🔍</span>
                 <input type="text" placeholder="খুঁজুন..." class="w-32 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
               </div>
+              <label class="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-[10px] font-semibold text-emerald-900">ইউনিয়ন
+                <select id="activeUnionSelect" class="max-w-36 bg-transparent text-xs font-bold focus:outline-none" aria-label="Select assigned union"></select>
+              </label>
+              <span id="roleBadge" class="hidden rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 lg:inline-flex">Role</span>
 
               <button class="relative rounded-full border border-slate-200 bg-slate-100 p-2.5 text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700">
                 🔔
@@ -246,18 +272,18 @@
                   <span class="rounded-2xl bg-amber-100 p-2 text-xl">⏳</span>
                 </div>
                 <div class="mt-5 flex items-end justify-between">
-                  <div class="text-3xl font-black text-slate-800" data-counter="pending">05</div>
+                  <div class="text-3xl font-black text-slate-800" data-counter="pending">0</div>
                   <span class="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">Review</span>
                 </div>
               </div>
 
               <div class="glass hover-lift panel-glow rounded-3xl p-5">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm text-slate-500">সক্রিয় সেবা</span>
+                  <span class="text-sm text-slate-500">চলমান জরুরি ঘটনা</span>
                   <span class="rounded-2xl bg-emerald-100 p-2 text-xl">🧩</span>
                 </div>
                 <div class="mt-5 flex items-end justify-between">
-                  <div class="text-3xl font-black text-slate-800" data-counter="services">48</div>
+                  <div class="text-3xl font-black text-slate-800" data-counter="services">0</div>
                   <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Live</span>
                 </div>
               </div>
@@ -268,7 +294,7 @@
                   <span class="rounded-2xl bg-blue-100 p-2 text-xl">📈</span>
                 </div>
                 <div class="mt-5 flex items-end justify-between">
-                  <div class="text-3xl font-black text-slate-800" data-counter="market">09</div>
+                  <div class="text-3xl font-black text-slate-800" data-counter="market">0</div>
                   <span class="rounded-full bg-blue-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-700">Synced</span>
                 </div>
               </div>
@@ -279,7 +305,7 @@
                   <span class="rounded-2xl bg-violet-100 p-2 text-xl">👥</span>
                 </div>
                 <div class="mt-5 flex items-end justify-between">
-                  <div class="text-3xl font-black text-slate-800" data-counter="users">128</div>
+                  <div class="text-3xl font-black text-slate-800" data-counter="users">0</div>
                   <span class="rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-violet-700">Active</span>
                 </div>
               </div>
@@ -296,40 +322,40 @@
                   <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div class="mb-3 flex items-center justify-between text-sm">
                       <span class="text-slate-600">Service Verification</span>
-                      <span class="font-bold text-emerald-600">82%</span>
+                      <span id="overviewVerifiedServices" class="font-bold text-emerald-600">0</span>
                     </div>
                     <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
-                      <div class="h-full w-[82%] rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                      <div id="overviewVerifiedBar" class="h-full w-0 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"></div>
                     </div>
                   </div>
 
                   <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div class="mb-3 flex items-center justify-between text-sm">
                       <span class="text-slate-600">Emergency Response</span>
-                      <span class="font-bold text-amber-600">67%</span>
+                      <span id="overviewActiveIncidents" class="font-bold text-amber-600">0</span>
                     </div>
                     <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
-                      <div class="h-full w-[67%] rounded-full bg-gradient-to-r from-amber-400 to-yellow-400"></div>
+                      <div id="overviewIncidentBar" class="h-full w-0 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400"></div>
                     </div>
                   </div>
 
                   <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div class="mb-3 flex items-center justify-between text-sm">
                       <span class="text-slate-600">Blood Match Success</span>
-                      <span class="font-bold text-blue-600">91%</span>
+                      <span id="overviewDonorCount" class="font-bold text-blue-600">0</span>
                     </div>
                     <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
-                      <div class="h-full w-[91%] rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                      <div id="overviewDonorBar" class="h-full w-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"></div>
                     </div>
                   </div>
 
                   <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <div class="mb-3 flex items-center justify-between text-sm">
                       <span class="text-slate-600">Content Quality</span>
-                      <span class="font-bold text-violet-600">94%</span>
+                      <span id="overviewOpenReports" class="font-bold text-violet-600">0</span>
                     </div>
                     <div class="h-2.5 overflow-hidden rounded-full bg-slate-200">
-                      <div class="h-full w-[94%] rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"></div>
+                      <div id="overviewReportsBar" class="h-full w-0 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400"></div>
                     </div>
                   </div>
                 </div>
@@ -341,31 +367,7 @@
                   <span class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">Live</span>
                 </div>
 
-                <div class="space-y-3">
-                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div class="flex items-center justify-between gap-2">
-                      <div class="font-semibold text-slate-800">জরুরি সেবা অনুমোদিত</div>
-                      <div class="text-[10px] text-slate-500">২ মিনিট আগে</div>
-                    </div>
-                    <p class="mt-1 text-sm text-slate-500">লোহাগাড়া ত্রাণ সেবা সনাক্তকরণ সফল হয়েছে।</p>
-                  </div>
-
-                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div class="flex items-center justify-between gap-2">
-                      <div class="font-semibold text-slate-800">বাজার দর আপডেট</div>
-                      <div class="text-[10px] text-slate-500">৯ মিনিট আগে</div>
-                    </div>
-                    <p class="mt-1 text-sm text-slate-500">পদুয়া বাজারে চালের দাম ২.৪% বৃদ্ধি পেয়েছে।</p>
-                  </div>
-
-                  <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                    <div class="flex items-center justify-between gap-2">
-                      <div class="font-semibold text-slate-800">নতুন গল্প জমা</div>
-                      <div class="text-[10px] text-slate-500">১৮ মিনিট আগে</div>
-                    </div>
-                    <p class="mt-1 text-sm text-slate-500">স্থানীয় ইতিহাসের গল্প মডারেশন কিউতে অপেক্ষমাণ।</p>
-                  </div>
-                </div>
+                <div id="recentActivity" class="space-y-3"></div>
               </div>
             </div>
           </section>
@@ -381,6 +383,63 @@
             </div>
 
             <div id="moderationList" class="space-y-4"></div>
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <div class="border-b border-slate-100 px-5 py-4"><h3 class="font-black text-slate-800">রিপোর্ট করা বিজ্ঞাপন ও ব্যবহারকারী</h3><p class="text-xs text-slate-500">প্রতিটি পদক্ষেপ নীতিমালা ও প্রমাণ যাচাই করে নিন</p></div>
+              <div id="reportedQueue" class="divide-y divide-slate-100"></div>
+            </div>
+          </section>
+
+          <section id="tab-properties" class="tab-panel hidden space-y-5">
+            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Real Estate Intelligence</div>
+                <h2 class="mt-1 text-2xl font-black text-slate-800">প্রপার্টি ও মার্কেট ইন্টেলিজেন্স</h2>
+              </div>
+              <span class="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">লাইভ API</span>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">সক্রিয় লিস্টিং</div><div id="activeListingsMetric" class="mt-2 text-2xl font-black">0</div><div class="mt-1 text-xs text-slate-500">নির্বাচিত ইউনিয়ন</div></div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">রিভিউ অপেক্ষায়</div><div id="pendingListingsMetric" class="mt-2 text-2xl font-black">0</div><div class="mt-1 text-xs text-slate-500">সার্ভার গণনা</div></div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">বিক্রি / ভাড়া সম্পন্ন</div><div id="closedListingsMetric" class="mt-2 text-2xl font-black">0</div><div class="mt-1 text-xs text-slate-500">নির্বাচিত ইউনিয়ন</div></div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">নতুন ইনকোয়ারি</div><div id="newLeadsMetric" class="mt-2 text-2xl font-black">0</div><div class="mt-1 text-xs text-slate-500">গত ৩০ দিন</div></div>
+            </div>
+            <form id="propertyCreateForm" class="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 md:grid-cols-2 xl:grid-cols-4">
+              <div class="xl:col-span-4"><h3 class="font-black text-slate-800">নতুন প্রপার্টি পোস্ট</h3><p class="text-xs text-slate-500">ওয়ার্ড, এলাকা ও মালিকানা প্রমাণসহ; পোস্টটি Pending verification হবে।</p></div>
+              <label class="text-xs font-semibold text-slate-600">প্রপার্টির মালিক<select id="propertyOwnerSelect" name="ownerId" required class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></select></label>
+              <label class="text-xs font-semibold text-slate-600">শিরোনাম<input name="title" required minlength="5" class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>
+              <label class="text-xs font-semibold text-slate-600">ধরন<select name="listingType" class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="house">বাড়ি</option><option value="land">জমি</option><option value="apartment">অ্যাপার্টমেন্ট</option></select></label>
+              <label class="text-xs font-semibold text-slate-600">ওয়ার্ড<select id="propertyWardSelect" name="wardId" required class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></select></label>
+              <label class="text-xs font-semibold text-slate-600">এলাকা<input name="areaName" required class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="যেমন: Ward 3, College Road" /></label>
+              <label class="text-xs font-semibold text-slate-600">মূল্য<input name="priceAmount" type="number" min="1" step="0.01" required class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>
+              <label class="text-xs font-semibold text-slate-600">মূল্য ধরন<select name="pricePeriod" class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="sale">বিক্রয়</option><option value="month">মাসিক ভাড়া</option></select></label>
+              <label class="text-xs font-semibold text-slate-600">মালিকানা দলিল (PDF/JPG/PNG, সর্বোচ্চ 15 MB)<input name="ownershipProof" type="file" accept="application/pdf,image/jpeg,image/png" required class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" /></label>
+              <label class="text-xs font-semibold text-slate-600 md:col-span-2 xl:col-span-4">বিবরণ<textarea name="description" minlength="20" maxlength="10000" required rows="3" class="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></textarea></label>
+              <div class="md:col-span-2 xl:col-span-4"><button class="rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white">দলিলসহ Pending পোস্ট তৈরি</button></div>
+            </form>
+            <div class="grid gap-5 xl:grid-cols-2">
+              <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <div class="mb-4 flex items-center justify-between"><h3 class="font-black text-slate-800">লিস্টিং স্ট্যাটাস</h3><span class="text-xs text-slate-500">বিভাগ অনুযায়ী</span></div>
+                <div class="relative h-64"><canvas id="propertyStatusChart" aria-label="Property listing status chart"></canvas></div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-5">
+                <div class="mb-4 flex items-center justify-between"><h3 class="font-black text-slate-800">স্থানীয় প্লট মূল্য প্রবণতা</h3><span class="text-xs text-slate-500">৳ / শতক · ৬ মাস</span></div>
+                <div class="relative h-64"><canvas id="landTrendChart" aria-label="Local plot value trend chart"></canvas></div>
+              </div>
+            </div>
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4"><div><h3 class="font-black text-slate-800">যাচাই অপেক্ষায়</h3><p class="text-xs text-slate-500">মালিকানা নথি যাচাই করে অনুমোদন দিন</p></div><button id="propertyQueueExport" class="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">কিউ CSV</button></div>
+              <div class="overflow-x-auto"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50 text-xs text-slate-500"><tr><th class="px-5 py-3">প্রপার্টি</th><th class="px-5 py-3">ধরন / এলাকা</th><th class="px-5 py-3">নথি</th><th class="px-5 py-3">স্ট্যাটাস</th><th class="px-5 py-3">অ্যাকশন</th></tr></thead><tbody id="propertyQueueBody"></tbody></table></div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5">
+              <div class="mb-4"><h3 class="font-black text-slate-800">ব্লু-ব্যাজ আবেদন</h3><p class="text-xs text-slate-500">নিয়মিত লিস্টার ও ভেন্ডর পরিচয় যাচাই</p></div>
+              <div id="vendorRequests" class="grid gap-3 md:grid-cols-2"></div>
+            </div>
+          </section>
+
+          <section id="tab-leads" class="tab-panel hidden space-y-5">
+            <div class="flex flex-wrap items-end justify-between gap-3"><div><div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Property CRM</div><h2 class="mt-1 text-2xl font-black text-slate-800">ইনকোয়ারি ও ভিউয়িং পাইপলাইন</h2></div><input id="leadSearch" type="search" placeholder="নাম বা প্রপার্টি খুঁজুন" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm sm:w-64" /></div>
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">নতুন</div><div class="text-2xl font-black">12</div></div><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">যোগাযোগ হয়েছে</div><div class="text-2xl font-black">8</div></div><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">ভিউয়িং নির্ধারিত</div><div class="text-2xl font-black">6</div></div><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">বুকিং</div><div class="text-2xl font-black">3</div></div></div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50 text-xs text-slate-500"><tr><th class="px-4 py-3">ক্রেতা</th><th class="px-4 py-3">প্রপার্টি</th><th class="px-4 py-3">যোগাযোগ</th><th class="px-4 py-3">রিকোয়েস্ট</th><th class="px-4 py-3">পর্যায়</th><th class="px-4 py-3">আপডেট</th></tr></thead><tbody id="leadTableBody"></tbody></table></div>
           </section>
 
           <!-- Market Tab -->
@@ -408,12 +467,22 @@
                         <th class="pb-3 pr-3 font-semibold">বাজার</th>
                         <th class="pb-3 pr-3 font-semibold">খুচরা</th>
                         <th class="pb-3 pr-3 font-semibold">হোলসেল</th>
-                        <th class="pb-3 font-semibold">ট্রেন্ড</th>
                       </tr>
                     </thead>
                     <tbody id="marketTableBody"></tbody>
                   </table>
                 </div>
+
+                <form id="marketCreateForm" class="mt-5 grid gap-2 border-t border-slate-100 pt-4 sm:grid-cols-2">
+                  <h4 class="font-bold text-slate-800 sm:col-span-2">নতুন পণ্যের দৈনিক দর</h4>
+                  <input name="displayName" required placeholder="পণ্যের নাম" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                  <input name="commodityCode" required placeholder="কোড, যেমন rice-miniket" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                  <select name="category" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="market">কাঁচাবাজার</option><option value="rice">চাল ও ডাল</option><option value="fruit">ফলমূল</option><option value="hill">পাহাড়ি পণ্য</option><option value="seed">বীজ ও সার</option></select>
+                  <input name="unit" required placeholder="একক, যেমন kg" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                  <input name="retailAmount" type="number" min="0.01" step="0.01" required placeholder="খুচরা মূল্য" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                  <input name="wholesaleAmount" type="number" min="0.01" step="0.01" required placeholder="হোলসেল মূল্য" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+                  <button class="rounded-lg bg-emerald-800 px-3 py-2 text-sm font-bold text-white">মূল্য সংরক্ষণ</button>
+                </form>
 
                 <div class="mt-5 flex justify-end">
                   <button id="updateMarketBtn" class="rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-glow transition hover:-translate-y-0.5">Update Price</button>
@@ -424,6 +493,11 @@
                 <h3 class="mb-4 text-xl font-black text-slate-800">মার্কেট সারসংক্ষেপ</h3>
                 <div id="marketSummary" class="space-y-3"></div>
               </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5">
+              <div class="mb-4 flex flex-wrap items-center justify-between gap-2"><div><h3 class="font-black text-slate-800">দৈনিক পণ্যদর প্রবণতা</h3><p class="text-xs text-slate-500">নির্বাচিত ইউনিয়নের মূল্য ইতিহাস</p></div><select id="marketSelect" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" aria-label="Select local market"></select></div>
+              <div class="relative h-64"><canvas id="commodityTrendChart" aria-label="Commodity price history chart"></canvas></div>
+              <div class="mt-4 flex justify-end"><button id="broadcastPricesBtn" class="rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-900">দাম আপডেট ও সম্প্রচার</button></div>
             </div>
           </section>
 
@@ -440,17 +514,17 @@
                   <span class="text-sm text-slate-500">অত্যাবশ্যক O+ রক্ত</span>
                   <span class="rounded-full bg-red-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-red-700">Critical</span>
                 </div>
-                <div class="mt-5 text-3xl font-black text-slate-800">05</div>
+                <div id="criticalDonorCount" class="mt-5 text-3xl font-black text-slate-800">0</div>
                 <p class="mt-2 text-sm text-slate-500">লোহাগাড়া ও আশেপাশের ইউনিয়ন থেকে ডোনার নোটিফিকেশন পাঠানো হচ্ছে।</p>
               </div>
 
               <div class="glass hover-lift panel-glow rounded-3xl p-5">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm text-slate-500">ডোনার রেসপন্স</span>
+                  <span class="text-sm text-slate-500">Available donor</span>
                   <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Fast</span>
                 </div>
-                <div class="mt-5 text-3xl font-black text-slate-800">18 min</div>
-                <p class="mt-2 text-sm text-slate-500">নিকটতম যাচাইকৃত ডোনার সনাক্তকরণের গড় সময়।</p>
+                <div id="donorDirectoryCount" class="mt-5 text-3xl font-black text-slate-800">0</div>
+                <p class="mt-2 text-sm text-slate-500">নির্বাচিত ইউনিয়নে উপলভ্য ও সম্মতিদানকারী দাতা।</p>
               </div>
 
               <div class="glass hover-lift panel-glow rounded-3xl p-5">
@@ -458,10 +532,36 @@
                   <span class="text-sm text-slate-500">সক্রিয় অ্যালার্ট</span>
                   <span class="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-700">Review</span>
                 </div>
-                <div class="mt-5 text-3xl font-black text-slate-800">12</div>
+                <div id="activeIncidentCount" class="mt-5 text-3xl font-black text-slate-800">0</div>
                 <p class="mt-2 text-sm text-slate-500">ডিসপ্যাচ ও ভেরিফিকেশন বাকি আছে।</p>
               </div>
             </div>
+            <div class="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4"><div><h3 class="font-black text-slate-800">রক্তদাতা ডিরেক্টরি</h3><p class="text-xs text-slate-500">নির্বাচিত ইউনিয়নের সম্মতিদানকারী, যাচাইকৃত দাতা</p></div><div class="flex gap-2"><select id="donorGroupFilter" class="rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="">সব গ্রুপ</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select><select id="donorAreaFilter" class="rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="">সব ওয়ার্ড</option></select><select id="donorAvailabilityFilter" class="rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="">সব অবস্থা</option><option value="true">Available</option><option value="false">Unavailable</option></select></div></div>
+                <div class="overflow-x-auto"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50 text-xs text-slate-500"><tr><th class="px-4 py-3">দাতা</th><th class="px-4 py-3">রক্তের গ্রুপ</th><th class="px-4 py-3">এলাকা</th><th class="px-4 py-3">অবস্থা</th><th class="px-4 py-3">কল</th></tr></thead><tbody id="donorTableBody"></tbody></table></div>
+                <div id="donorEnrollmentPanel" class="border-t border-slate-100 p-4"><h3 class="font-black text-slate-800">ডোনার enrollment review</h3><p class="mt-1 text-xs text-slate-500">ফোনে যাচাই না হওয়া পর্যন্ত কেউ তালিকা বা SOS-এ যুক্ত হবে না।</p><div id="donorEnrollmentQueue" class="mt-3 space-y-3"></div></div>
+              </div>
+              <div class="space-y-5">
+                <section class="rounded-2xl border border-red-200 bg-white p-5"><h3 class="font-black text-slate-800">ইউনিয়ন SOS সম্প্রচার</h3><p class="mt-1 text-xs text-slate-500">শুধু নির্বাচিত ইউনিয়ন/ওয়ার্ডের যাচাইকৃত দাতা ও সক্রিয় স্বেচ্ছাসেবক লক্ষ্য হবে।</p><form id="sosForm" class="mt-3 space-y-3"><select name="alertType" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="medical">চিকিৎসা</option><option value="flood">বন্যা</option><option value="accident">দুর্ঘটনা</option><option value="fire">অগ্নিকাণ্ড</option><option value="other">অন্যান্য</option></select><select id="sosWardSelect" name="wardId" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">পুরো ইউনিয়ন</option></select><textarea name="message" required minlength="10" maxlength="1000" rows="3" placeholder="জরুরি বার্তা" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></textarea><label class="flex items-start gap-2 text-xs text-red-800"><input name="confirmBroadcast" type="checkbox" required class="mt-0.5" />আমি নির্বাচিত এলাকায় জরুরি SMS/Push পাঠানোর বিষয়টি নিশ্চিত করছি।</label><button class="w-full rounded-xl bg-red-700 px-4 py-2.5 text-sm font-bold text-white">Alert queue করুন</button></form></section>
+                <section class="rounded-2xl border border-slate-200 bg-white p-5"><h3 class="font-black text-slate-800">Union response teams</h3><form id="responseTeamForm" class="mt-3 grid gap-2"><input name="name" required placeholder="টিম / সেবার নাম" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" /><select name="type" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="volunteer">স্বেচ্ছাসেবক</option><option value="fire_service">ফায়ার সার্ভিস</option><option value="ambulance">অ্যাম্বুলেন্স</option><option value="blood_bank">ব্লাড ব্যাংক</option><option value="rescue">রেসকিউ</option></select><input name="phone" required inputmode="tel" placeholder="ফোন নম্বর" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" /><select id="teamWardSelect" name="wardId" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"></select><button class="rounded-lg border border-emerald-700 px-3 py-2 text-sm font-bold text-emerald-900">টিম যোগ করুন</button></form><div id="responseTeamList" class="mt-4 space-y-2"></div></section>
+                <div class="rounded-2xl border border-slate-200 bg-white p-5"><div class="mb-3 flex items-center justify-between"><h3 class="font-black text-slate-800">জরুরি দ্রুত ডায়াল</h3><span class="h-2 w-2 rounded-full bg-emerald-500"></span></div><div class="space-y-3"><a href="tel:999" class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3 text-sm"><span>জাতীয় জরুরি সেবা · পুলিশ</span><strong>999</strong></a><a href="tel:199" class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3 text-sm"><span>ফায়ার সার্ভিস</span><strong>199</strong></a><a href="tel:16263" class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3 text-sm"><span>স্বাস্থ্য বাতায়ন / অ্যাম্বুলেন্স সহায়তা</span><strong>16263</strong></a></div></div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-5"><div class="mb-3 flex items-center justify-between"><h3 class="font-black text-slate-800">রেসকিউ ও ত্রাণ লগ</h3><span id="incidentLogCount" class="text-xs font-semibold text-amber-700">0</span></div><form id="incidentForm" class="mb-4 grid gap-2 border-b border-slate-100 pb-4"><input name="incidentType" required placeholder="ঘটনার ধরন" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" /><select id="incidentWardSelect" name="wardId" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"></select><input name="assignedTeam" placeholder="নির্ধারিত টিম (ঐচ্ছিক)" class="rounded-lg border border-slate-200 px-3 py-2 text-sm" /><textarea name="details" required minlength="10" maxlength="3000" placeholder="ঘটনার বিবরণ" rows="2" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"></textarea><button class="rounded-lg bg-amber-600 px-3 py-2 text-sm font-bold text-white">Incident লগ করুন</button></form><div id="emergencyLog" class="space-y-3 text-sm"></div></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="tab-access" class="tab-panel hidden space-y-5">
+            <div><div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Security & Governance</div><h2 class="mt-1 text-2xl font-black text-slate-800">রোল ও অডিট ট্রেইল</h2><p class="mt-1 text-sm text-slate-500">Union Moderator ও Local Editor-এর permission API-তে union scope দিয়ে প্রয়োগ হয়।</p></div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50 text-xs text-slate-500"><tr><th class="px-4 py-3">রোল</th><th class="px-4 py-3">প্রপার্টি</th><th class="px-4 py-3">বাজার দর</th><th class="px-4 py-3">জরুরি</th><th class="px-4 py-3">সীমা</th></tr></thead><tbody><tr class="border-t"><td class="px-4 py-3 font-semibold">Super Admin</td><td class="px-4 py-3">সব ইউনিয়ন</td><td class="px-4 py-3">সব ইউনিয়ন</td><td class="px-4 py-3">সব ইউনিয়ন</td><td class="px-4 py-3">Global</td></tr><tr class="border-t"><td class="px-4 py-3 font-semibold">Union Moderator</td><td class="px-4 py-3">Assigned union</td><td class="px-4 py-3">Assigned union</td><td class="px-4 py-3">Assigned union · SOS</td><td class="px-4 py-3">Union + ward</td></tr><tr class="border-t"><td class="px-4 py-3 font-semibold">Local Editor</td><td class="px-4 py-3">Draft / proof</td><td class="px-4 py-3">Update / broadcast</td><td class="px-4 py-3">Directory updates</td><td class="px-4 py-3">Union + ward</td></tr></tbody></table></div>
+            <form id="roleAssignmentForm" class="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 md:grid-cols-4"><div class="md:col-span-4"><h3 class="font-black text-slate-800">অ্যাডমিন রোল অ্যাসাইন</h3><p class="text-xs text-slate-500">শুধু Super Admin; ইউনিয়নভিত্তিক রোল নির্বাচিত union-এ সীমাবদ্ধ থাকবে।</p></div><select id="adminUserSelect" name="userId" required class="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">অ্যাকাউন্ট নির্বাচন</option></select><select name="role" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="union_moderator">Union Moderator</option><option value="local_editor">Local Editor</option><option value="super_admin">Super Admin</option></select><select id="roleUnionSelect" name="unionId" class="rounded-lg border border-slate-200 px-3 py-2 text-sm"></select><button class="rounded-lg bg-emerald-800 px-3 py-2 text-sm font-bold text-white">অ্যাসাইন যোগ করুন</button></form>
+            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white"><div class="border-b border-slate-100 px-5 py-4"><h3 class="font-black text-slate-800">সাম্প্রতিক প্রশাসনিক কার্যক্রম</h3><p class="text-xs text-slate-500">সময়, actor, source IP ও target union transactional audit table থেকে</p></div><div class="overflow-x-auto"><table class="min-w-full text-left text-sm"><thead class="bg-slate-50 text-xs text-slate-500"><tr><th class="px-4 py-3">সময়</th><th class="px-4 py-3">অভিনেতা</th><th class="px-4 py-3">কার্যক্রম</th><th class="px-4 py-3">রিসোর্স</th><th class="px-4 py-3">IP</th></tr></thead><tbody id="auditTableBody"></tbody></table></div></div>
+          </section>
+
+          <section id="tab-reports" class="tab-panel hidden space-y-5">
+            <div><div class="text-[11px] font-bold uppercase tracking-[0.28em] text-emerald-700">Reporting</div><h2 class="mt-1 text-2xl font-black text-slate-800">রিপোর্ট ও ডেটা এক্সপোর্ট</h2><p class="mt-1 text-sm text-slate-500">নির্বাচিত ইউনিয়নের database snapshot থেকে export job তৈরি হবে।</p></div>
+            <div class="grid gap-4 md:grid-cols-3"><label class="text-sm font-semibold text-slate-700">রিপোর্ট সময়কাল<select id="reportPeriod" class="mt-2 block w-full rounded-xl border border-slate-200 bg-white px-3 py-3"><option value="weekly">সাপ্তাহিক</option><option value="monthly">মাসিক</option></select></label><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">সক্রিয় লিস্টিং · নতুন ইউজার</div><div id="reportListingMetric" class="mt-2 text-2xl font-black">0 · 0</div></div><div class="rounded-2xl border border-slate-200 bg-white p-4"><div class="text-xs text-slate-500">নতুন ইনকোয়ারি · জরুরি ঘটনা</div><div id="reportActivityMetric" class="mt-2 text-2xl font-black">0 · 0</div></div></div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5"><h3 class="font-black text-slate-800">রিপোর্ট তৈরি</h3><p class="mt-1 text-sm text-slate-500">Growth, property moderation, lead conversion, বাজারদর এবং জরুরি সেবার সারাংশ অন্তর্ভুক্ত।</p><div class="mt-5 flex flex-wrap gap-3"><button id="reportCsvBtn" class="rounded-xl border border-emerald-800 px-4 py-2.5 text-sm font-bold text-emerald-900 hover:bg-emerald-50">CSV ডাউনলোড</button><button id="reportExcelBtn" class="rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-900">Excel ডাউনলোড</button><button id="reportPdfBtn" class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">PDF প্রিন্ট</button></div></div>
           </section>
 
           <!-- Settings Tab -->
@@ -614,11 +714,11 @@
             <form id="settingsSystemForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
               <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Integrations · Mock</div>
+                  <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Integrations · server managed</div>
                   <h3 class="mt-1 text-lg font-black text-slate-800">API ও সিস্টেম কনফিগারেশন</h3>
                   <p class="mt-1 text-sm text-slate-500">ভবিষ্যৎ ব্যাকএন্ড সংযোগের জন্য প্লেসহোল্ডার। এই ফর্মে কোনো তথ্য পাঠানো বা সংরক্ষণ করা হয় না।</p>
                 </div>
-                <span class="w-fit rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-800">Mock mode</span>
+                <span class="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-800">Server managed</span>
               </div>
 
               <div class="grid gap-5 xl:grid-cols-2">
@@ -676,7 +776,7 @@
               <div class="mb-5">
                 <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Data &amp; Backup</div>
                 <h3 id="dataToolsHeading" class="mt-1 text-lg font-black text-slate-800">ডেটা ব্যবস্থাপনা ও ব্যাকআপ</h3>
-                <p class="mt-1 text-sm text-slate-500">ড্যাশবোর্ডের বর্তমান ডেমো ডেটা ফাইলে রপ্তানি করুন বা এই ডিভাইসে সংরক্ষিত অ্যাডমিন পছন্দ মুছুন।</p>
+                <p class="mt-1 text-sm text-slate-500">সীমিত বর্তমান union cache রপ্তানি করুন বা এই ডিভাইসে সংরক্ষিত admin preferences মুছুন।</p>
               </div>
               <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <button id="exportJsonBtn" type="button" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-700/20"><span aria-hidden="true">↓</span> JSON রপ্তানি</button>
@@ -708,12 +808,21 @@
 
     <!-- Toast container -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex w-[280px] flex-col gap-3"></div>
+    <div id="documentModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 p-4"><section class="flex h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white"><header class="flex items-center justify-between border-b px-4 py-3"><h2 id="documentModalTitle" class="font-bold">Secure ownership document</h2><button id="closeDocumentModal" class="rounded-lg border px-3 py-1.5 text-sm">বন্ধ</button></header><iframe id="documentFrame" title="Private ownership document preview" class="min-h-0 flex-1" referrerpolicy="no-referrer"></iframe></section></div>
 
     <script>
-      const ADMIN_EMAILS = [
-        'yourgmail@gmail.com',
-        'admin@lohagarahub.com'
-      ];
+      const API_BASE = document.querySelector('meta[name="admin-api-base"]').content.replace(/\/$/, '');
+      let currentAdmin = null;
+      let activeUnionId = null;
+      let unionData = [];
+      let wardData = [];
+      let marketOptions = [];
+      let ownerOptions = [];
+      let adminUsers = [];
+      let overviewData = {};
+      let commodityHistory = [];
+      let propertyHistory = [];
+      let liveEventsController = null;
 
       const loginScreen = document.getElementById('loginScreen');
       const appShell = document.getElementById('appShell');
@@ -732,19 +841,6 @@
       function hideAuthError() {
         authError.classList.add('hidden');
         authError.textContent = '';
-      }
-
-      function triggerMockLogin() {
-        const mockUser = {
-          displayName: 'Mock Admin User',
-          email: 'admin@lohagara.local',
-          photoURL: '',
-          uid: 'mock-admin-user'
-        };
-
-        updateUserProfile(mockUser);
-        setAuthState(true);
-        showToast('Mock admin login active. Paste real Firebase credentials to enable Google sign-in.', 'warning');
       }
 
       function updateUserProfile(user) {
@@ -781,9 +877,58 @@
           loginScreen.classList.add('hidden');
           appShell.classList.remove('hidden');
         } else {
+          liveEventsController?.abort();
           loginScreen.classList.remove('hidden');
           appShell.classList.add('hidden');
         }
+      }
+
+      async function apiRequest(path, options = {}) {
+        const user = window.firebaseAuth?.currentUser;
+        const token = options.token || (user ? await user.getIdToken() : null);
+        if (!token) throw new Error('Sign in with an authorized Firebase account first.');
+        const response = await fetch(`${API_BASE}/admin${path}`, {
+          ...options,
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers || {}) },
+          body: options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status}).`);
+        return payload.data;
+      }
+
+      function startRealtimeFeed() {
+        liveEventsController?.abort();
+        liveEventsController = new AbortController();
+        const { signal } = liveEventsController;
+        (async () => {
+          while (!signal.aborted) {
+            try {
+              const token = await window.firebaseAuth.currentUser.getIdToken();
+              const response = await fetch(`${API_BASE}/admin/events`, { headers: { Authorization: `Bearer ${token}` }, signal });
+              if (!response.ok || !response.body) throw new Error('Live update connection is unavailable.');
+              const reader = response.body.getReader();
+              const decoder = new TextDecoder();
+              let buffer = '';
+              while (!signal.aborted) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const messages = buffer.split('\n\n');
+                buffer = messages.pop() || '';
+                for (const message of messages) {
+                  const line = message.split('\n').find((part) => part.startsWith('data: '));
+                  if (!line) continue;
+                  const update = JSON.parse(line.slice(6));
+                  if (!update.unionId || Number(update.unionId) === activeUnionId) await loadUnionWorkspace(activeUnionId);
+                }
+              }
+            } catch (error) {
+              if (!signal.aborted) console.warn('Live admin feed reconnecting:', error.message);
+            }
+            if (!signal.aborted) await new Promise((resolve) => setTimeout(resolve, 3000));
+          }
+        })();
       }
 
       async function handleGoogleSignIn() {
@@ -791,29 +936,13 @@
         const provider = window.googleProvider;
 
         if (!window.hasRealFirebaseConfig || !auth || !provider) {
-          console.warn('Firebase is not configured yet. Falling back to mock login mode for UI testing.');
-          triggerMockLogin();
+          showAuthError('Firebase Web configuration is required before admin access can be enabled.');
           return;
         }
 
         try {
           hideAuthError();
-          const result = await signInWithPopup(auth, provider);
-          const user = result.user;
-          const normalizedEmail = (user.email || '').toLowerCase();
-          const authorized = ADMIN_EMAILS.some((email) => email.toLowerCase() === normalizedEmail);
-
-          if (!authorized) {
-            await signOut(auth);
-            updateUserProfile(null);
-            setAuthState(false);
-            showAuthError('Unauthorized Google account. Only authorized admin emails can access this dashboard.');
-            return;
-          }
-
-          updateUserProfile(user);
-          setAuthState(true);
-          showToast('Signed in successfully as approved admin.', 'success');
+          await window.firebaseSignInWithPopup(auth, provider);
         } catch (error) {
           console.error('Google sign-in failed. Details:', error);
           setAuthState(false);
@@ -833,17 +962,10 @@
 
       document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleSignIn);
 
-      const mockLoginBtn = document.createElement('button');
-      mockLoginBtn.type = 'button';
-      mockLoginBtn.textContent = 'Test dashboard UI (Mock login)';
-      mockLoginBtn.className = 'mt-4 w-full rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/20';
-      mockLoginBtn.addEventListener('click', triggerMockLogin);
-      document.querySelector('#loginScreen .w-full.max-w-md').appendChild(mockLoginBtn);
-
       async function handleLogout() {
         const auth = window.firebaseAuth;
         try {
-          await signOut(auth);
+          await window.firebaseSignOut(auth);
           updateUserProfile(null);
           setAuthState(false);
           showToast('Logged out successfully.', 'info');
@@ -884,91 +1006,196 @@
         }
       });
 
-      if (window.firebaseAuth && window.hasRealFirebaseConfig) {
-        onAuthStateChanged(window.firebaseAuth, (user) => {
+      function attachFirebaseAuth() {
+        if (!window.firebaseAuth || !window.hasRealFirebaseConfig) return;
+        window.firebaseOnAuthStateChanged(window.firebaseAuth, async (user) => {
           if (!user) {
+            currentAdmin = null;
             updateUserProfile(null);
             setAuthState(false);
             return;
           }
-
-          const normalizedEmail = (user.email || '').toLowerCase();
-          const authorized = ADMIN_EMAILS.some((email) => email.toLowerCase() === normalizedEmail);
-
-          if (!authorized) {
-            signOut(window.firebaseAuth)
-              .then(() => {
-                updateUserProfile(null);
-                setAuthState(false);
-                showAuthError('This Google account is not on the authorized admin list.');
-              })
-              .catch(() => {
-                setAuthState(false);
-              });
-            return;
+          try {
+            const token = await user.getIdToken();
+            currentAdmin = await apiRequest('/session', { token });
+            updateUserProfile({ displayName: currentAdmin.displayName, email: currentAdmin.email, photoURL: user.photoURL });
+            await loadAdminData();
+            setAuthState(true);
+            startRealtimeFeed();
+          } catch (error) {
+            currentAdmin = null;
+            await window.firebaseSignOut(window.firebaseAuth);
+            updateUserProfile(null);
+            setAuthState(false);
+            showAuthError(error.message || 'The signed-in account does not have an active admin role.');
           }
-
-          updateUserProfile(user);
-          setAuthState(true);
         });
-      } else {
-        setAuthState(false);
       }
+      window.addEventListener('lohagara-firebase-ready', attachFirebaseAuth, { once: true });
+      attachFirebaseAuth();
 
       const tabButtons = document.querySelectorAll('.nav-item');
       const tabPanels = document.querySelectorAll('.tab-panel');
 
-      const moderationData = [
-        {
-          id: 1,
-          type: 'Emergency Service',
-          title: 'পদুয়া নতুন জরুরি পরিবহন সেবা',
-          author: 'মোহাম্মদ করিম',
-          area: 'পদুয়া',
-          time: '2 min ago',
-          badge: 'High',
-          description: 'ফ্লাড ও জরুরি পরিবহনের জন্য নতুন কন্টাক্ট পোস্ট করা হয়েছে।'
-        },
-        {
-          id: 2,
-          type: 'Community Story',
-          title: 'প্রাচীন ব্রিজের গল্প',
-          author: 'নুসরাত জাহান',
-          area: 'লোহাগাড়া',
-          time: '18 min ago',
-          badge: 'Medium',
-          description: 'স্থানীয় ইতিহাস সম্পর্কিত গল্প আপলোড করা হয়েছে, যাচাইয়ের অপেক্ষায়।'
-        },
-        {
-          id: 3,
-          type: 'Market Update',
-          title: 'চালের দাম আপডেট',
-          author: 'জালাল উদ্দিন',
-          area: 'লোহাগাড়া',
-          time: '31 min ago',
-          badge: 'Low',
-          description: 'বাজার দর আপডেটের জন্য নতুন দর তালিকা জমা হয়েছে।'
-        },
-        {
-          id: 4,
-          type: 'Service Listing',
-          title: 'ডিজিটাল স্বাস্থ্য পরামর্শ',
-          author: 'আয়শা আক্তার',
-          area: 'লোহাগাড়া',
-          time: '54 min ago',
-          badge: 'Medium',
-          description: 'স্থানীয় টেলিহেলথ সেবা তালিকাভুক্তির জন্য আবেদন জমা।'
-        }
-      ];
+      const moderationData = [];
+      const marketData = [];
+      const propertyQueueData = [];
+      const vendorRequestsData = [];
+      const leadData = [];
+      const donorData = [];
+      const donorEnrollments = [];
+      const reportData = [];
+      const reportedData = [];
+      const teamData = [];
+      const incidentData = [];
 
-      const marketData = [
-        { product: 'আলু', market: 'লোহাগাড়া', retail: 26, wholesale: 18, trend: 'Up' },
-        { product: 'পেঁয়াজ', market: 'লোহাগাড়া', retail: 35, wholesale: 24, trend: 'Stable' },
-        { product: 'চাল', market: 'লোহাগাড়া', retail: 48, wholesale: 40, trend: 'Up' },
-        { product: 'আলু', market: 'পদুয়া', retail: 28, wholesale: 20, trend: 'Stable' },
-        { product: 'পেঁয়াজ', market: 'পদুয়া', retail: 37, wholesale: 25, trend: 'Down' },
-        { product: 'চাল', market: 'পদুয়া', retail: 50, wholesale: 41, trend: 'Up' }
-      ];
+      function replaceItems(target, items) {
+        target.splice(0, target.length, ...(Array.isArray(items) ? items : []));
+      }
+
+      async function optionalApiRequest(path) {
+        try { return await apiRequest(path); }
+        catch (error) {
+          if (!error.message.includes('cannot perform') && !error.message.includes('assigned union') && !error.message.includes('Forbidden')) console.warn(`Optional API request failed: ${path}`, error.message);
+          return [];
+        }
+      }
+
+      function setOptions(select, options, placeholder, selectedValue = '') {
+        select.replaceChildren();
+        if (placeholder) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = placeholder;
+          select.appendChild(option);
+        }
+        options.forEach((item) => {
+          const option = document.createElement('option');
+          option.value = String(item.value);
+          option.textContent = item.label;
+          option.selected = String(item.value) === String(selectedValue);
+          select.appendChild(option);
+        });
+      }
+
+      function syncUnionNavigation() {
+        if (!currentAdmin) return;
+        const roles = currentAdmin.roles || [];
+        const superAdmin = roles.includes('super_admin');
+        const allowedTabs = superAdmin
+          ? ['overview', 'moderation', 'properties', 'leads', 'market', 'blood', 'access', 'reports', 'settings']
+          : roles.includes('union_moderator')
+            ? ['overview', 'properties', 'leads', 'market', 'blood']
+            : roles.includes('local_editor')
+              ? ['overview', 'properties', 'market', 'blood']
+              : ['overview'];
+        document.querySelectorAll('.nav-item').forEach((button) => button.classList.toggle('hidden', !allowedTabs.includes(button.dataset.tab)));
+        document.getElementById('roleBadge').textContent = roles.map((role) => role.replaceAll('_', ' ')).join(', ');
+        document.getElementById('roleBadge').classList.remove('hidden');
+        document.getElementById('updateMarketBtn').classList.toggle('hidden', !(superAdmin || roles.includes('local_editor') || roles.includes('union_moderator')));
+        document.getElementById('broadcastPricesBtn').classList.toggle('hidden', !(superAdmin || roles.includes('local_editor') || roles.includes('union_moderator')));
+        document.getElementById('sosForm').classList.toggle('hidden', !(superAdmin || roles.includes('union_moderator')));
+          document.getElementById('donorEnrollmentPanel').classList.toggle('hidden', !(superAdmin || roles.includes('union_moderator')));
+        if (!allowedTabs.includes('access')) document.getElementById('tab-access').classList.add('hidden');
+        if (!allowedTabs.includes('settings')) document.getElementById('tab-settings').classList.add('hidden');
+      }
+
+      async function loadUnionWorkspace(unionId) {
+        if (!unionId) return;
+        activeUnionId = Number(unionId);
+        const query = `?unionId=${encodeURIComponent(activeUnionId)}`;
+        const results = await Promise.allSettled([
+          apiRequest(`/overview${query}`),
+          apiRequest(`/listings?status=pending${query}`),
+          apiRequest(`/unions/${activeUnionId}/wards`),
+          apiRequest(`/unions/${activeUnionId}/owners`),
+          apiRequest(`/unions/${activeUnionId}/markets`),
+          apiRequest(`/unions/${activeUnionId}/market/prices`),
+          apiRequest(`/unions/${activeUnionId}/donors`),
+          apiRequest(`/unions/${activeUnionId}/emergency/teams`),
+          apiRequest(`/unions/${activeUnionId}/emergencies`),
+          optionalApiRequest(`/unions/${activeUnionId}/leads`),
+          optionalApiRequest(`/unions/${activeUnionId}/audit`),
+          apiRequest(`/unions/${activeUnionId}/property-price-history`),
+          apiRequest(`/unions/${activeUnionId}/market/history`),
+          optionalApiRequest(`/unions/${activeUnionId}/donor-enrollments`)
+        ]);
+        const dataAt = (index, fallback = []) => results[index].status === 'fulfilled' ? results[index].value : fallback;
+        overviewData = dataAt(0, {});
+        replaceItems(propertyQueueData, dataAt(1));
+        replaceItems(wardData, dataAt(2));
+        replaceItems(ownerOptions, dataAt(3));
+        replaceItems(marketOptions, dataAt(4));
+        replaceItems(marketData, dataAt(5).map((row) => ({ ...row, marketId: row.market_id, product: row.display_name, market: row.local_market || row.market_name, retail: Number(row.retail_amount), wholesale: Number(row.wholesale_amount) })));
+        replaceItems(donorData, dataAt(6).map((row) => ({ ...row, name: row.display_name, group: row.blood_group, area: row.area_name || `Ward ${row.ward_number || ''}`, phone: '', available: row.available })));
+        replaceItems(teamData, dataAt(7));
+        replaceItems(incidentData, dataAt(8));
+        replaceItems(leadData, dataAt(9).map((row) => ({ ...row, name: row.buyer_name, property: `${row.title} · ${row.public_code}`, phone: row.buyer_phone || '', request: row.request_type, stage: row.stage })));
+        replaceItems(reportData, dataAt(10).map((row) => ({ time: new Date(row.created_at).toLocaleString(), actor: row.actor_name || 'System', action: row.action, resource: `${row.resource_type} · ${row.resource_id}`, ip: row.source_ip || '—' })));
+        replaceItems(propertyHistory, dataAt(11));
+        replaceItems(commodityHistory, dataAt(12));
+        replaceItems(donorEnrollments, dataAt(13));
+        renderPropertyQueue();
+        renderMarketTable();
+        renderMarketSummary();
+        renderLeadTable(document.getElementById('leadSearch').value);
+        renderDonors();
+        renderDonorEnrollments();
+        renderResponseTeams();
+        renderEmergencyLog();
+        renderAudit();
+        updateCounters();
+        document.getElementById('activeIncidentCount').textContent = String(incidentData.filter((item) => ['open', 'dispatched'].includes(item.status)).length);
+        document.getElementById('criticalDonorCount').textContent = String(donorData.filter((item) => item.group === 'O+' && item.available).length);
+        document.getElementById('donorDirectoryCount').textContent = String(donorData.filter((item) => item.available).length);
+        document.getElementById('activeListingsMetric').textContent = String(overviewData.active_listings || 0);
+        document.getElementById('pendingListingsMetric').textContent = String(overviewData.pending_listings || 0);
+        document.getElementById('closedListingsMetric').textContent = String((overviewData.listingBreakdown || []).filter((row) => ['sold', 'rented'].includes(row.status)).reduce((sum, row) => sum + Number(row.total), 0));
+        document.getElementById('newLeadsMetric').textContent = String(overviewData.new_leads_30d || 0);
+        document.getElementById('overviewVerifiedServices').textContent = String(teamData.filter((team) => team.verified && team.active).length);
+        document.getElementById('overviewActiveIncidents').textContent = String(incidentData.filter((item) => ['open', 'dispatched'].includes(item.status)).length);
+        document.getElementById('overviewDonorCount').textContent = String(donorData.filter((item) => item.available).length);
+        document.getElementById('overviewOpenReports').textContent = String(overviewData.open_reports || 0);
+        document.getElementById('reportListingMetric').textContent = `${overviewData.active_listings || 0} · ${overviewData.new_users_30d || 0}`;
+        document.getElementById('reportActivityMetric').textContent = `${overviewData.new_leads_30d || 0} · ${overviewData.active_incidents || 0}`;
+        document.getElementById('overviewVerifiedBar').style.width = `${Math.min(teamData.length ? teamData.filter((team) => team.verified).length / teamData.length * 100 : 0, 100)}%`;
+        document.getElementById('overviewIncidentBar').style.width = `${Math.min(incidentData.length ? incidentData.filter((item) => item.status === 'resolved').length / incidentData.length * 100 : 0, 100)}%`;
+        document.getElementById('overviewDonorBar').style.width = `${Math.min(donorData.length ? donorData.filter((item) => item.available).length / donorData.length * 100 : 0, 100)}%`;
+        document.getElementById('overviewReportsBar').style.width = `${Math.min(Number(overviewData.open_reports || 0) * 10, 100)}%`;
+        document.getElementById('recentActivity').innerHTML = reportData.slice(0, 4).map((entry) => `<div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><div class="flex items-center justify-between gap-2"><strong class="text-sm">${escapeHtml(entry.action)}</strong><span class="text-[10px] text-slate-500">${escapeHtml(entry.time)}</span></div><p class="mt-1 text-xs text-slate-500">${escapeHtml(entry.resource)} · ${escapeHtml(entry.actor)}</p></div>`).join('') || '<p class="text-sm text-slate-500">এই ইউনিয়নের কোনো সাম্প্রতিক প্রশাসনিক কাজ নেই।</p>';
+        const wardOptions = wardData.map((ward) => ({ value: ward.id, label: `${ward.area_name} · Ward ${ward.ward_number}` }));
+        setOptions(document.getElementById('propertyOwnerSelect'), ownerOptions.map((owner) => ({ value: owner.id, label: `${owner.display_name}${owner.email ? ` · ${owner.email}` : ''}` })), 'মালিক বাছুন');
+        setOptions(document.getElementById('propertyWardSelect'), wardOptions, 'ওয়ার্ড বাছুন');
+        setOptions(document.getElementById('sosWardSelect'), wardOptions, 'পুরো ইউনিয়ন');
+        setOptions(document.getElementById('incidentWardSelect'), wardOptions, 'পুরো ইউনিয়ন');
+        setOptions(document.getElementById('teamWardSelect'), wardOptions, 'ওয়ার্ডের বাইরে');
+        setOptions(document.getElementById('donorAreaFilter'), wardOptions, 'সব ওয়ার্ড');
+        setOptions(document.getElementById('marketSelect'), marketOptions.map((market) => ({ value: market.id, label: market.name })), 'সব বাজার', marketOptions[0]?.id || '');
+        Object.values(chartInstances).forEach((chart) => chart.destroy());
+        chartInstances = {};
+        adminChartsReady = false;
+        if (!document.getElementById('tab-properties').classList.contains('hidden') || !document.getElementById('tab-market').classList.contains('hidden')) renderAdminCharts();
+      }
+
+      async function loadAdminData() {
+        syncUnionNavigation();
+        unionData = await apiRequest('/unions');
+        const select = document.getElementById('activeUnionSelect');
+        const scopedUnionIds = new Set((currentAdmin.unionScopes || []).map((scope) => String(scope.unionId)));
+        const visibleUnions = currentAdmin.roles.includes('super_admin') ? unionData : unionData.filter((union) => scopedUnionIds.has(String(union.id)));
+        setOptions(select, visibleUnions.map((union) => ({ value: union.id, label: union.name_en })), null, activeUnionId || visibleUnions[0]?.id);
+        setOptions(document.getElementById('roleUnionSelect'), unionData.map((union) => ({ value: union.id, label: union.name_en })), 'ইউনিয়ন নির্বাচন');
+        if (!visibleUnions.length) throw new Error('No union is assigned to this administrator. Ask a Super Admin to assign a union scope.');
+        await loadUnionWorkspace(select.value);
+        if (currentAdmin.roles.includes('super_admin')) {
+          adminUsers = await apiRequest('/users');
+          setOptions(document.getElementById('adminUserSelect'), adminUsers.map((user) => ({ value: user.id, label: `${user.display_name}${user.email ? ` · ${user.email}` : ''}` })), 'অ্যাকাউন্ট নির্বাচন');
+        }
+        replaceItems(reportedData, await optionalApiRequest('/reports').then((items) => items.map((row) => ({ ...row, subject: row.reason_code, detail: row.details || '', reporter: row.reporter_name, target: row.listing_id ? `Property ${row.listing_id}` : `User ${row.subject_user_id}` }))));
+        replaceItems(vendorRequestsData, await optionalApiRequest('/vendors/requests').then((items) => items.map((row) => ({ ...row, name: row.business_name, area: row.display_name, details: row.status }))));
+        renderReportedQueue();
+        renderVendorRequests();
+      }
 
       const settingsStorageKey = 'lohagara-admin-settings';
       const defaultAdminSettings = {
@@ -1089,7 +1316,7 @@
         event.preventDefault();
         document.getElementById('settingsFirebaseApiKey').value = '';
         document.getElementById('settingsSmsToken').value = '';
-        showToast('ডেমো ফর্ম যাচাই হয়েছে; কনফিগারেশন পাঠানো বা সংরক্ষণ করা হয়নি।', 'warning');
+        showToast('গোপন integration credentials API-তে নয়, server secret manager-এ configure করতে হবে।', 'warning');
       });
 
       function downloadFile(filename, content, mimeType) {
@@ -1162,7 +1389,38 @@
         tabPanels.forEach((panel) => {
           panel.classList.toggle('hidden', panel.id !== `tab-${tabName}`);
         });
+        if (tabName === 'properties' || tabName === 'market') renderAdminCharts();
       }
+
+      const roleTabs = {
+        super_admin: ['overview', 'moderation', 'properties', 'leads', 'market', 'blood', 'access', 'reports', 'settings'],
+        moderator: ['overview', 'moderation', 'properties', 'leads', 'blood', 'reports'],
+        market_editor: ['overview', 'market', 'reports'],
+        data_entry_operator: ['overview', 'properties', 'market']
+      };
+      document.getElementById('activeUnionSelect').addEventListener('change', async (event) => {
+        try { await loadUnionWorkspace(event.target.value); }
+        catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('roleAssignmentForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!currentAdmin?.roles?.includes('super_admin')) return showToast('শুধু Super Admin অ্যাসাইনমেন্ট পরিবর্তন করতে পারবেন।', 'error');
+        const formData = new FormData(event.currentTarget);
+        const user = adminUsers.find((entry) => entry.id === formData.get('userId'));
+        if (!user) return showToast('অ্যাকাউন্ট নির্বাচন করুন।', 'error');
+        const role = String(formData.get('role'));
+        const unionId = Number(formData.get('unionId'));
+        if (!['super_admin'].includes(role) && !unionId) return showToast('Local role-এর জন্য ইউনিয়ন নির্বাচন আবশ্যক।', 'error');
+        const assignments = (user.assignments || []).map((assignment) => ({ role: assignment.role, ...(assignment.unionId ? { unionId: Number(assignment.unionId) } : {}) }));
+        const nextAssignment = { role, ...(['union_moderator', 'local_editor'].includes(role) ? { unionId } : {}) };
+        if (!assignments.some((assignment) => assignment.role === nextAssignment.role && assignment.unionId === nextAssignment.unionId)) assignments.push(nextAssignment);
+        try {
+          await apiRequest(`/users/${user.id}/roles`, { method: 'PUT', body: { roles: assignments } });
+          adminUsers = await apiRequest('/users');
+          setOptions(document.getElementById('adminUserSelect'), adminUsers.map((entry) => ({ value: entry.id, label: `${entry.display_name}${entry.email ? ` · ${entry.email}` : ''}` })), 'অ্যাকাউন্ট নির্বাচন', user.id);
+          showToast('রোল অ্যাসাইনমেন্ট সংরক্ষিত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
 
       tabButtons.forEach((button) => {
         button.addEventListener('click', () => switchTab(button.dataset.tab));
@@ -1300,31 +1558,26 @@
       });
 
       function updateCounters() {
-        const pending = moderationData.length;
-        document.querySelector('[data-counter="pending"]').textContent = String(pending).padStart(2, '0');
-        document.querySelector('[data-counter="services"]').textContent = String(48 - Math.min(pending, 10));
-        document.querySelector('[data-counter="users"]').textContent = String(128 + Math.max(0, 5 - pending));
+        document.querySelector('[data-counter="pending"]').textContent = String(overviewData.pending_listings || 0).padStart(2, '0');
+        document.querySelector('[data-counter="services"]').textContent = String(overviewData.active_incidents || 0);
+        document.querySelector('[data-counter="market"]').textContent = String(marketData.length);
+        document.querySelector('[data-counter="users"]').textContent = String(overviewData.new_users_30d || 0);
       }
 
       function renderMarketTable() {
         const tbody = document.getElementById('marketTableBody');
-        tbody.innerHTML = marketData
-          .map((row, index) => `
+        const selectedMarket = document.getElementById('marketSelect').value;
+        const rows = marketData.map((row, index) => ({ ...row, index })).filter((row) => !selectedMarket || row.marketId === selectedMarket);
+        tbody.innerHTML = rows
+          .map((row) => `
             <tr class="border-b border-slate-200 last:border-b-0">
-              <td class="py-3 pr-3 font-semibold text-slate-800">${row.product}</td>
-              <td class="py-3 pr-3 text-slate-600">${row.market}</td>
+              <td class="py-3 pr-3 font-semibold text-slate-800">${escapeHtml(row.product)}</td>
+              <td class="py-3 pr-3 text-slate-600">${escapeHtml(row.market)}</td>
               <td class="py-3 pr-3">
-                <input data-field="retail" data-index="${index}" value="${row.retail}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
+                <input data-field="retail" data-index="${row.index}" value="${row.retail}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
               </td>
               <td class="py-3 pr-3">
-                <input data-field="wholesale" data-index="${index}" value="${row.wholesale}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
-              </td>
-              <td class="py-3">
-                <select data-field="trend" data-index="${index}" class="rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-slate-800 focus:border-emerald-400 focus:outline-none">
-                  <option value="Up" ${row.trend === 'Up' ? 'selected' : ''}>Up</option>
-                  <option value="Stable" ${row.trend === 'Stable' ? 'selected' : ''}>Stable</option>
-                  <option value="Down" ${row.trend === 'Down' ? 'selected' : ''}>Down</option>
-                </select>
+                <input data-field="wholesale" data-index="${row.index}" value="${row.wholesale}" class="w-20 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2 text-center text-slate-800 focus:border-emerald-400 focus:outline-none" />
               </td>
             </tr>
           `)
@@ -1333,10 +1586,10 @@
 
       function renderMarketSummary() {
         const container = document.getElementById('marketSummary');
-        const summary = marketData.reduce((acc, row) => {
+        const selectedMarket = document.getElementById('marketSelect').value;
+        const summary = marketData.filter((row) => !selectedMarket || row.marketId === selectedMarket).reduce((acc, row) => {
           const key = row.market;
-          if (!acc[key]) acc[key] = { market: key, total: 0, count: 0 };
-          acc[key].total += row.retail;
+          if (!acc[key]) acc[key] = { market: key, count: 0 };
           acc[key].count += 1;
           return acc;
         }, {});
@@ -1345,41 +1598,388 @@
           .map((item) => `
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
               <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-800">${item.market}</span>
+                <span class="font-bold text-slate-800">${escapeHtml(item.market)}</span>
                 <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Live</span>
               </div>
-              <div class="mt-3 text-2xl font-black text-slate-800">${Math.round(item.total / item.count)}৳</div>
-              <p class="text-sm text-slate-500">গড় খুচরা মূল্য</p>
+              <div class="mt-3 text-2xl font-black text-slate-800">${item.count}</div>
+              <p class="text-sm text-slate-500">পণ্যের লাইভ দর</p>
             </div>
           `)
           .join('');
       }
 
-      document.getElementById('updateMarketBtn').addEventListener('click', () => {
+      function renderResponseTeams() {
+        const labels = { volunteer: 'Volunteer', fire_service: 'Fire service', ambulance: 'Ambulance', blood_bank: 'Blood bank', rescue: 'Rescue' };
+        const canVerify = currentAdmin?.roles?.includes('super_admin') || currentAdmin?.roles?.includes('union_moderator');
+        document.getElementById('responseTeamList').innerHTML = teamData.map((team) => `
+          <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3"><div class="min-w-0"><div class="truncate text-sm font-semibold text-slate-800">${escapeHtml(team.name)}</div><div class="text-xs text-slate-500">${escapeHtml(labels[team.team_type] || team.team_type)} · Ward ${escapeHtml(team.ward_number || 'Union-wide')} · ${team.verified ? 'Verified' : 'Pending verification'}</div></div><div class="flex shrink-0 gap-2">${canVerify && !team.verified ? `<button data-team-verify="${escapeHtml(team.id)}" class="rounded-lg border border-amber-300 px-2 py-1.5 text-xs font-bold text-amber-900">যাচাই</button>` : ''}<a class="rounded-lg border border-emerald-700 px-3 py-1.5 text-xs font-bold text-emerald-900" href="tel:${escapeHtml(team.phone)}">Call</a></div></div>`).join('') || '<p class="text-sm text-slate-500">এই ইউনিয়নে কোনো response team নেই।</p>';
+      }
+
+      function renderEmergencyLog() {
+        const canDispatch = currentAdmin?.roles?.includes('super_admin') || currentAdmin?.roles?.includes('union_moderator');
+        document.getElementById('incidentLogCount').textContent = String(incidentData.filter((item) => ['open', 'dispatched'].includes(item.status)).length);
+        document.getElementById('emergencyLog').innerHTML = incidentData.map((incident) => `
+          <div class="border-l-2 ${incident.status === 'resolved' ? 'border-emerald-500' : 'border-amber-400'} pl-3"><div class="flex flex-wrap items-center justify-between gap-2"><strong>${escapeHtml(incident.incident_type)}</strong>${canDispatch ? `<select data-incident-id="${escapeHtml(incident.id)}" class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs"><option value="open" ${incident.status === 'open' ? 'selected' : ''}>Open</option><option value="dispatched" ${incident.status === 'dispatched' ? 'selected' : ''}>Dispatched</option><option value="resolved" ${incident.status === 'resolved' ? 'selected' : ''}>Resolved</option><option value="cancelled" ${incident.status === 'cancelled' ? 'selected' : ''}>Cancelled</option></select>` : `<span class="text-xs text-slate-500">${escapeHtml(incident.status)}</span>`}</div><div class="text-xs text-slate-500">${escapeHtml(incident.details)} · ${new Date(incident.created_at).toLocaleString()}</div></div>`).join('') || '<p class="text-sm text-slate-500">কোনো জরুরি ঘটনা খোলা নেই।</p>';
+      }
+
+      document.getElementById('updateMarketBtn').addEventListener('click', async () => {
         const rows = document.querySelectorAll('#marketTableBody tr');
+        const pendingPrices = [];
         rows.forEach((row) => {
           const index = Number(row.querySelector('[data-index]')?.dataset.index ?? 0);
           const retailInput = row.querySelector('[data-field="retail"]');
           const wholesaleInput = row.querySelector('[data-field="wholesale"]');
-          const trendInput = row.querySelector('[data-field="trend"]');
-
           if (marketData[index]) {
-            marketData[index].retail = Number(retailInput.value || marketData[index].retail);
-            marketData[index].wholesale = Number(wholesaleInput.value || marketData[index].wholesale);
-            marketData[index].trend = trendInput.value || marketData[index].trend;
+            const retail = Number(retailInput.value);
+            const wholesale = Number(wholesaleInput.value);
+            if (!Number.isFinite(retail) || !Number.isFinite(wholesale) || retail <= 0 || wholesale <= 0 || wholesale > retail) {
+              retailInput.focus();
+              showToast('মূল্য ধনাত্মক হতে হবে এবং হোলসেল খুচরার বেশি হতে পারবে না।', 'error');
+              return;
+            }
+            pendingPrices.push({ ...marketData[index], retail, wholesale });
           }
         });
 
-        renderMarketSummary();
-        showToast('বাজার দর সফলভাবে আপডেট হয়েছে!', 'success');
+        if (!rows.length || pendingPrices.length !== rows.length) return;
+        try {
+          for (const price of pendingPrices) {
+            await apiRequest(`/unions/${activeUnionId}/market/prices`, { method: 'POST', body: { marketId: price.marketId, commodityCode: price.commodity_code, displayName: price.product, unit: price.unit, retailAmount: price.retail, wholesaleAmount: price.wholesale, effectiveAt: new Date().toISOString() } });
+          }
+          await loadUnionWorkspace(activeUnionId);
+          showToast('বাজারদরের নতুন ইতিহাস ডেটাবেজে সংরক্ষিত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
       });
+
+      document.getElementById('marketSelect').addEventListener('change', () => {
+        renderMarketTable();
+        renderMarketSummary();
+        renderAdminCharts();
+      });
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+      }
+
+      function renderPropertyQueue() {
+        const canReview = currentAdmin?.roles?.includes('super_admin') || currentAdmin?.roles?.includes('union_moderator');
+        document.getElementById('propertyQueueBody').innerHTML = propertyQueueData.map((property) => `
+          <tr class="border-t border-slate-100">
+            <td class="px-5 py-3"><div class="font-semibold text-slate-800">${escapeHtml(property.title)}</div><div class="text-xs text-slate-500">${escapeHtml(property.public_code)} · ৳ ${escapeHtml(property.price_amount)} · ${escapeHtml(property.owner_name)}</div></td>
+            <td class="px-5 py-3">${escapeHtml(property.listing_type)}<div class="text-xs text-slate-500">${escapeHtml(property.union_name)} · Ward ${escapeHtml(property.ward_number || '—')} · ${escapeHtml(property.area_name || '')}</div></td>
+            <td class="px-5 py-3"><button data-document="${escapeHtml(property.id)}" class="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-semibold text-blue-800">দলিল ${escapeHtml(property.document_count || 0)}</button></td>
+            <td class="px-5 py-3"><span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">${escapeHtml(property.status)}</span></td>
+            <td class="px-5 py-3">${canReview ? `<div class="flex gap-2"><button data-property-action="approve" data-id="${escapeHtml(property.id)}" class="rounded-lg bg-emerald-700 px-2.5 py-1.5 text-xs font-semibold text-white">Approve</button><button data-property-action="reject" data-id="${escapeHtml(property.id)}" class="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-700">Reject</button></div>` : '<span class="text-xs text-slate-500">Review required</span>'}</td>
+          </tr>`).join('') || '<tr><td colspan="5" class="px-5 py-8 text-center text-slate-500">যাচাইয়ের জন্য কোনো লিস্টিং নেই।</td></tr>';
+      }
+
+      function renderVendorRequests() {
+        document.getElementById('vendorRequests').innerHTML = vendorRequestsData.map((vendor) => `
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-2"><div><div class="font-bold text-slate-800">${escapeHtml(vendor.name)}</div><div class="text-xs text-slate-500">${escapeHtml(vendor.area)} · ${escapeHtml(vendor.details)}</div></div><span class="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-bold text-blue-800">Badge review</span></div><div class="mt-3 flex gap-2"><button data-vendor-action="approve" data-id="${escapeHtml(vendor.id)}" class="rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white">Verify & approve</button><button data-vendor-action="reject" data-id="${escapeHtml(vendor.id)}" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700">Decline</button></div></div>`).join('') || '<p class="text-sm text-slate-500">কোনো আবেদন অপেক্ষায় নেই।</p>';
+      }
+
+      function renderLeadTable(search = '') {
+        const filtered = leadData.filter((lead) => `${lead.name} ${lead.property} ${lead.phone}`.toLowerCase().includes(search.toLowerCase()));
+        document.getElementById('leadTableBody').innerHTML = filtered.map((lead) => `
+          <tr class="border-t border-slate-100"><td class="px-4 py-3 font-semibold">${escapeHtml(lead.name)}<div class="text-xs font-normal text-slate-500">${escapeHtml(lead.id)}</div></td><td class="px-4 py-3">${escapeHtml(lead.property)}</td><td class="px-4 py-3">${escapeHtml(lead.phone)}</td><td class="px-4 py-3">${escapeHtml(lead.request)}</td><td class="px-4 py-3"><select data-lead-id="${escapeHtml(lead.id)}" class="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs"><option value="new" ${lead.stage === 'new' ? 'selected' : ''}>New</option><option value="contacted" ${lead.stage === 'contacted' ? 'selected' : ''}>Contacted</option><option value="viewing" ${lead.stage === 'viewing' ? 'selected' : ''}>Viewing</option><option value="booked" ${lead.stage === 'booked' ? 'selected' : ''}>Booked</option><option value="closed" ${lead.stage === 'closed' ? 'selected' : ''}>Closed</option><option value="lost" ${lead.stage === 'lost' ? 'selected' : ''}>Lost</option></select></td><td class="px-4 py-3 text-xs text-slate-500">${escapeHtml(new Date(lead.updated_at).toLocaleString())}</td></tr>`).join('') || '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">কোনো ইনকোয়ারি পাওয়া যায়নি।</td></tr>';
+      }
+
+      function renderDonors() {
+        const group = document.getElementById('donorGroupFilter').value;
+        const area = document.getElementById('donorAreaFilter').value;
+        const available = document.getElementById('donorAvailabilityFilter').value;
+        const canReveal = currentAdmin?.roles?.includes('super_admin') || currentAdmin?.roles?.includes('union_moderator');
+        const donors = donorData.filter((donor) => (!group || donor.group === group) && (!area || donor.ward_id === area) && (!available || String(donor.available) === available));
+        document.getElementById('donorTableBody').innerHTML = donors.map((donor) => `
+          <tr class="border-t border-slate-100"><td class="px-4 py-3 font-semibold">${escapeHtml(donor.name)}</td><td class="px-4 py-3 font-bold text-red-700">${escapeHtml(donor.group)}</td><td class="px-4 py-3">${escapeHtml(donor.area)}</td><td class="px-4 py-3"><span class="rounded-full px-2 py-1 text-xs font-semibold ${donor.available ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-600'}">${donor.available ? 'Available' : 'Unavailable'}</span></td><td class="px-4 py-3">${donor.available && canReveal ? `<button data-donor-call="${escapeHtml(donor.id)}" class="rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-bold text-white">নিরাপদে কল</button>` : '<span class="text-xs text-slate-400">—</span>'}</td></tr>`).join('') || '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">এই ফিল্টারে কোনো দাতা নেই।</td></tr>';
+      }
+
+      function renderDonorEnrollments() {
+        document.getElementById('donorEnrollmentQueue').innerHTML = donorEnrollments.map((request) => `
+          <div class="rounded-xl border border-slate-200 bg-slate-50 p-3"><div class="flex flex-wrap items-center justify-between gap-2"><div><strong>${escapeHtml(request.display_name)}</strong><div class="text-xs text-slate-500">${escapeHtml(request.blood_group)} · Ward ${escapeHtml(wardData.find((ward) => ward.id === request.ward_id)?.ward_number || 'Union-wide')} · ${new Date(request.created_at).toLocaleString()}</div></div><button data-donor-enrollment-contact="${escapeHtml(request.id)}" class="rounded-lg border border-emerald-700 px-2.5 py-1.5 text-xs font-bold text-emerald-900">নম্বর যাচাই করুন</button></div><div class="mt-2 flex flex-wrap items-center gap-3"><label class="flex items-center gap-2 text-xs text-slate-700"><input data-donor-verified="${escapeHtml(request.id)}" type="checkbox" />ফোনে যোগাযোগ করে যাচাই হয়েছে</label><button data-donor-enrollment-action="approve" data-id="${escapeHtml(request.id)}" class="rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-bold text-white">Approve</button><button data-donor-enrollment-action="reject" data-id="${escapeHtml(request.id)}" class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-bold text-red-700">Reject</button></div></div>`).join('') || '<p class="text-sm text-slate-500">কোনো enrollment অপেক্ষায় নেই।</p>';
+      }
+
+      function renderReportedQueue() {
+        document.getElementById('reportedQueue').innerHTML = reportedData.map((report) => `
+          <div class="flex flex-col gap-3 p-4 lg:flex-row lg:items-center"><div class="min-w-0 flex-1"><div class="flex flex-wrap items-center gap-2"><strong>${escapeHtml(report.subject)}</strong><span class="rounded-full bg-red-50 px-2 py-1 text-xs font-semibold text-red-700">${escapeHtml(report.reporter)}</span><span class="text-xs text-slate-500">${escapeHtml(report.id)}</span></div><p class="mt-1 text-sm text-slate-600">${escapeHtml(report.detail)} · ${escapeHtml(report.target)}</p></div><div class="flex flex-wrap gap-2">${report.subject_user_id ? `<button data-report-action="warn" data-id="${escapeHtml(report.id)}" class="rounded-lg border border-amber-300 px-3 py-2 text-xs font-bold text-amber-800">Warn</button><button data-report-action="ban" data-id="${escapeHtml(report.id)}" class="rounded-lg bg-red-700 px-3 py-2 text-xs font-bold text-white">Ban user</button>` : ''}${report.listing_id ? `<button data-report-action="delete" data-id="${escapeHtml(report.id)}" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700">Remove listing</button>` : ''}</div></div>`).join('') || '<p class="p-5 text-sm text-slate-500">সব রিপোর্ট পর্যালোচনা হয়েছে।</p>';
+      }
+
+      function renderAudit() {
+        document.getElementById('auditTableBody').innerHTML = reportData.map((entry) => `<tr class="border-t border-slate-100"><td class="whitespace-nowrap px-4 py-3 text-xs text-slate-500">${escapeHtml(entry.time)}</td><td class="px-4 py-3">${escapeHtml(entry.actor)}</td><td class="px-4 py-3 font-semibold">${escapeHtml(entry.action)}</td><td class="px-4 py-3">${escapeHtml(entry.resource)}</td><td class="px-4 py-3 font-mono text-xs">${escapeHtml(entry.ip)}</td></tr>`).join('');
+      }
+
+      let adminChartsReady = false;
+      let chartInstances = {};
+      function renderAdminCharts() {
+        if (!window.Chart) return;
+        const chartOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } };
+        const types = ['house', 'land', 'apartment'];
+        const breakdown = overviewData.listingBreakdown || [];
+        const countFor = (type, statuses) => breakdown.filter((row) => row.listing_type === type && statuses.includes(row.status)).reduce((sum, row) => sum + Number(row.total), 0);
+        const upsertChart = (id, config) => {
+          if (chartInstances[id]) {
+            chartInstances[id].data = config.data;
+            chartInstances[id].options = config.options;
+            chartInstances[id].update();
+          } else {
+            chartInstances[id] = new Chart(document.getElementById(id), config);
+          }
+        };
+        upsertChart('propertyStatusChart', { type: 'bar', data: { labels: types.map((type) => ({ house: 'House', land: 'Land', apartment: 'Apartment' })[type]), datasets: [
+          { label: 'Active', data: types.map((type) => countFor(type, ['active'])), backgroundColor: '#059669' },
+          { label: 'Pending', data: types.map((type) => countFor(type, ['pending'])), backgroundColor: '#f59e0b' },
+          { label: 'Sold / Rented', data: types.map((type) => countFor(type, ['sold', 'rented'])), backgroundColor: '#0284c7' },
+          { label: 'Rejected', data: types.map((type) => countFor(type, ['rejected'])), backgroundColor: '#ef4444' }
+        ] }, options: { ...chartOptions, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } } });
+        const landRows = propertyHistory.filter((row) => row.listing_type === 'land');
+        upsertChart('landTrendChart', { type: 'line', data: { labels: landRows.map((row) => new Date(row.period).toLocaleDateString()), datasets: [{ label: 'Land average · BDT', data: landRows.map((row) => Number(row.average_price)), borderColor: '#0d8f64', backgroundColor: 'rgba(13,143,100,.12)', fill: true, tension: .35 }] }, options: { ...chartOptions, scales: { y: { beginAtZero: false } } } });
+        const selectedMarket = document.getElementById('marketSelect').value;
+        const trendRows = commodityHistory.filter((row) => !selectedMarket || row.market_id === selectedMarket);
+        const labels = [...new Set(trendRows.map((row) => new Date(row.effective_at).toLocaleDateString()))].sort((left, right) => new Date(left) - new Date(right));
+        const commodities = [...new Set(trendRows.map((row) => row.commodity_code))];
+        const palette = ['#0d8f64', '#e8791d', '#0284c7', '#dc4065', '#7a8c27'];
+        const datasets = commodities.map((code, index) => {
+          const rows = trendRows.filter((row) => row.commodity_code === code);
+          const byDay = new Map(rows.map((row) => [new Date(row.effective_at).toLocaleDateString(), Number(row.retail_amount)]));
+          return { label: rows[0]?.display_name || code, data: labels.map((label) => byDay.get(label) ?? null), borderColor: palette[index % palette.length], tension: .35, spanGaps: true };
+        });
+        upsertChart('commodityTrendChart', { type: 'line', data: { labels, datasets }, options: { ...chartOptions, scales: { y: { beginAtZero: false } } } });
+        adminChartsReady = true;
+      }
+
+      document.getElementById('propertyQueueBody').addEventListener('click', (event) => {
+        const documentButton = event.target.closest('[data-document]');
+        if (documentButton) {
+          apiRequest(`/listings/${documentButton.dataset.document}/documents`).then((documents) => {
+            const cleanDocument = documents.find((document) => document.viewUrl);
+            if (!cleanDocument) return showToast('নথি এখনো malware scan-এ clean হয়নি; preview বন্ধ আছে।', 'warning');
+            document.getElementById('documentModalTitle').textContent = cleanDocument.name;
+            document.getElementById('documentFrame').src = cleanDocument.viewUrl;
+            document.getElementById('documentModal').classList.remove('hidden');
+            document.getElementById('documentModal').classList.add('flex');
+          }).catch((error) => showToast(error.message, 'error'));
+        }
+        const actionButton = event.target.closest('[data-property-action]');
+        if (!actionButton) return;
+        const action = actionButton.dataset.propertyAction;
+        openConfirmModal(action === 'approve' ? 'প্রপার্টি অনুমোদন' : 'প্রপার্টি প্রত্যাখ্যান', 'এই সিদ্ধান্তটি সার্ভারে স্থায়ীভাবে রেকর্ড হবে। এগোবেন?', async () => {
+          try {
+            await apiRequest(`/listings/${actionButton.dataset.id}/decision`, { method: 'POST', body: { decision: action, reason: action === 'reject' ? 'Ownership or listing review rejected by administrator.' : 'Ownership proof reviewed and approved.' } });
+            await loadUnionWorkspace(activeUnionId);
+            showToast('প্রপার্টির সিদ্ধান্ত সংরক্ষিত হয়েছে।', 'success');
+          } catch (error) { showToast(error.message, 'error'); }
+        });
+      });
+      document.getElementById('vendorRequests').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-vendor-action]');
+        if (!button) return;
+        const action = button.dataset.vendorAction;
+        apiRequest(`/vendors/${button.dataset.id}/decision`, { method: 'POST', body: { decision: action, reason: 'Reviewed by assigned administrator.' } }).then(async () => {
+          replaceItems(vendorRequestsData, await optionalApiRequest('/vendors/requests'));
+          renderVendorRequests();
+          showToast('ভেন্ডর যাচাই সিদ্ধান্ত সংরক্ষিত হয়েছে।', 'success');
+        }).catch((error) => showToast(error.message, 'error'));
+      });
+      document.getElementById('reportedQueue').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-report-action]');
+        if (!button) return;
+        const report = reportedData.find((entry) => entry.id === button.dataset.id);
+        if (!report) return;
+        const action = button.dataset.reportAction;
+        const serverAction = { warn: 'warn', delete: 'delete_listing', ban: 'ban_user' }[action];
+        openConfirmModal(`${action === 'ban' ? 'ব্যবহারকারী ব্যান' : action === 'delete' ? 'কনটেন্ট মুছুন' : 'সতর্কতা পাঠান'}?`, `${report.subject} · ${report.target} · এই পদক্ষেপটি সার্ভারে রেকর্ড হবে।`, async () => {
+          try {
+            await apiRequest(`/reports/${report.id}/actions`, { method: 'POST', body: { action: serverAction, reason: 'Reviewed from the moderation queue.' } });
+            replaceItems(reportedData, await optionalApiRequest('/reports'));
+            renderReportedQueue();
+            showToast('মডারেশন ব্যবস্থা সংরক্ষিত হয়েছে।', 'success');
+          } catch (error) { showToast(error.message, 'error'); }
+        });
+      });
+      document.getElementById('leadSearch').addEventListener('input', (event) => renderLeadTable(event.target.value));
+      document.getElementById('leadTableBody').addEventListener('change', (event) => {
+        const lead = leadData.find((entry) => entry.id === event.target.dataset.leadId);
+        if (!lead) return;
+        apiRequest(`/unions/${activeUnionId}/leads/${lead.id}`, { method: 'PATCH', body: { stage: event.target.value } }).then(() => {
+          lead.stage = event.target.value;
+          showToast(`${lead.name} · pipeline stage সংরক্ষিত হয়েছে।`, 'success');
+        }).catch((error) => showToast(error.message, 'error'));
+      });
+      document.getElementById('donorGroupFilter').addEventListener('change', renderDonors);
+      document.getElementById('donorAreaFilter').addEventListener('change', renderDonors);
+      document.getElementById('donorAvailabilityFilter').addEventListener('change', renderDonors);
+      document.getElementById('donorTableBody').addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-donor-call]');
+        if (!button) return;
+        try {
+          const contact = await apiRequest(`/donors/${button.dataset.donorCall}/contact`);
+          const link = document.createElement('a');
+          link.href = `tel:${contact.phone}`;
+          link.className = 'rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-bold text-white';
+          link.textContent = contact.phone;
+          button.replaceWith(link);
+          showToast('দাতার ফোন নম্বর সুরক্ষিতভাবে লোড হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('donorEnrollmentQueue').addEventListener('click', async (event) => {
+        const contactButton = event.target.closest('[data-donor-enrollment-contact]');
+        if (contactButton) {
+          try {
+            const contact = await apiRequest(`/unions/${activeUnionId}/donor-enrollments/${contactButton.dataset.donorEnrollmentContact}/contact`);
+            const phoneLink = document.createElement('a');
+            phoneLink.href = `tel:${contact.phone}`;
+            phoneLink.textContent = contact.phone;
+            phoneLink.className = 'text-sm font-bold text-emerald-800';
+            contactButton.replaceWith(phoneLink);
+          } catch (error) { showToast(error.message, 'error'); }
+          return;
+        }
+        const actionButton = event.target.closest('[data-donor-enrollment-action]');
+        if (!actionButton) return;
+        const requestId = actionButton.dataset.id;
+        const verified = document.querySelector(`[data-donor-verified="${CSS.escape(requestId)}"]`)?.checked || false;
+        if (actionButton.dataset.donorEnrollmentAction === 'approve' && !verified) return showToast('Approve করার আগে ফোনে যাচাই করুন।', 'warning');
+        try {
+          await apiRequest(`/unions/${activeUnionId}/donor-enrollments/${requestId}/decision`, { method: 'POST', body: { decision: actionButton.dataset.donorEnrollmentAction, phoneVerified: verified } });
+          await loadUnionWorkspace(activeUnionId);
+          showToast('Donor enrollment সিদ্ধান্ত সংরক্ষিত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('responseTeamList').addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-team-verify]');
+        if (!button) return;
+        try {
+          await apiRequest(`/unions/${activeUnionId}/emergency/teams/${button.dataset.teamVerify}`, { method: 'PATCH', body: { verified: true } });
+          await loadUnionWorkspace(activeUnionId);
+          showToast('Response team যাচাই সম্পন্ন।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('emergencyLog').addEventListener('change', async (event) => {
+        const incidentId = event.target.dataset.incidentId;
+        if (!incidentId) return;
+        try {
+          await apiRequest(`/unions/${activeUnionId}/emergencies/${incidentId}`, { method: 'PATCH', body: { status: event.target.value } });
+          await loadUnionWorkspace(activeUnionId);
+          showToast('জরুরি ঘটনার অবস্থা আপডেট হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('propertyCreateForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        const file = formData.get('ownershipProof');
+        if (!activeUnionId || !file || file.size < 1 || file.size > 15 * 1024 * 1024) return showToast('একটি সমর্থিত 15 MB-এর ছোট দলিল নির্বাচন করুন।', 'error');
+        const submit = form.querySelector('button[type="submit"],button:not([type])');
+        submit.disabled = true;
+        try {
+          const listing = await apiRequest('/listings', { method: 'POST', body: {
+            publicCode: `LH-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+            ownerId: formData.get('ownerId'),
+            unionId: activeUnionId,
+            wardId: formData.get('wardId'),
+            areaName: formData.get('areaName'),
+            listingType: formData.get('listingType'),
+            title: formData.get('title'),
+            description: formData.get('description'),
+            priceAmount: Number(formData.get('priceAmount')),
+            pricePeriod: formData.get('pricePeriod')
+          } });
+          const signed = await apiRequest(`/listings/${listing.id}/documents/upload-url`, { method: 'POST', body: { fileName: file.name, contentType: file.type } });
+          const upload = await fetch(signed.uploadUrl, { method: 'PUT', headers: signed.requiredHeaders, body: file });
+          if (!upload.ok) throw new Error('Private document upload failed; listing remains pending without a proof file.');
+          const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+          const sha256 = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+          await apiRequest(`/listings/${listing.id}/documents`, { method: 'POST', body: { objectKey: signed.objectKey, fileName: file.name, contentType: file.type, sha256 } });
+          form.reset();
+          await loadUnionWorkspace(activeUnionId);
+          showToast('প্রপার্টি ও private ownership proof জমা হয়েছে; scan শেষ না হওয়া পর্যন্ত approval বন্ধ থাকবে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+        finally { submit.disabled = false; }
+      });
+      document.getElementById('responseTeamForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        try {
+          await apiRequest(`/unions/${activeUnionId}/emergency/teams`, { method: 'POST', body: { name: data.get('name'), type: data.get('type'), phone: data.get('phone'), ...(data.get('wardId') ? { wardId: data.get('wardId') } : {}) } });
+          event.currentTarget.reset();
+          await loadUnionWorkspace(activeUnionId);
+          showToast('Response team ডেটাবেজে যুক্ত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('marketCreateForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const marketId = document.getElementById('marketSelect').value;
+        if (!marketId) return showToast('একটি স্থানীয় বাজার নির্বাচন করুন।', 'error');
+        try {
+          await apiRequest(`/unions/${activeUnionId}/market/prices`, { method: 'POST', body: { marketId, displayName: formData.get('displayName'), commodityCode: formData.get('commodityCode').toLowerCase().replace(/\s+/g, '-'), category: formData.get('category'), unit: formData.get('unit'), retailAmount: Number(formData.get('retailAmount')), wholesaleAmount: Number(formData.get('wholesaleAmount')), effectiveAt: new Date().toISOString() } });
+          event.currentTarget.reset();
+          await loadUnionWorkspace(activeUnionId);
+          showToast('নতুন পণ্যের মূল্য ও history সংরক্ষিত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('incidentForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        try {
+          await apiRequest(`/unions/${activeUnionId}/emergencies`, { method: 'POST', body: { incidentType: formData.get('incidentType'), details: formData.get('details'), assignedTeam: formData.get('assignedTeam'), ...(formData.get('wardId') ? { wardId: formData.get('wardId') } : {}) } });
+          event.currentTarget.reset();
+          await loadUnionWorkspace(activeUnionId);
+          showToast('জরুরি ঘটনা ইউনিয়ন লগে যুক্ত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('sosForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        try {
+          const result = await apiRequest(`/unions/${activeUnionId}/emergency-alerts`, {
+            method: 'POST',
+            headers: { 'Idempotency-Key': crypto.randomUUID() },
+            body: { alertType: data.get('alertType'), message: data.get('message'), confirmBroadcast: data.get('confirmBroadcast') === 'on', ...(data.get('wardId') ? { wardId: data.get('wardId') } : {}) }
+          });
+          event.currentTarget.reset();
+          showToast(`SOS queued: ${result.smsRecipients} SMS, ${result.pushRecipients} push target. Delivery worker প্রয়োজন।`, 'warning');
+          await loadUnionWorkspace(activeUnionId);
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      document.getElementById('closeDocumentModal').addEventListener('click', () => {
+        document.getElementById('documentFrame').src = 'about:blank';
+        document.getElementById('documentModal').classList.add('hidden');
+        document.getElementById('documentModal').classList.remove('flex');
+      });
+      document.getElementById('propertyQueueExport').addEventListener('click', () => {
+        const rows = [['id', 'public_code', 'title', 'type', 'union', 'ward', 'price', 'owner', 'document_count'], ...propertyQueueData.map((row) => [row.id, row.public_code, row.title, row.listing_type, row.union_name, row.ward_number, row.price_amount, row.owner_name, row.document_count])];
+        downloadFile('lohagara-property-review.csv', `\ufeff${rows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\r\n')}`, 'text/csv;charset=utf-8');
+      });
+      document.getElementById('broadcastPricesBtn').addEventListener('click', async () => {
+        const marketId = document.getElementById('marketSelect').value;
+        if (!marketId) return showToast('প্রথমে একটি স্থানীয় বাজার নির্বাচন করুন।', 'warning');
+        try {
+          await apiRequest(`/unions/${activeUnionId}/market/broadcast`, { method: 'POST', headers: { 'Idempotency-Key': crypto.randomUUID() }, body: { marketId, effectiveAt: new Date().toISOString() } });
+          showToast('Union price bulletin delivery queue-তে যুক্ত হয়েছে।', 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      });
+      async function queueReport(format) {
+        const end = new Date();
+        const start = new Date(end);
+        if (document.getElementById('reportPeriod').value === 'monthly') start.setDate(1);
+        else start.setDate(start.getDate() - 6);
+        const body = { periodStart: start.toISOString().slice(0, 10), periodEnd: end.toISOString().slice(0, 10), format };
+        try {
+          const job = await apiRequest(`/unions/${activeUnionId}/reports/exports`, { method: 'POST', body });
+          showToast(`Report job ${job.id} queued. Worker processing will publish the file.`, 'success');
+        } catch (error) { showToast(error.message, 'error'); }
+      }
+      document.getElementById('reportCsvBtn').addEventListener('click', () => queueReport('csv'));
+      document.getElementById('reportExcelBtn').addEventListener('click', () => queueReport('xlsx'));
+      document.getElementById('reportPdfBtn').addEventListener('click', () => queueReport('pdf'));
 
       document.getElementById('logoutBtn').addEventListener('click', () => {
         openConfirmModal(
           'Logout from admin panel',
           'আপনি কি নিশ্চিতভাবে অ্যাডমিন সেশনটি বন্ধ করতে চান?',
           () => {
-            showToast('সফলভাবে লগআউট করা হয়েছে।', 'info');
+            handleLogout();
           }
         );
       });
@@ -1401,6 +2001,12 @@
       renderModerationList();
       renderMarketTable();
       renderMarketSummary();
+      renderPropertyQueue();
+      renderVendorRequests();
+      renderLeadTable();
+      renderDonors();
+      renderReportedQueue();
+      renderAudit();
       updateCounters();
       switchTab('overview');
     </script>
