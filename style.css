@@ -1311,13 +1311,12 @@ button {
 
 @media (max-width: 980px) {
   .topbar {
-    flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
+    padding: 14px 18px;
   }
 
-  .main-nav {
-    order: 3;
-    width: 100%;
+  .topbar .main-nav {
+    display: none;
   }
 }
 
@@ -1331,20 +1330,16 @@ button {
   }
 
   .topbar {
-    padding: 16px 14px;
+    padding: 12px 14px;
   }
 
   .brand-wrap {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .main-nav {
-    gap: 8px;
+    width: auto;
+    justify-content: flex-start;
   }
 
   .nav-cta {
-    width: 100%;
+    display: none;
   }
 }
 
@@ -5059,5 +5054,152 @@ button {
 
   .tab-btn {
     flex: 1 1 calc(50% - 10px);
+  }
+}
+
+/* ==========================================================================
+   Live Notice / Announcement Banner
+   ========================================================================== */
+#topNoticeBanner {
+  animation: slideNoticeDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideNoticeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Mobile Navigation Drawer
+   ========================================================================== */
+#mobileNavDrawer {
+  animation: drawerFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-nav-item {
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+
+.mobile-nav-item:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   Unions Explorer Section
+   ========================================================================== */
+.union-card {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
+}
+
+.union-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(13, 143, 100, 0.12);
+  border-color: rgba(13, 143, 100, 0.4);
+}
+
+.union-card:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+/* ==========================================================================
+   Back To Top Floating Button
+   ========================================================================== */
+#backToTopBtn {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s ease,
+              box-shadow 0.25s ease,
+              opacity 0.25s ease;
+  box-shadow: 0 10px 25px rgba(13, 143, 100, 0.35);
+}
+
+#backToTopBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 14px 32px rgba(13, 143, 100, 0.45);
+}
+
+#backToTopBtn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* ==========================================================================
+   Footer Enhancements
+   ========================================================================== */
+footer a {
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+footer a:hover {
+  color: #a7f3d0;
+  transform: translateX(2px);
+}
+
+/* ==========================================================================
+   Custom Sleek Scrollbar
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 2px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0d8f64;
+}
+
+/* ==========================================================================
+   Accessibility & Focus Outlines
+   ========================================================================== */
+:focus-visible {
+  outline: 3px solid rgba(13, 143, 100, 0.4);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Print Optimization
+   ========================================================================== */
+@media print {
+  .topbar,
+  #topNoticeBanner,
+  #mobileNavDrawer,
+  #backToTopBtn,
+  footer,
+  .form-panel,
+  .krishi-filters,
+  #filterButtons {
+    display: none !important;
+  }
+
+  .page-shell {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
   }
 }
