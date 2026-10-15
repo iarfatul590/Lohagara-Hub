@@ -1,0 +1,51 @@
+{
+  "union_name": "৭নং পুটিবিলা ইউনিয়ন",
+  "upazila": "লোহাগাড়া",
+  "district": "চট্টগ্রাম",
+  "union_parishad_admin": {
+    "chairman": {
+      "name": "মাওলানা মো ইউনুছ",
+      "phone": "01819000000"
+    },
+    "secretary": {
+      "name": "মোঃ রফিকুল ইসলাম",
+      "phone": "01819111111"
+    }
+  },
+  "ambulance": [
+    {
+      "vehicle_name": "পুটিবিলা ফ্রি অ্যাম্বুলেন্স সার্ভিস",
+      "driver_name": "রহিম উদ্দিন",
+      "phone": "01812345678",
+      "base_location": "এম.সি.এইচ.আই হাসপাতাল মোড়"
+    }
+  ],
+  "donors": [
+    {
+      "name": "আরিফুল ইসলাম",
+      "blood_group": "A+",
+      "village": "এম.সি.এইচ.আই বাজার",
+      "phone": "01888000111",
+      "availability_status": "Available"
+    },
+    {
+      "name": "কামরুল হাসান",
+      "blood_group": "B+",
+      "village": "নয়াপাড়া",
+      "phone": "01700000222",
+      "availability_status": "Unavailable"
+    }
+  ],
+  "emergency_services": [
+    {
+      "service_name": "লোহাগাড়া ফায়ার সার্ভিস",
+      "details": "জরুরি অগ্নিনির্বাপণ ও উদ্ধার কাজ",
+      "phone": "01700000000"
+    },
+    {
+      "service_name": "লোহাগাড়া থানা পুলিশ",
+      "details": "আইন-শৃঙ্খলা রক্ষা ও নিরাপত্তা",
+      "phone": "01711111111"
+    }
+  ]
+}

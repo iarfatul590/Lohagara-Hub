@@ -1,4 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const noticeBanner = document.getElementById('topNoticeBanner');
+  const dismissNoticeBtn = document.getElementById('dismissNoticeBtn');
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+  const closeMobileNavBtn = document.getElementById('closeMobileNav');
+
+  dismissNoticeBtn?.addEventListener('click', () => {
+    noticeBanner?.remove();
+  });
+
+  const toggleMobileNav = () => {
+    if (!mobileNavDrawer) return;
+    mobileNavDrawer.classList.toggle('hidden');
+    mobileNavToggle?.setAttribute('aria-expanded', String(!mobileNavDrawer.classList.contains('hidden')));
+  };
+
+  mobileNavToggle?.addEventListener('click', toggleMobileNav);
+  closeMobileNavBtn?.addEventListener('click', () => {
+    if (mobileNavDrawer) {
+      mobileNavDrawer.classList.add('hidden');
+      mobileNavToggle?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  mobileNavDrawer?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileNavDrawer.classList.add('hidden');
+      mobileNavToggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+
   const publicApiBase = document.querySelector('meta[name="admin-api-base"]')?.content.replace(/\/$/, '') || 'http://localhost:4000/api/v1';
   const getPublicData = async (path) => {
     const response = await fetch(`${publicApiBase}/public${path}`);

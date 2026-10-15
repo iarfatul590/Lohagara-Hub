@@ -1,10 +1,248 @@
-{
-  "union_id": "putibila",
-  "union_name": "৭নং পুটিবিলা",
-  "ambulance": [],
-  "donors": [],
-  "meta": {
-    "extracted_from": "index.html",
-    "date": "2026-09-27"
-  }
-}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>৭নং পুটিবিলা ইউনিয়ন - Lohagara Hub</title>
+    <!-- গ্লোবাল CSS ফাইল লিংক -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: #f4f6f9; 
+            color: #333; 
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card { 
+            background: #fff; 
+            padding: 18px; 
+            margin-bottom: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+        }
+        h1, h2, h3 { color: #0066cc; margin-top: 0; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+            gap: 15px; 
+        }
+        .badge { 
+            background: #28a745; 
+            color: white; 
+            padding: 3px 8px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            float: right;
+        }
+        .badge-danger { background: #dc3545; }
+        .call-btn {
+            display: inline-block;
+            background-color: #0066cc;
+            color: #fff;
+            padding: 8px 14px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+        .call-btn:hover { background-color: #004999; }
+        select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 250px;
+        }
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ইউনিয়ন শিরোনাম -->
+        <h1 id="unionName">লোডিং...</h1>
+        <p><strong>উপজেলা:</strong> <span id="upazila">-</span> | <strong>জেলা:</strong> <span id="district">-</span></p>
+
+        <!-- এরর মেসেজ ব্লক -->
+        <div id="errorMessage" class="error-message">
+            ⚠️ ডেটা লোড করতে সমস্যা হয়েছে! অনুগ্রহ করে নিশ্চিত করুন আপনার প্রজেক্ট ফোল্ডারে <b>putibila.json</b> ফাইলটি সঠিকভাবে আছে।
+        </div>
+
+        <!-- ইউনিয়ন পরিষদ প্রশাসন -->
+        <div class="card">
+            <h2>ইউনিয়ন পরিষদ প্রশাসন</h2>
+            <p><strong>চেয়ারম্যান:</strong> <span id="chairmanName">-</span></p>
+            <a id="chairmanPhoneBtn" href="#" class="call-btn" style="display:none;">📞 চেয়ারম্যানকে কল করুন</a>
+            
+            <p style="margin-top: 15px;"><strong>সচিব:</strong> <span id="secretaryName">-</span></p>
+            <a id="secretaryPhoneBtn" href="#" class="call-btn" style="display:none;">📞 সচিবকে কল করুন</a>
+        </div>
+
+        <!-- অ্যাম্বুলেন্স সেবা -->
+        <h2>অ্যাম্বুলেন্স সেবা</h2>
+        <div id="ambulanceContainer" class="grid"></div>
+
+        <!-- রক্তদাতাদের তালিকা -->
+        <h2>রক্তদাতাদের তালিকা</h2>
+        <div>
+            <label for="bloodFilter"><strong>রক্তের গ্রুপ দিয়ে খুঁজুন:</strong> </label>
+            <select id="bloodFilter" onchange="filterDonors()">
+                <option value="all">সব গ্রুপ</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+            </select>
+        </div>
+        <div id="donorContainer" class="grid"></div>
+
+        <!-- জরুরি যোগাযোগ -->
+        <h2>জরুরি যোগাযোগ</h2>
+        <div id="emergencyContainer" class="grid"></div>
+    </div>
+
+    <script>
+        let globalDonorsData = [];
+
+        // putibila.json থেকে ডেটা ফেচ করা
+        fetch('putibila.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error! Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // ইউনিয়ন সাধারণ তথ্য
+                document.getElementById('unionName').innerText = data.union_name || 'তথ্য পাওয়া যায়নি';
+                document.getElementById('upazila').innerText = data.upazila || '-';
+                document.getElementById('district').innerText = data.district || '-';
+
+                // প্রশাসন তথ্য
+                if(data.union_parishad_admin) {
+                    const chairman = data.union_parishad_admin.chairman || {};
+                    const secretary = data.union_parishad_admin.secretary || {};
+
+                    document.getElementById('chairmanName').innerText = chairman.name ? `${chairman.name} (${chairman.phone})` : '-';
+                    if(chairman.phone) {
+                        const cBtn = document.getElementById('chairmanPhoneBtn');
+                        cBtn.href = `tel:${chairman.phone}`;
+                        cBtn.style.display = 'inline-block';
+                    }
+
+                    document.getElementById('secretaryName').innerText = secretary.name ? `${secretary.name} (${secretary.phone})` : '-';
+                    if(secretary.phone) {
+                        const sBtn = document.getElementById('secretaryPhoneBtn');
+                        sBtn.href = `tel:${secretary.phone}`;
+                        sBtn.style.display = 'inline-block';
+                    }
+                }
+
+                // অ্যাম্বুলেন্স সেবা রেন্ডার
+                const ambContainer = document.getElementById('ambulanceContainer');
+                let ambHTML = '';
+                if(data.ambulance && data.ambulance.length > 0) {
+                    data.ambulance.forEach(amb => {
+                        ambHTML += `
+                            <div class="card">
+                                <h3>${amb.vehicle_name}</h3>
+                                <p><strong>চালকের নাম:</strong> ${amb.driver_name}</p>
+                                <p><strong>লোকেশন:</strong> ${amb.base_location}</p>
+                                <a href="tel:${amb.phone}" class="call-btn">📞 কল করুন (${amb.phone})</a>
+                            </div>
+                        `;
+                    });
+                } else {
+                    ambHTML = '<p>কোনো অ্যাম্বুলেন্সের তথ্য পাওয়া যায়নি।</p>';
+                }
+                ambContainer.innerHTML = ambHTML;
+
+                // রক্তদাতা তালিকা
+                if(data.donors) {
+                    globalDonorsData = data.donors;
+                    renderDonors(globalDonorsData);
+                }
+
+                // জরুরি সার্ভিস
+                const emergencyContainer = document.getElementById('emergencyContainer');
+                let emergencyHTML = '';
+                if(data.emergency_services && data.emergency_services.length > 0) {
+                    data.emergency_services.forEach(service => {
+                        emergencyHTML += `
+                            <div class="card">
+                                <h3>${service.service_name}</h3>
+                                <p>${service.details || ''}</p>
+                                <a href="tel:${service.phone}" class="call-btn">📞 কল করুন (${service.phone})</a>
+                            </div>
+                        `;
+                    });
+                }
+                emergencyContainer.innerHTML = emergencyHTML;
+
+            })
+            .catch(error => {
+                console.error('JSON লোড করতে সমস্যা:', error);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('unionName').innerText = '৭নং পুটিবিলা ইউনিয়ন';
+            });
+
+        // রক্তদাতাদের রেন্ডার ফাংশন
+        function renderDonors(donors) {
+            const donorContainer = document.getElementById('donorContainer');
+            let donorHTML = '';
+
+            if (donors.length === 0) {
+                donorContainer.innerHTML = '<p>এই গ্রুপের কোনো রক্তদাতার তথ্য পাওয়া যায়নি।</p>';
+                return;
+            }
+
+            donors.forEach(donor => {
+                const isAvailable = donor.availability_status === 'Available' || donor.availability_status === 'উপলব্ধ';
+                const badgeClass = isAvailable ? 'badge' : 'badge badge-danger';
+                const statusText = isAvailable ? 'রক্তদানে প্রস্তুত' : 'এখন দিতে পারবেন না';
+
+                donorHTML += `
+                    <div class="card">
+                        <h3>${donor.name} <span class="${badgeClass}">${donor.blood_group}</span></h3>
+                        <p><strong>গ্রাম:</strong> ${donor.village}</p>
+                        <p><strong>স্ট্যাটাস:</strong> ${statusText}</p>
+                        <a href="tel:${donor.phone}" class="call-btn">📞 কল করুন (${donor.phone})</a>
+                    </div>
+                `;
+            });
+            donorContainer.innerHTML = donorHTML;
+        }
+
+        // রক্তের গ্রুপ ফিল্টার ফাংশন
+        function filterDonors() {
+            const selectedGroup = document.getElementById('bloodFilter').value;
+            if (selectedGroup === 'all') {
+                renderDonors(globalDonorsData);
+            } else {
+                const filtered = globalDonorsData.filter(d => d.blood_group === selectedGroup);
+                renderDonors(filtered);
+            }
+        }
+    </script>
+</body>
+</html>
