@@ -1,35 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const noticeBanner = document.getElementById('topNoticeBanner');
-  const dismissNoticeBtn = document.getElementById('dismissNoticeBtn');
-  const mobileNavToggle = document.getElementById('mobileNavToggle');
-  const mobileNavDrawer = document.getElementById('mobileNavDrawer');
-  const closeMobileNavBtn = document.getElementById('closeMobileNav');
-
-  dismissNoticeBtn?.addEventListener('click', () => {
-    noticeBanner?.remove();
-  });
-
-  const toggleMobileNav = () => {
-    if (!mobileNavDrawer) return;
-    mobileNavDrawer.classList.toggle('hidden');
-    mobileNavToggle?.setAttribute('aria-expanded', String(!mobileNavDrawer.classList.contains('hidden')));
-  };
-
-  mobileNavToggle?.addEventListener('click', toggleMobileNav);
-  closeMobileNavBtn?.addEventListener('click', () => {
-    if (mobileNavDrawer) {
-      mobileNavDrawer.classList.add('hidden');
-      mobileNavToggle?.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  mobileNavDrawer?.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      mobileNavDrawer.classList.add('hidden');
-      mobileNavToggle?.setAttribute('aria-expanded', 'false');
-    });
-  });
-
   const publicApiBase = document.querySelector('meta[name="admin-api-base"]')?.content.replace(/\/$/, '') || 'http://localhost:4000/api/v1';
   const getPublicData = async (path) => {
     const response = await fetch(`${publicApiBase}/public${path}`);
@@ -37,24 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status}).`);
     return payload.data;
   };
-
-  const loadStorage = (key, fallback) => {
-    try {
-      const saved = localStorage.getItem(key);
-      return saved ? JSON.parse(saved) : fallback;
-    } catch {
-      return fallback;
-    }
-  };
-
-  const saveStorage = (key, data) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch (e) {
-      console.warn('Storage save failed:', e);
-    }
-  };
-
   const weatherLoading = document.getElementById('weatherLoading');
   const weatherContent = document.getElementById('weatherContent');
   const weatherIcon = document.getElementById('weatherIcon');
@@ -150,20 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const applyWeatherData = (weatherData, isFallback = false) => {
-    const temp = Math.round(Number(weatherData?.main?.temp ?? weatherData?.current?.temp_c ?? 30));
-    const humidity = Math.round(Number(weatherData?.main?.humidity ?? weatherData?.current?.humidity ?? 78));
-    const wind = Math.round(Number(
-      weatherData?.wind?.speed !== undefined
-        ? weatherData.wind.speed * 3.6
-        : (weatherData?.current?.wind_kph ?? 13)
-    ));
-    const conditionText = weatherData?.weather?.[0]?.description || weatherData?.current?.condition?.text || 'আংশিক মেঘলা';
-    const conditionMain = weatherData?.weather?.[0]?.main || 'Clouds';
+    const temp = Math.round(Number(weatherData?.main?.temp ?? 0));
+    const humidity = Math.round(Number(weatherData?.main?.humidity ?? 0));
+    const wind = Math.round(Number((weatherData?.wind?.speed ?? 0) * 3.6));
+    const conditionText = weatherData?.weather?.[0]?.description || 'আবহাওয়া';
+    const conditionMain = weatherData?.weather?.[0]?.main || 'Clear';
     const rainChance = (() => {
-      if (weatherData?.forecast?.forecastday?.[0]?.day?.daily_chance_of_rain !== undefined) {
-        return weatherData.forecast.forecastday[0].day.daily_chance_of_rain;
-      }
-      const cloudCoverage = Number(weatherData?.clouds?.all ?? 60);
+      const cloudCoverage = Number(weatherData?.clouds?.all ?? 0);
       const weatherGroup = ['Rain', 'Drizzle', 'Thunderstorm'];
 
       if (weatherGroup.includes(conditionMain)) {
@@ -219,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (shouldWarn) {
         weatherWarningText.textContent = '⚠️ সতর্কতা: আগামী ২৪ ঘণ্টায় বৃষ্টির সম্ভাবনা রয়েছে, কৃষিপণ্য ও পান বরজ সুরক্ষায় সতর্ক থাকুন।';
       } else {
-        weatherWarningText.textContent = '✅ স্থানীয় আবহাওয়া কৃষি ও দৈনন্দিন কাজের উপযোগী রয়েছে।';
+        weatherWarningText.textContent = '✅ আবহাওয়া generally suitable for farming activities; keep irrigation and crop protection plans aligned with local conditions.';
       }
     }
 
@@ -764,7 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fetchAndRenderUnion = async (path) => {
     try {
       const res = await fetch(path);
-      if (!res.ok) return;
+      if (!res.ok) throw new Error('Network error');
       const data = await res.json();
 
       const unionId = data.union_id || data.union || path;
@@ -777,10 +721,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Array.isArray(data.donors) && donorGrid) {
         donorGrid.insertAdjacentHTML('beforeend', data.donors.map((d) => renderDonorEntry(unionId, d)).join(''));
       }
-    } catch {
-      // Ignore missing local files silently
+    } catch (e) {
+      console.warn('Could not load union file', path, e.message);
     }
   };
+
+  // Load known union files (created earlier)
+  fetchAndRenderUnion('index.borohatia');
+  fetchAndRenderUnion('index.amirabad');
 
   const eventData = [
     {
@@ -858,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCountdowns();
   setInterval(updateCountdowns, 60000);
 
-  const defaultGrievanceData = [
+  const grievanceData = [
     {
       name: 'আনোয়ার হোসেন',
       area: '৬নং লোহাগাড়া',
@@ -896,7 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
       date: '২০২৬-০৯-১৭'
     }
   ];
-  const grievanceData = loadStorage('lh_grievances', defaultGrievanceData);
 
   const grievanceFeed = document.getElementById('grievanceFeed');
   const grievanceList = document.getElementById('grievanceList');
@@ -1003,7 +950,6 @@ document.addEventListener('DOMContentLoaded', () => {
       statusTone: 'amber',
       date: new Date().toISOString().slice(0, 10)
     });
-    saveStorage('lh_grievances', grievanceData);
 
     grievanceForm.reset();
     closeModal();
@@ -1016,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGrievanceFeed();
   renderGrievanceList();
 
-  const defaultArtisanDirectory = [
+  const artisanDirectory = [
     {
       name: 'আমিনুর রহমান',
       area: '৪নং চরম্বা',
@@ -1078,7 +1024,6 @@ document.addEventListener('DOMContentLoaded', () => {
       avatar: '🎨'
     }
   ];
-  const artisanDirectory = loadStorage('lh_artisans', defaultArtisanDirectory);
 
   const artisanFilters = document.querySelectorAll('.artisan-filter');
   const artisanGrid = document.getElementById('artisanGrid');
@@ -1177,7 +1122,6 @@ document.addEventListener('DOMContentLoaded', () => {
       phone,
       avatar: category === 'expert' ? '💡' : category === 'artisan' ? '🛠️' : '✨'
     });
-    saveStorage('lh_artisans', artisanDirectory);
 
     artisanForm.reset();
     closeArtisanDialog();
@@ -1187,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderArtisanCards();
 
-  const defaultOxygenInventory = [
+  const oxygenInventory = [
     {
       name: 'অক্সিজেন সিলিন্ডার',
       type: 'oxygen',
@@ -1255,7 +1199,6 @@ document.addEventListener('DOMContentLoaded', () => {
       note: 'খুব দ্রুত হ্যান্ড-ওভার করা যাবে।'
     }
   ];
-  const oxygenInventory = loadStorage('lh_oxygen', defaultOxygenInventory);
 
   const oxygenFilters = document.querySelectorAll('.oxygen-filter');
   const oxygenGrid = document.getElementById('oxygenGrid');
@@ -1376,7 +1319,6 @@ document.addEventListener('DOMContentLoaded', () => {
       phone,
       note
     });
-    saveStorage('lh_oxygen', oxygenInventory);
 
     oxygenForm.reset();
     closeOxygenDialog();

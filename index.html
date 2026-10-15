@@ -4,12 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="admin-api-base" content="http://localhost:4000/api/v1" />
-    <meta name="description" content="লোহাগাড়া অঞ্চলের বিভিন্ন তথ্য, বাজারদর, জরুরি সেবা এবং অনলাইন প্ল্যাটফর্ম।">
-    <title>লোহাগাড়া হাব - Lohagara Hub | স্থানীয় তথ্য ও সেবা</title>
-    <meta property="og:title" content="লোহাগাড়া হাব - Lohagara Hub">
-<meta property="og:description" content="লোহাগাড়া অঞ্চলের বিভিন্ন তথ্য ও অনলাইন সেবা।">
-<meta property="og:image" content="URL_to_your_logo_or_image">
-<meta property="og:url" content="https://lohagarahub.netlify.app">
+    <title>লোহাগাড়া হাব</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -19,18 +14,6 @@
   </head>
   <body>
     <div class="page-shell">
-      <!-- Live Announcement / Notice Banner -->
-      <aside id="topNoticeBanner" class="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-emerald-400/40 bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 px-4 py-2.5 text-xs text-white shadow-md">
-        <div class="flex items-center gap-2.5 overflow-hidden">
-          <span class="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-500/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-200">ঘোষণা</span>
-          <p id="topNoticeMessage" class="truncate font-medium text-emerald-50">লোহাগাড়া হাব-এ স্বাগতম! যে কোনো জরুরি রক্ত, অ্যাম্বুলেন্স বা নাগরিক তথ্যের জন্য আমাদের ডিরেক্টরি ব্যবহার করুন।</p>
-        </div>
-        <div class="flex shrink-0 items-center gap-2">
-          <a href="#emergency-panel" class="rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-bold text-white transition hover:bg-white/25">হেল্পলাইন ↗</a>
-          <button id="dismissNoticeBtn" type="button" class="grid h-6 w-6 place-items-center rounded-lg text-white/70 transition hover:bg-white/10 hover:text-white" aria-label="বিজ্ঞপ্তি বন্ধ করুন">✕</button>
-        </div>
-      </aside>
-
       <header class="topbar">
         <div class="brand-wrap">
           <div class="brand-mark">🌿</div>
@@ -43,41 +26,14 @@
         <nav class="main-nav" aria-label="Main navigation">
           <a href="#emergency-panel">জরুরি</a>
           <a href="#krishi-heading">কৃষি</a>
-          <a href="#smart-blood-heading">রক্ত</a>
           <a href="#healthcare-heading">স্বাস্থ্য</a>
           <a href="#education-heading">শিক্ষা</a>
-          <a href="#transport-heading">পরিবহন</a>
+          <a href="#events-heading">নোটিশ</a>
           <a href="#marketplace-heading">মার্কেট</a>
-          <a href="#unions-heading">ইউনিয়নসমূহ</a>
         </nav>
 
-        <div class="flex items-center gap-2">
-          <a href="#smart-blood-heading" class="nav-cta hidden sm:inline-flex">জরুরি রক্ত</a>
-          <a href="admin.html" class="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1.5 text-xs font-bold text-white backdrop-blur transition hover:bg-white/25 shadow-sm" title="অ্যাডমিন কন্ট্রোল সেন্টার">
-            <span>🛡️</span> <span class="hidden md:inline">অ্যাডমিন</span>
-          </a>
-          <button id="mobileNavToggle" type="button" class="grid h-9 w-9 place-items-center rounded-xl bg-white/15 text-white transition hover:bg-white/25 lg:hidden" aria-label="মেনু খুলুন">☰</button>
-        </div>
+        <a href="#smart-blood-heading" class="nav-cta">জরুরি রক্ত</a>
       </header>
-
-      <!-- Mobile Navigation Drawer -->
-      <div id="mobileNavDrawer" class="mb-5 hidden overflow-hidden rounded-2xl border border-emerald-200 bg-white p-4 shadow-xl lg:hidden">
-        <div class="mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">কমিউনিটি মেনু</span>
-          <button id="closeMobileNav" type="button" class="text-xs text-slate-400 hover:text-slate-600">✕ বন্ধ করুন</button>
-        </div>
-        <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700">
-          <a href="#emergency-panel" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🚨 জরুরি সেবা</a>
-          <a href="#krishi-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🌾 কৃষি ও বাজার</a>
-          <a href="#smart-blood-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🩸 রক্ত নেটওয়ার্ক</a>
-          <a href="#healthcare-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🏥 স্বাস্থ্য সেবা</a>
-          <a href="#education-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">📚 শিক্ষা প্রতিষ্ঠান</a>
-          <a href="#transport-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🚌 বাস ও পরিবহন</a>
-          <a href="#marketplace-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🛍️ মার্কেটপ্লেস</a>
-          <a href="#unions-heading" class="mobile-nav-item flex items-center gap-2 rounded-xl bg-slate-50 p-2.5 transition hover:bg-emerald-50 hover:text-emerald-800">🏛️ ৯টি ইউনিয়ন</a>
-          <a href="admin.html" class="mobile-nav-item col-span-2 flex items-center justify-center gap-2 rounded-xl bg-emerald-800 p-2.5 text-white transition hover:bg-emerald-900 font-bold">🛡️ অ্যাডমিন কনসোল খুলুন</a>
-        </div>
-      </div>
 
       <section class="hero-section" aria-label="Community overview">
         <div class="hero-copy">
@@ -1725,110 +1681,6 @@
         </div>
       </div>
 
-      <!-- Unions Showcase / Explorer Section -->
-      <section id="unions-heading" class="relative my-8 overflow-hidden rounded-[32px] border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-slate-50 p-6 md:p-8 shadow-sm">
-        <div class="mb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-          <div>
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-800">🏛️ Local Union Network</span>
-            <h2 class="mt-2 text-2xl font-black text-slate-800 md:text-3xl">লোহাগাড়া উপজেলার ৯টি ইউনিয়ন ও হাব</h2>
-            <p class="mt-1 text-sm text-slate-600 max-w-2xl">আপনার ইউনিয়ন নির্বাচন করে জরুরি সেবা, রক্তদাতা, স্বাস্থ্যসেবা ও কৃষি বাজারদর সরাসরি দেখুন।</p>
-          </div>
-          <span class="text-xs font-semibold text-slate-500 bg-white/80 border border-slate-200 px-3 py-1.5 rounded-xl shadow-xs">মোট ৯টি ইউনিয়ন পরিষদ</span>
-        </div>
-
-        <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-          <!-- 1. Borohatia -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="bighatia">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">১নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">বড়হাতিয়া ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">বড়হাতিয়া বাজার, কৃষি অঞ্চল ও বনায়ন সংলগ্ন এলাকা।</p>
-          </div>
-
-          <!-- 2. Amirabad -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="amirabad">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">২নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">আমিরাবাদ ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">বাণিজ্যিক কেন্দ্র, আমিরাবাদ স্টেশন ও গুরুত্বপূর্ণ বাজার।</p>
-          </div>
-
-          <!-- 3. Padua -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="padua">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৩নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">পদুয়া ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">পদুয়া বাজার, স্বাস্থ্য সেবা কেন্দ্র ও নদী তীরবর্তী এলাকা।</p>
-          </div>
-
-          <!-- 4. Chormba -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="chormba">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৪নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">চরম্বা ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">পাহাড়ি সমতল ও বিস্তৃত কৃষি খামার ও উদ্যান এলাকা।</p>
-          </div>
-
-          <!-- 5. Kalaizan -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="kolaizan">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৫নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">কলাউজান ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">ঐতিহ্যবাহী সমাজ, শিক্ষা প্রতিষ্ঠান ও শান্ত পল্লি জনপদ।</p>
-          </div>
-
-          <!-- 6. Lohagara Sadar -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="lohagara">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-100 px-2.5 py-1 text-xs font-extrabold text-emerald-900">৬নং ইউনিয়ন (সদর)</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">লোহাগাড়া সদর ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">উপজেলা সদর, বটতলী মোড়, সরকারি অফিস ও প্রশাসনিক বলয়।</p>
-          </div>
-
-          <!-- 7. Putibila -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="putibila">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৭নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">পুটিবিলা ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">প্রাকৃতিক সবুজ, নদী অববাহিকা ও ডলু পাড়ের জনবসতি।</p>
-          </div>
-
-          <!-- 8. Chunati -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="chunati">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৮নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">চুনতি ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">চুনতি অভয়ারণ্য, সুফি ঐতিহ্য ও প্রাকৃতিক পর্যটন অঞ্চল।</p>
-          </div>
-
-          <!-- 9. Adhunagar -->
-          <div class="union-card group cursor-pointer rounded-2xl border border-slate-200/80 bg-white p-4 transition hover:-translate-y-1 hover:border-emerald-400 hover:shadow-md" data-union-target="adhunagar">
-            <div class="flex items-center justify-between">
-              <span class="rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-extrabold text-emerald-800">৯নং ইউনিয়ন</span>
-              <span class="text-xs text-slate-400 group-hover:text-emerald-600 font-semibold">ফিল্টার করুন ↗</span>
-            </div>
-            <h3 class="mt-2 text-base font-bold text-slate-800 group-hover:text-emerald-700">আধুনগর ইউনিয়ন</h3>
-            <p class="text-xs text-slate-500 mt-1">আধুনগর বাজার, খানহাট ও জাতীয় মহাসড়ক সংলগ্ন যোগাযোগ কেন্দ্র।</p>
-          </div>
-        </div>
-      </section>
-
       <div class="dashboard-wrap">
         <div class="toolbar-panel">
           <div class="search-box">
@@ -1904,176 +1756,8 @@
           </aside>
         </div>
       </div>
-
-      <!-- Modern Comprehensive Footer -->
-      <footer class="mt-14 overflow-hidden rounded-[32px] border border-emerald-950/20 bg-gradient-to-b from-emerald-950 via-emerald-900 to-slate-950 p-7 md:p-10 text-white shadow-2xl">
-        <div class="grid gap-8 lg:grid-cols-4 md:grid-cols-2">
-          <!-- Col 1: Brand & Overview -->
-          <div class="space-y-3.5">
-            <div class="flex items-center gap-3">
-              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-2xl shadow-sm">🌿</div>
-              <div>
-                <h3 class="text-xl font-black text-white">লোহাগাড়া হাব</h3>
-                <span class="text-xs text-emerald-300 font-medium">স্মার্ট কমিউনিটি নেটওয়ার্ক</span>
-              </div>
-            </div>
-            <p class="text-xs leading-relaxed text-emerald-100/75">
-              লোহাগাড়া উপজেলার সকল নাগরিক সেবা, রক্তদাতা সহায়তা, জরুরি হটলাইন, স্বাস্থ্যসেবা ও কৃষিপণ্যের বাজারদর এক ঠিকানায় পাওয়ার নির্ভরযোগ্য ডিজিটাল প্ল্যাটফর্ম।
-            </p>
-            <div class="flex items-center gap-2 pt-1">
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] font-bold text-emerald-300">
-                <span class="h-2 w-2 rounded-full bg-emerald-400"></span> লোহাগাড়া, চট্টগ্রাম
-              </span>
-            </div>
-          </div>
-
-          <!-- Col 2: Quick Links -->
-          <div>
-            <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-300 mb-3.5 border-b border-white/10 pb-2">জরুরি নেভিগেশন</h4>
-            <ul class="space-y-2 text-xs text-emerald-100/80">
-              <li><a href="#emergency-panel" class="hover:text-white transition flex items-center gap-2">🚨 জরুরি হটলাইন ও পুলিশ</a></li>
-              <li><a href="#smart-blood-heading" class="hover:text-white transition flex items-center gap-2">🩸 স্মার্ট ব্লাড নেটওয়ার্ক</a></li>
-              <li><a href="#krishi-heading" class="hover:text-white transition flex items-center gap-2">🌾 কৃষিপণ্যের বাজারদর</a></li>
-              <li><a href="#healthcare-heading" class="hover:text-white transition flex items-center gap-2">🏥 স্বাস্থ্য ও ডায়াগনস্টিক</a></li>
-              <li><a href="#transport-heading" class="hover:text-white transition flex items-center gap-2">🚌 বাস ও পরিবহন সময়সূচি</a></li>
-              <li><a href="#marketplace-heading" class="hover:text-white transition flex items-center gap-2">🛍️ স্থানীয় মার্কেটপ্লেস</a></li>
-            </ul>
-          </div>
-
-          <!-- Col 3: Unions -->
-          <div>
-            <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-300 mb-3.5 border-b border-white/10 pb-2">লোহাগাড়ার ৯টি ইউনিয়ন</h4>
-            <div class="grid grid-cols-2 gap-x-2 gap-y-2 text-xs text-emerald-100/80">
-              <a href="#unions-heading" class="hover:text-white transition">১নং বড়হাতিয়া</a>
-              <a href="#unions-heading" class="hover:text-white transition">২নং আমিরাবাদ</a>
-              <a href="#unions-heading" class="hover:text-white transition">৩নং পদুয়া</a>
-              <a href="#unions-heading" class="hover:text-white transition">৪নং চরম্বা</a>
-              <a href="#unions-heading" class="hover:text-white transition">৫নং কলাউজান</a>
-              <a href="#unions-heading" class="hover:text-white transition">৬নং লোহাগাড়া সদর</a>
-              <a href="#unions-heading" class="hover:text-white transition">৭নং পুটিবিলা</a>
-              <a href="#unions-heading" class="hover:text-white transition">৮নং চুনতি</a>
-              <a href="#unions-heading" class="hover:text-white transition col-span-2">৯নং আধুনগর</a>
-            </div>
-          </div>
-
-          <!-- Col 4: Admin & Contact -->
-          <div>
-            <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-300 mb-3.5 border-b border-white/10 pb-2">প্রশাসনিক কন্ট্রোল</h4>
-            <div class="space-y-3 text-xs text-emerald-100/80">
-              <p>অ্যাডমিনের তথ্য হালনাগাদ ও মডারেশনের জন্য ড্যাশবোর্ডে প্রবেশ করুন:</p>
-              <div class="flex flex-col gap-2">
-                <a href="admin.html" class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600/30 border border-emerald-400/40 px-3.5 py-2.5 font-bold text-emerald-100 transition hover:bg-emerald-600/50 shadow-sm">
-                  🛡️ অ্যাডমিন কনসোল
-                </a>
-                <a href="Setting.html" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 border border-white/15 px-3.5 py-2.5 font-bold text-white transition hover:bg-white/20">
-                  ⚙️ প্ল্যাটফর্ম সেটিংস
-                </a>
-              </div>
-              <p class="text-[11px] text-emerald-200/70 pt-1">
-                জরুরি হেল্পডেস্ক: <a href="tel:+8801876000000" class="text-emerald-300 underline font-bold">০১৮৭৬-১২২৩৩৪</a>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8 border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-emerald-200/60">
-          <p>© ২০২৬ লোহাগাড়া হাব • একটি উন্মুক্ত অলাভজনক কমিউনিটি পোর্টাল।</p>
-          <div class="flex items-center gap-4">
-            <a href="#emergency-panel" class="hover:text-white transition">হটলাইন</a>
-            <span>•</span>
-            <a href="#unions-heading" class="hover:text-white transition">ইউনিয়ন ডিরেক্টরি</a>
-            <span>•</span>
-            <a href="admin.html" class="hover:text-white transition">অ্যাডমিন লগইন</a>
-          </div>
-        </div>
-      </footer>
     </div>
 
-    <!-- Floating Back to Top Button -->
-    <button id="backToTopBtn" type="button" class="fixed bottom-6 right-6 z-40 hidden h-11 w-11 items-center justify-center rounded-2xl bg-emerald-800 text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-emerald-900 focus:outline-none" aria-label="উপরে যান">
-      <span class="text-lg font-black leading-none">↑</span>
-    </button>
-
     <script src="script.js"></script>
-    <script>
-      // Load and apply notice banner from localStorage if configured in Setting.html
-      (function initNoticeAndHelpers() {
-        const settingsKey = 'lohagara-admin-settings-page';
-        try {
-          const saved = JSON.parse(localStorage.getItem(settingsKey) || '{}');
-          if (saved.hubInfo) {
-            const banner = document.getElementById('topNoticeBanner');
-            const msg = document.getElementById('topNoticeMessage');
-            if (saved.hubInfo.showNotice === false) {
-              if (banner) banner.style.display = 'none';
-            } else if (saved.hubInfo.noticeText && msg) {
-              msg.textContent = saved.hubInfo.noticeText;
-            }
-          }
-        } catch (_) {}
-
-        // Notice dismiss handler
-        const dismissBtn = document.getElementById('dismissNoticeBtn');
-        const banner = document.getElementById('topNoticeBanner');
-        if (dismissBtn && banner) {
-          dismissBtn.addEventListener('click', () => {
-            banner.style.display = 'none';
-          });
-        }
-
-        // Mobile Nav Drawer Toggle
-        const toggleBtn = document.getElementById('mobileNavToggle');
-        const drawer = document.getElementById('mobileNavDrawer');
-        const closeBtn = document.getElementById('closeMobileNav');
-        if (toggleBtn && drawer) {
-          toggleBtn.addEventListener('click', () => {
-            drawer.classList.toggle('hidden');
-          });
-          if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-              drawer.classList.add('hidden');
-            });
-          }
-          drawer.querySelectorAll('.mobile-nav-item').forEach((link) => {
-            link.addEventListener('click', () => {
-              drawer.classList.add('hidden');
-            });
-          });
-        }
-
-        // Union cards click handler to filter dashboard services
-        document.querySelectorAll('.union-card').forEach((card) => {
-          card.addEventListener('click', () => {
-            const unionId = card.getAttribute('data-union-target');
-            if (!unionId) return;
-            const filterBtn = document.querySelector(`.filter-btn[data-union="${unionId}"]`);
-            if (filterBtn) {
-              filterBtn.click();
-            }
-            const target = document.querySelector('.dashboard-wrap');
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth' });
-            }
-          });
-        });
-
-        // Back to Top button
-        const backToTop = document.getElementById('backToTopBtn');
-        if (backToTop) {
-          window.addEventListener('scroll', () => {
-            if (window.scrollY > 400) {
-              backToTop.classList.remove('hidden');
-              backToTop.classList.add('flex');
-            } else {
-              backToTop.classList.add('hidden');
-              backToTop.classList.remove('flex');
-            }
-          });
-          backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          });
-        }
-      })();
-    </script>
   </body>
 </html>

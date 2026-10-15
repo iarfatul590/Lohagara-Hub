@@ -8,9 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script type="module">
-      import { firebaseApp, db } from './firebase.js';
+      import { firebaseApp } from './firebase.js';
       import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-      import { doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
       const auth = getAuth(firebaseApp);
       const googleProvider = new GoogleAuthProvider();
@@ -18,9 +17,6 @@
       window.firebaseAuth = auth;
       window.googleProvider = googleProvider;
       window.firebaseApp = firebaseApp;
-      window.firebaseDb = db;
-      window.firebaseFirestoreDoc = doc;
-      window.firebaseFirestoreOnSnapshot = onSnapshot;
       window.hasRealFirebaseConfig = true;
       window.firebaseSignInWithPopup = signInWithPopup;
       window.firebaseSignOut = signOut;
@@ -116,16 +112,6 @@
           Sign in with Google
         </button>
 
-        <div class="mt-4 flex items-center justify-center gap-2">
-          <span class="h-px flex-1 bg-white/10"></span>
-          <span class="text-[11px] font-medium text-slate-300">অথবা দ্রুত প্রবেশ</span>
-          <span class="h-px flex-1 bg-white/10"></span>
-        </div>
-
-        <button id="demoLoginBtn" type="button" class="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-400/40 bg-emerald-500/20 px-5 py-3 text-sm font-bold text-emerald-100 backdrop-blur transition hover:bg-emerald-500/30">
-          ⚡ ডেমো মোডে প্রবেশ করুন (Quick Access)
-        </button>
-
         <div id="authError" class="mt-5 hidden rounded-2xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm text-red-100"></div>
       </div>
     </div>
@@ -205,11 +191,6 @@
             <button data-tab="access" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">🛡️ রোল ও অডিট</button>
             <button data-tab="reports" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">📊 রিপোর্ট ও এক্সপোর্ট</button>
             <button data-tab="settings" class="nav-item mobile-nav w-full rounded-2xl border border-white/10 bg-transparent px-4 py-3 text-left text-sm font-medium text-emerald-50/90">⚙️ সেটিংস</button>
-            <div class="mt-6 border-t border-white/10 pt-4">
-              <a href="index.html" class="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-100 hover:bg-red-500/20">
-                ↩️ মেইন সাইটে ফিরুন
-              </a>
-            </div>
           </nav>
         </div>
       </div>
@@ -229,43 +210,17 @@
             <div class="flex items-center gap-3">
               <div class="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-2 md:flex">
                 <span class="text-sm text-slate-500">🔍</span>
-                <input id="globalAdminSearch" type="text" placeholder="খুঁজুন..." class="w-32 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
+                <input type="text" placeholder="খুঁজুন..." class="w-32 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none" />
               </div>
               <label class="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-[10px] font-semibold text-emerald-900">ইউনিয়ন
                 <select id="activeUnionSelect" class="max-w-36 bg-transparent text-xs font-bold focus:outline-none" aria-label="Select assigned union"></select>
               </label>
               <span id="roleBadge" class="hidden rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 lg:inline-flex">Role</span>
 
-              <!-- Notification Bell & Dropdown -->
-              <div class="relative">
-                <button id="adminNotifBtn" type="button" class="relative rounded-full border border-slate-200 bg-slate-100 p-2.5 text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700" aria-label="Notifications" aria-haspopup="true">
-                  🔔
-                  <span id="adminNotifBadge" class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">3</span>
-                </button>
-                <div id="adminNotifDropdown" class="absolute right-0 top-12 z-50 hidden w-80 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl transition">
-                  <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800">অ্যাডমিন অ্যালার্ট ও নোটিফিকেশন</h4>
-                    <button id="clearAdminNotifs" type="button" class="text-xs font-semibold text-emerald-700 hover:underline">সব পঠিত</button>
-                  </div>
-                  <div class="mt-3 space-y-2 text-xs">
-                    <div class="rounded-xl border border-rose-100 bg-rose-50/70 p-2.5 text-slate-700">
-                      <strong class="block text-rose-800">🩸 জরুরি রক্তের আবেদন</strong>
-                      <span class="mt-0.5 block text-slate-600">পদুয়া এলাকা থেকে 'O+' রক্তের নতুন অনুরোধ এসেছে।</span>
-                      <span class="mt-1 block text-[10px] text-slate-400">১০ মিনিট আগে</span>
-                    </div>
-                    <div class="rounded-xl border border-emerald-100 bg-emerald-50/60 p-2.5 text-slate-700">
-                      <strong class="block text-emerald-800">🏪 সার্ভিস সাবমিশন</strong>
-                      <span class="mt-0.5 block text-slate-600">লোহাগাড়া বাজারে নতুন ফার্মেসির তালিকা অনুমোদনের অপেক্ষায়।</span>
-                      <span class="mt-1 block text-[10px] text-slate-400">১ ঘণ্টা আগে</span>
-                    </div>
-                    <div class="rounded-xl border border-slate-100 bg-slate-50 p-2.5 text-slate-700">
-                      <strong class="block text-slate-800">📈 বাজার দর আপডেট</strong>
-                      <span class="mt-0.5 block text-slate-600">বটতলী বাজারের আজকের চাল ও সবজির পাইকারি দর তালিকাভুক্ত হয়েছে।</span>
-                      <span class="mt-1 block text-[10px] text-slate-400">আজ সকাল ৯:৩০</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <button class="relative rounded-full border border-slate-200 bg-slate-100 p-2.5 text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700">
+                🔔
+                <span class="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">3</span>
+              </button>
 
               <div id="userProfileBadge" class="flex items-center gap-3 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-1.5 shadow-sm">
                 <img id="userAvatar" src="" alt="User avatar" class="hidden h-10 w-10 rounded-full object-cover" />
@@ -596,16 +551,6 @@
               </span>
             </div>
 
-            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div>
-                <h4 class="font-bold text-emerald-900 text-sm">সম্পূর্ণ প্ল্যাটফর্ম ও হাব পাবলিক সেটিংস প্রয়োজন?</h4>
-                <p class="text-xs text-emerald-700 mt-0.5">লোহাগাড়া হাবের পাবলিক হেল্পলাইন, নোটিশ ব্যানার এবং সম্পূর্ণ JSON ব্যাকআপ ও রিস্টোরের জন্য ডেডিকেটেড সেটিংস পেজ ব্যবহার করুন।</p>
-              </div>
-              <a href="Setting.html" class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-emerald-800 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-900 shadow-sm">
-                ⚙️ পূর্ণাঙ্গ সেটিংস পেজে যান
-              </a>
-            </div>
-
             <div class="grid gap-5 xl:grid-cols-2">
               <form id="settingsProfileForm" class="glass panel-glow rounded-3xl p-5 md:p-6">
                 <div class="mb-5 flex items-start justify-between gap-3">
@@ -643,28 +588,16 @@
                 </div>
 
                 <div class="space-y-3">
-                  <div>
-                    <label class="block text-sm font-semibold text-slate-700" for="currentPassword">বর্তমান পাসওয়ার্ড</label>
-                    <div class="relative mt-1.5">
-                      <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 pr-10 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
-                      <button type="button" class="admin-password-toggle absolute right-3 top-3 text-slate-400 hover:text-slate-600" data-target="currentPassword" aria-label="পাসওয়ার্ড দেখান">👁️</button>
-                    </div>
-                  </div>
+                  <label class="block text-sm font-semibold text-slate-700" for="currentPassword">বর্তমান পাসওয়ার্ড
+                    <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                  </label>
                   <div class="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label class="block text-sm font-semibold text-slate-700" for="newPassword">নতুন পাসওয়ার্ড</label>
-                      <div class="relative mt-1.5">
-                        <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" minlength="8" required class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 pr-10 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
-                        <button type="button" class="admin-password-toggle absolute right-3 top-3 text-slate-400 hover:text-slate-600" data-target="newPassword" aria-label="পাসওয়ার্ড দেখান">👁️</button>
-                      </div>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-semibold text-slate-700" for="confirmPassword">নিশ্চিত করুন</label>
-                      <div class="relative mt-1.5">
-                        <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 pr-10 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
-                        <button type="button" class="admin-password-toggle absolute right-3 top-3 text-slate-400 hover:text-slate-600" data-target="confirmPassword" aria-label="পাসওয়ার্ড দেখান">👁️</button>
-                      </div>
-                    </div>
+                    <label class="block text-sm font-semibold text-slate-700" for="newPassword">নতুন পাসওয়ার্ড
+                      <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
+                    <label class="block text-sm font-semibold text-slate-700" for="confirmPassword">নিশ্চিত করুন
+                      <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    </label>
                   </div>
                 </div>
 
@@ -853,13 +786,6 @@
 
     <script>
       const API_BASE = document.querySelector('meta[name="admin-api-base"]').content.replace(/\/$/, '');
-      const demoAdminUser = {
-        displayName: 'Demo Admin',
-        email: 'demo@lohagara.local',
-        roles: ['super_admin'],
-        unionScopes: [{ unionId: 1 }]
-      };
-
       let currentAdmin = null;
       let activeUnionId = null;
       let unionData = [];
@@ -871,7 +797,6 @@
       let commodityHistory = [];
       let propertyHistory = [];
       let liveEventsController = null;
-      let demoModeEnabled = false;
 
       const loginScreen = document.getElementById('loginScreen');
       const appShell = document.getElementById('appShell');
@@ -882,104 +807,6 @@
       const userAvatar = document.getElementById('userAvatar');
       const userInitials = document.getElementById('userInitials');
 
-      function getFriendlyAuthMessage(error) {
-        const message = (error && (error.message || String(error))) || '';
-        const normalized = message.toLowerCase();
-
-        if (!message || normalized.includes('failed to fetch') || normalized.includes('networkerror') || normalized.includes('fetch failed') || normalized.includes('load failed')) {
-          return 'Admin access is temporarily unavailable because the backend server is offline or the browser cannot reach it. Please start the local admin API and try again.';
-        }
-
-        if (normalized.includes('sign in with an authorized firebase account first') || normalized.includes('authorized firebase account')) {
-          return 'Please sign in with an authorized Google admin account first.';
-        }
-
-        return message;
-      }
-
-      function isOfflineBackendError(error) {
-        const message = (error && (error.message || String(error))) || '';
-        const normalized = message.toLowerCase();
-        return normalized.includes('failed to fetch') || normalized.includes('networkerror') || normalized.includes('fetch failed') || normalized.includes('load failed') || normalized.includes('offline') || normalized.includes('connection refused');
-      }
-
-      function makeDemoFallback(path) {
-        const cleanPath = path.split('?')[0];
-
-        if (cleanPath === '/session') return demoAdminUser;
-        if (cleanPath === '/users') return [];
-        if (cleanPath === '/unions') return [
-          { id: 1, name_en: 'লোহাগাড়া সদর', name_bn: 'লোহাগাড়া সদর', district: 'চট্টগ্রাম' },
-          { id: 2, name_en: 'বড়হাটিয়া', name_bn: 'বড়হাটিয়া', district: 'চট্টগ্রাম' },
-          { id: 3, name_en: 'আধুনগর', name_bn: 'আধুনগর', district: 'চট্টগ্রাম' },
-          { id: 4, name_en: 'চুনাটি', name_bn: 'চুনাটি', district: 'চট্টগ্রাম' },
-          { id: 5, name_en: 'কলাউজান', name_bn: 'কলাউজান', district: 'চট্টগ্রাম' },
-          { id: 6, name_en: 'পদুয়া', name_bn: 'পদুয়া', district: 'চট্টগ্রাম' },
-          { id: 7, name_en: 'পুটিবিলা', name_bn: 'পুটিবিলা', district: 'চট্টগ্রাম' },
-          { id: 8, name_en: 'চরম্বা', name_bn: 'চরম্বা', district: 'চট্টগ্রাম' },
-          { id: 9, name_en: 'আমিরাবাদ', name_bn: 'আমিরাবাদ', district: 'চট্টগ্রাম' }
-        ];
-        if (cleanPath === '/overview') return {
-          active_listings: 24,
-          pending_listings: 7,
-          new_leads_30d: 18,
-          open_reports: 4,
-          active_incidents: 2,
-          listingBreakdown: [
-            { status: 'active', total: 18 },
-            { status: 'pending', total: 7 },
-            { status: 'sold', total: 3 },
-            { status: 'rented', total: 2 }
-          ],
-          new_users_30d: 11
-        };
-        if (cleanPath === '/listings') return [
-          { id: 101, public_code: 'LH-101', title: '৩ কক্ষের বাড়ি', status: 'pending', price_amount: 1850000, upazila: 'লোহাগাড়া', ward_name: 'নাম্বার ১', created_at: new Date().toISOString(), owner_name: 'মোঃ রহিম', buyer_name: 'ফারুক', buyer_phone: '01700000000' },
-          { id: 102, public_code: 'LH-102', title: 'বিজনেস স্পেস', status: 'pending', price_amount: 2400000, upazila: 'লোহাগাড়া', ward_name: 'নাম্বার ২', created_at: new Date().toISOString(), owner_name: 'সালেহ', buyer_name: 'আনিস', buyer_phone: '01800000000' }
-        ];
-        if (cleanPath.includes('/wards')) return [
-          { id: 1, area_name: 'নাম্বার ১', ward_number: 1 },
-          { id: 2, area_name: 'নাম্বার ২', ward_number: 2 },
-          { id: 3, area_name: 'নাম্বার ৩', ward_number: 3 }
-        ];
-        if (cleanPath.includes('/owners')) return [
-          { id: 201, display_name: 'মোঃ রহিম', email: 'rahim@example.com' },
-          { id: 202, display_name: 'সালেহ উদ্দিন', email: 'saleh@example.com' }
-        ];
-        if (cleanPath.includes('/markets')) return [
-          { id: 1, name: 'লোহাগাড়া বাজার' },
-          { id: 2, name: 'চন্দ্রা বাজার' }
-        ];
-        if (cleanPath.includes('/market/prices')) return [
-          { id: 1, display_name: 'ধান', local_market: 'লোহাগাড়া বাজার', retail_amount: 42, wholesale_amount: 38, market_name: 'লোহাগাড়া বাজার' },
-          { id: 2, display_name: 'গম', local_market: 'চন্দ্রা বাজার', retail_amount: 35, wholesale_amount: 31, market_name: 'চন্দ্রা বাজার' }
-        ];
-        if (cleanPath.includes('/donors')) return [
-          { display_name: 'আকবর', blood_group: 'O+', available: true, area_name: 'নাম্বার ১' },
-          { display_name: 'শামীম', blood_group: 'B+', available: true, area_name: 'নাম্বার ২' }
-        ];
-        if (cleanPath.includes('/emergency/teams')) return [
-          { id: 1, name: 'এমআরজি টিম', verified: true, active: true },
-          { id: 2, name: 'ফায়ার টিম', verified: false, active: true }
-        ];
-        if (cleanPath.includes('/emergencies')) return [
-          { id: 1, status: 'open', details: 'বৃষ্টি ও জলাবদ্ধতা', created_at: new Date().toISOString() },
-          { id: 2, status: 'resolved', details: 'সড়ক মেরামত', created_at: new Date().toISOString() }
-        ];
-        if (cleanPath.includes('/leads')) return [
-          { id: 301, buyer_name: 'আবুল', title: 'বাড়ি', public_code: 'LH-101', request_type: 'ভিউ', stage: 'new', buyer_phone: '01711111111' }
-        ];
-        if (cleanPath.includes('/audit')) return [
-          { action: 'login', resource_type: 'admin_user', resource_id: 'demo-admin', created_at: new Date().toISOString(), actor_name: 'Demo Admin', source_ip: '127.0.0.1' }
-        ];
-        if (cleanPath.includes('/property-price-history')) return [];
-        if (cleanPath.includes('/market/history')) return [];
-        if (cleanPath.includes('/donor-enrollments')) return [];
-        if (cleanPath === '/reports') return [];
-        if (cleanPath === '/vendors/requests') return [];
-        return {};
-      }
-
       function showAuthError(message) {
         authError.textContent = message;
         authError.classList.remove('hidden');
@@ -988,58 +815,6 @@
       function hideAuthError() {
         authError.classList.add('hidden');
         authError.textContent = '';
-      }
-
-      function toNumber(value, fallback = 0) {
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : fallback;
-      }
-
-      function syncOverviewCardValues(data = {}) {
-        const pending = toNumber(data.pendingApprovals ?? data.pending ?? overviewData.pending_listings ?? 0, 0);
-        const services = toNumber(data.activeIncidents ?? data.services ?? overviewData.active_incidents ?? 0, 0);
-        const market = toNumber(data.marketRecords ?? data.marketCount ?? marketData.length ?? 0, 0);
-        const users = toNumber(data.newUsers30d ?? data.contributors ?? overviewData.new_users_30d ?? 0, 0);
-
-        const pendingNode = document.querySelector('[data-counter="pending"]');
-        const servicesNode = document.querySelector('[data-counter="services"]');
-        const marketNode = document.querySelector('[data-counter="market"]');
-        const usersNode = document.querySelector('[data-counter="users"]');
-
-        if (pendingNode) pendingNode.textContent = String(pending).padStart(2, '0');
-        if (servicesNode) servicesNode.textContent = String(services);
-        if (marketNode) marketNode.textContent = String(market);
-        if (usersNode) usersNode.textContent = String(users);
-
-        overviewData = { ...overviewData, ...data, pending_listings: pending, active_incidents: services, new_users_30d: users };
-      }
-
-      function startOverviewRealtimeListener() {
-        if (!window.firebaseDb || !window.firebaseFirestoreDoc || !window.firebaseFirestoreOnSnapshot) return;
-
-        if (window.__overviewRealtimeUnsubscribe) {
-          window.__overviewRealtimeUnsubscribe();
-        }
-
-        try {
-          window.__overviewRealtimeUnsubscribe = window.firebaseFirestoreOnSnapshot(
-            window.firebaseFirestoreDoc(window.firebaseDb, 'admin', 'dashboard'),
-            (snapshot) => {
-              if (!snapshot.exists()) {
-                syncOverviewCardValues({ pendingApprovals: overviewData.pending_listings || 0, activeIncidents: overviewData.active_incidents || 0, newUsers30d: overviewData.new_users_30d || 0 });
-                return;
-              }
-
-              const data = snapshot.data() || {};
-              syncOverviewCardValues(data);
-            },
-            (error) => {
-              console.warn('Firestore overview listener unavailable:', error);
-            }
-          );
-        } catch (error) {
-          console.warn('Unable to start Firestore overview listener:', error);
-        }
       }
 
       function updateUserProfile(user) {
@@ -1073,15 +848,10 @@
 
       function setAuthState(isAuthenticated) {
         if (isAuthenticated) {
-          startOverviewRealtimeListener();
           loginScreen.classList.add('hidden');
           appShell.classList.remove('hidden');
         } else {
           liveEventsController?.abort();
-          if (window.__overviewRealtimeUnsubscribe) {
-            window.__overviewRealtimeUnsubscribe();
-            window.__overviewRealtimeUnsubscribe = null;
-          }
           loginScreen.classList.remove('hidden');
           appShell.classList.add('hidden');
         }
@@ -1090,30 +860,15 @@
       async function apiRequest(path, options = {}) {
         const user = window.firebaseAuth?.currentUser;
         const token = options.token || (user ? await user.getIdToken() : null);
-
-        try {
-          if (!token && !path.startsWith('/session')) {
-            throw new Error('Sign in with an authorized Firebase account first.');
-          }
-
-          const response = await fetch(`${API_BASE}/admin${path}`, {
-            ...options,
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers || {}) },
-            body: options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body
-          });
-          const payload = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status}).`);
-          return payload.data;
-        } catch (error) {
-          if (isOfflineBackendError(error)) {
-            demoModeEnabled = true;
-            return makeDemoFallback(path);
-          }
-
-          const friendly = getFriendlyAuthMessage(error);
-          if (friendly !== error?.message) throw new Error(friendly);
-          throw error;
-        }
+        if (!token) throw new Error('Sign in with an authorized Firebase account first.');
+        const response = await fetch(`${API_BASE}/admin${path}`, {
+          ...options,
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers || {}) },
+          body: options.body && typeof options.body !== 'string' ? JSON.stringify(options.body) : options.body
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error?.message || `Request failed (${response.status}).`);
+        return payload.data;
       }
 
       function startRealtimeFeed() {
@@ -1164,20 +919,6 @@
           await window.firebaseSignInWithPopup(auth, provider);
         } catch (error) {
           console.error('Google sign-in failed. Details:', error);
-          if (isOfflineBackendError(error) || (error?.message && error.message.toLowerCase().includes('failed to fetch'))) {
-            demoModeEnabled = true;
-            currentAdmin = { ...demoAdminUser, displayName: 'Demo Admin', email: 'demo@lohagara.local' };
-            updateUserProfile({ displayName: currentAdmin.displayName, email: currentAdmin.email, photoURL: '' });
-            try {
-              await loadAdminData();
-              setAuthState(true);
-              showToast('Demo admin access enabled while the local API is offline.', 'info');
-              return;
-            } catch (loadError) {
-              console.warn('Fallback demo load failed:', loadError);
-            }
-          }
-
           setAuthState(false);
 
           if (error?.code === 'auth/configuration-not-found' || error?.code === 'auth/invalid-api-key' || error?.code === 'auth/invalid-credential') {
@@ -1185,7 +926,21 @@
             return;
           }
 
-          showAuthError(getFriendlyAuthMessage(error));
+          if (error?.code === 'auth/network-request-failed') {
+            showAuthError('Cannot reach Firebase Auth. Check your connection, firewall, and API key restrictions for this site.');
+            return;
+          }
+
+          if (error?.code === 'auth/unauthorized-domain') {
+            showAuthError('This site is not authorized in Firebase Authentication. Add 127.0.0.1 to Authentication > Settings > Authorized domains.');
+            return;
+          }
+
+          if (error?.message) {
+            showAuthError(`Google sign-in failed. Please try again. (${error.message})`);
+          } else {
+            showAuthError('Google sign-in failed. Please try again.');
+          }
         }
       }
 
@@ -1247,28 +1002,16 @@
           try {
             const token = await user.getIdToken();
             currentAdmin = await apiRequest('/session', { token });
-            if (!currentAdmin || !currentAdmin.roles) {
-              currentAdmin = { ...demoAdminUser, displayName: user.displayName || demoAdminUser.displayName, email: user.email || demoAdminUser.email };
-            }
             updateUserProfile({ displayName: currentAdmin.displayName, email: currentAdmin.email, photoURL: user.photoURL });
             await loadAdminData();
             setAuthState(true);
             startRealtimeFeed();
           } catch (error) {
-            if (isOfflineBackendError(error)) {
-              currentAdmin = { ...demoAdminUser, displayName: user.displayName || demoAdminUser.displayName, email: user.email || demoAdminUser.email };
-              updateUserProfile({ displayName: currentAdmin.displayName, email: currentAdmin.email, photoURL: user.photoURL });
-              await loadAdminData();
-              setAuthState(true);
-              showToast('Backend offline: demo admin access enabled temporarily.', 'info');
-              return;
-            }
-
             currentAdmin = null;
-            await window.firebaseSignOut(window.firebaseAuth).catch(() => {});
+            await window.firebaseSignOut(window.firebaseAuth);
             updateUserProfile(null);
             setAuthState(false);
-            showAuthError(getFriendlyAuthMessage(error) || 'The signed-in account does not have an active admin role.');
+            showAuthError(error.message || 'The signed-in account does not have an active admin role.');
           }
         });
       }
@@ -1278,39 +1021,7 @@
       const tabButtons = document.querySelectorAll('.nav-item');
       const tabPanels = document.querySelectorAll('.tab-panel');
 
-      const defaultModerationQueue = [
-        {
-          id: 1,
-          type: 'জরুরি সেবা',
-          badge: 'High',
-          time: '১০ মিনিট আগে',
-          title: 'পদুয়া ডায়াগনস্টিক সেন্টারের নতুন তথ্য যাচাই',
-          description: 'নতুন অক্সিজেন সেবা ও সার্বক্ষণিক অ্যাম্বুলেন্স যোগাযোগের তথ্য লোহাগাড়া হাবে অন্তর্ভুক্তির আবেদন।',
-          author: 'ডা. নাসির উদ্দিন',
-          area: 'পদুয়া ইউনিয়ন'
-        },
-        {
-          id: 2,
-          type: 'ফার্মেসি',
-          badge: 'Medium',
-          time: '১ ঘণ্টা আগে',
-          title: 'মা-মণি ফার্মেসি ও ড্রাগ হাউস',
-          description: 'লোহাগাড়া বটতলী স্টেশনে নতুন ২৪ ঘণ্টা খোলা ফার্মেসির তালিকাভুক্তি অনুরোধ।',
-          author: 'কামাল হোসেন',
-          area: 'লোহাগাড়া সদর'
-        },
-        {
-          id: 3,
-          type: 'রক্তদান সেবা',
-          badge: 'Low',
-          time: '২ ঘণ্টা আগে',
-          title: 'নতুন ও+ রক্তদাতা রেজিস্ট্রেশন',
-          description: 'স্বেচ্ছাসেবী রক্তদাতা হিসেবে নাম ও যোগাযোগের নম্বর অন্তর্ভুক্তির আবেদন।',
-          author: 'তানভীর আহমেদ',
-          area: 'আধুনগর ইউনিয়ন'
-        }
-      ];
-      const moderationData = [...defaultModerationQueue];
+      const moderationData = [];
       const marketData = [];
       const propertyQueueData = [];
       const vendorRequestsData = [];
@@ -1721,11 +1432,6 @@
       function renderModerationList() {
         const container = document.getElementById('moderationList');
         container.innerHTML = '';
-
-        if (!moderationData.length) {
-          container.innerHTML = '<div class="glass panel-glow rounded-3xl p-8 text-center text-sm font-semibold text-slate-500">কোনো অপেক্ষমান আবেদন নেই। সমস্ত মডারেশন সম্পন্ন হয়েছে!</div>';
-          return;
-        }
 
         moderationData.forEach((item) => {
           const card = document.createElement('div');
@@ -2270,98 +1976,11 @@
         document.getElementById('mobileSidebar').classList.add('hidden');
       });
 
-      const mobileSidebarEl = document.getElementById('mobileSidebar');
-      if (mobileSidebarEl) {
-        mobileSidebarEl.addEventListener('click', (event) => {
-          if (event.target === mobileSidebarEl) {
-            mobileSidebarEl.classList.add('hidden');
-          }
-        });
-      }
-
       document.querySelectorAll('.mobile-nav').forEach((button) => {
         button.addEventListener('click', () => {
           document.getElementById('mobileSidebar').classList.add('hidden');
         });
       });
-
-      // Demo login button handler
-      document.getElementById('demoLoginBtn')?.addEventListener('click', () => {
-        demoModeEnabled = true;
-        currentAdmin = { ...demoAdminUser, displayName: 'Demo Admin', email: 'demo@lohagara.local' };
-        updateUserProfile({ displayName: currentAdmin.displayName, email: currentAdmin.email, photoURL: '' });
-        loadAdminData().then(() => {
-          setAuthState(true);
-          showToast('ডেমো অ্যাডমিন কন্ট্রোল সেন্টারে সফলভাবে প্রবেশ করেছেন!', 'success');
-        }).catch((err) => {
-          console.warn('Demo login initialization:', err);
-          setAuthState(true);
-          showToast('ডেমো অ্যাডমিন কন্ট্রোল সেন্টারে স্বাগতম।', 'info');
-        });
-      });
-
-      // Admin password eye toggles
-      document.querySelectorAll('.admin-password-toggle').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const targetId = btn.getAttribute('data-target');
-          const input = document.getElementById(targetId);
-          if (!input) return;
-          if (input.type === 'password') {
-            input.type = 'text';
-            btn.textContent = '🔒';
-          } else {
-            input.type = 'password';
-            btn.textContent = '👁️';
-          }
-        });
-      });
-
-      // Notification Dropdown in header
-      const adminNotifBtn = document.getElementById('adminNotifBtn');
-      const adminNotifDropdown = document.getElementById('adminNotifDropdown');
-      if (adminNotifBtn && adminNotifDropdown) {
-        adminNotifBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          adminNotifDropdown.classList.toggle('hidden');
-        });
-
-        document.getElementById('clearAdminNotifs')?.addEventListener('click', () => {
-          const badge = document.getElementById('adminNotifBadge');
-          if (badge) badge.remove();
-          showToast('সমস্ত নোটিফিকেশন পঠিত হিসেবে চিহ্নিত করা হয়েছে।', 'success');
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!adminNotifDropdown.contains(e.target) && !adminNotifBtn.contains(e.target)) {
-            adminNotifDropdown.classList.add('hidden');
-          }
-        });
-      }
-
-      // Global Search input in header
-      const globalSearch = document.getElementById('globalAdminSearch');
-      if (globalSearch) {
-        globalSearch.addEventListener('input', (event) => {
-          const query = event.target.value.trim().toLowerCase();
-          document.querySelectorAll('#moderationList > div').forEach((card) => {
-            card.style.display = card.textContent.toLowerCase().includes(query) ? '' : 'none';
-          });
-          const leadInput = document.getElementById('leadSearch');
-          if (leadInput && query) {
-            leadInput.value = query;
-            renderLeadTable(query);
-          }
-          document.querySelectorAll('#marketTableBody tr').forEach((row) => {
-            row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-          });
-          document.querySelectorAll('#propertyQueueBody tr').forEach((row) => {
-            row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-          });
-          document.querySelectorAll('#donorTableBody tr').forEach((row) => {
-            row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-          });
-        });
-      }
 
       renderModerationList();
       renderMarketTable();
